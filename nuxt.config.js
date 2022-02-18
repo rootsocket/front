@@ -15,6 +15,10 @@ export default {
       { name: 'format-detection', content: 'telephone=no' },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    bodyAttrs: {
+      class:
+        'antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-300',
+    },
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -34,6 +38,7 @@ export default {
     '@nuxtjs/stylelint-module',
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
+    '@nuxtjs/google-fonts',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -42,6 +47,7 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/i18n',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -59,4 +65,28 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+  i18n: {
+    locales: ['en', 'fr', 'es'],
+    defaultLocale: 'en',
+    vueI18n: {
+      fallbackLocale: 'en',
+      messages: {
+        en: {
+          welcome: 'Welcome',
+        },
+        fr: {
+          welcome: 'Bienvenue',
+        },
+        es: {
+          welcome: 'Bienvenido',
+        },
+      },
+    },
+  },
+  googleFonts: {
+    families: {
+      'DM+Sans': true,
+      'DM+Mono': true,
+    },
+  },
 }
