@@ -48,6 +48,7 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     '@nuxtjs/i18n',
+    '@nuxtjs/auth-next',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -88,5 +89,8 @@ export default {
       'DM+Sans': true,
       'DM+Mono': true,
     },
+  },
+  router: {
+    middleware: ['auth'],
   },
 }
