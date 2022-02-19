@@ -3,7 +3,7 @@
     <div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
       <Logo class="mb-5" />
       <form
-        class="bg-white border dark:bg-gray-900 dark:border-gray-700 shadow w-full rounded-lg divide-y divide-gray-200 dark:divide-gray-600"
+        class="bg-white border dark:bg-gray-900 dark:border-gray-800 shadow w-full rounded-lg divide-y divide-gray-200 dark:divide-gray-800 shadow"
       >
         <div class="px-5 py-7">
           <TextLabel :value="$t('email')" />
