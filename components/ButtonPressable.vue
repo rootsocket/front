@@ -67,7 +67,9 @@ export default Vue.extend({
           return `
               border
               border-gray-200
+              dark:border-gray-600
               text-gray-500
+              dark:text-gray-300
               font-normal
             `
         default:

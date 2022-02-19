@@ -1,7 +1,7 @@
 <template>
   <input
     :type="type"
-    class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+    class="border dark:border-gray-600 rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-white dark:bg-gray-900"
     :placeholder="placeholder"
     :pattern="pattern"
     required

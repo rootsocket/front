@@ -1,7 +1,8 @@
 <template>
-  <label class="font-semibold text-sm text-gray-600 pb-1 block">{{
-    value
-  }}</label>
+  <label
+    class="font-semibold text-sm text-gray-600 dark:text-gray-300 pb-1 block"
+    >{{ value }}</label
+  >
 </template>
 
 <script lang="ts">

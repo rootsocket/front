@@ -12,7 +12,7 @@
         @click="$router.go(-1)"
       />
       <div
-        class="p-4 bg-white-100 rounded-md shadow mt-4 w-64 lg:w-96 max-h-52 overflow-auto"
+        class="p-4 bg-white-100 rounded-md shadow border dark:border-gray-600 mt-4 w-64 lg:w-96 max-h-52 overflow-auto"
       >
         <pre class="select-all">{{ JSON.stringify(error, null, 2) }}</pre>
       </div>

@@ -5,6 +5,6 @@
     :aria-label="`RootSocket Logo`"
   >
     <img src="/logo.png" class="h-6 max-w-full rounded-full" alt="Logo" />
-    <h1 class="text-2xl ml-2">RootSocket</h1>
+    <h1 class="text-2xl ml-2 text-white dark:text-gray-100">RootSocket</h1>
   </NuxtLink>
 </template>
