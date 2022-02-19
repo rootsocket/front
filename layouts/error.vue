@@ -29,6 +29,11 @@ export default {
       default: () => ({}),
     },
   },
+  head() {
+    return {
+      title: 'Error - RootSocket',
+    }
+  },
 }
 </script>
 

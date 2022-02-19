@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="fixed top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900"
+    class="fixed top-0 z-40 w-full border-b dark:border-gray-600 bg-white dark:bg-gray-900"
     :class="{ 'shadow border-transparent': scrolled }"
     @click="scrollToTop"
   >
@@ -26,19 +26,19 @@
             to="/"
             class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base mr-7 hidden lg:block"
             exact-active-class="text-primary-500"
-            >Applications</NuxtLink
+            >{{ $t('applications') }}</NuxtLink
           >
           <NuxtLink
             to="/"
             class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base mr-7 hidden lg:block"
             exact-active-class="text-primary-500"
-            >Billing</NuxtLink
+            >{{ $t('billing') }}</NuxtLink
           >
           <NuxtLink
             to="/"
             class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base hidden lg:block"
             exact-active-class="text-primary-500"
-            >Account</NuxtLink
+            >{{ $t('account') }}</NuxtLink
           >
           <div class="flex items-center">
             <button
@@ -96,3 +96,18 @@ export default {
   },
 }
 </script>
+
+<i18n>
+{
+  "en": {
+    "applications": "Applications",
+    "billing": "Billing",
+    "account": "Account"
+  },
+  "es": {
+    "applications": "Aplicaciones",
+    "billing": "Facturación",
+    "account": "Cuenta"
+  }
+}
+</i18n>

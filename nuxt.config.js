@@ -73,6 +73,7 @@ export default {
       { code: 'en', iso: 'en-US', name: 'English' },
       { code: 'es', iso: 'es-ES', name: 'Español' },
     ],
+    defaultLocale: 'en',
   },
   googleFonts: {
     families: {

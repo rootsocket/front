@@ -18,19 +18,19 @@
               to="/"
               class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base"
               exact-active-class="text-primary-500"
-              >Applications</NuxtLink
+              >{{ $t('applications') }}</NuxtLink
             >
             <NuxtLink
               to="/"
               class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base"
               exact-active-class="text-primary-500"
-              >Billing</NuxtLink
+              >{{ $t('billing') }}</NuxtLink
             >
             <NuxtLink
               to="/"
               class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base"
               exact-active-class="text-primary-500"
-              >Account</NuxtLink
+              >{{ $t('account') }}</NuxtLink
             >
           </div>
         </li>
@@ -53,3 +53,18 @@ export default {
   },
 }
 </script>
+
+<i18n>
+{
+  "en": {
+    "applications": "Applications",
+    "billing": "Billing",
+    "account": "Account"
+  },
+  "es": {
+    "applications": "Aplicaciones",
+    "billing": "Facturación",
+    "account": "Cuenta"
+  }
+}
+</i18n>
