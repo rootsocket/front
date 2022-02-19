@@ -1,5 +1,3 @@
-# RootSocket
-
 ## Build Setup
 
 ```bash

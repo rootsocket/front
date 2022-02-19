@@ -1,4 +1,12 @@
+import pkg from './package.json'
+
 export default {
+  publicRuntimeConfig: {
+    clientVersion: pkg.version,
+    projectTitle: pkg.name,
+    projectBlog: 'https://blog.rootsocket.com',
+    projectDocs: 'https://docs.rootsocket.com',
+  },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
@@ -73,7 +81,7 @@ export default {
       { code: 'en', iso: 'en-US', name: 'English' },
       { code: 'es', iso: 'es-ES', name: 'Español' },
     ],
-    defaultLocale: 'en',
+    fallbackLocale: 'en',
   },
   googleFonts: {
     families: {

@@ -1,7 +1,8 @@
 <template>
   <button
-    :type="type"
+    :type="loading ? 'button' : type"
     :class="`
+      relative
       text-center
       inline-block
       w-full
@@ -14,9 +15,17 @@
       duration-200
       ${classes}
     `"
-    @click="$emit('click')"
+    @click="loading ? noop : $emit('click')"
   >
-    <span class="inline-block mr-2">{{ value }}</span>
+    <div
+      class="absolute w-full flex justify-center"
+      :class="{ 'opacity-0': !loading }"
+    >
+      <IconLoad />
+    </div>
+    <span class="inline-block mr-2" :class="{ 'opacity-0': loading }">{{
+      value
+    }}</span>
   </button>
 </template>
 
@@ -47,6 +56,10 @@ export default Vue.extend({
       type: String as () => Variant,
       required: true,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     classes() {
@@ -67,7 +80,7 @@ export default Vue.extend({
           return `
               border
               border-gray-200
-              dark:border-gray-600
+              dark:border-gray-700
               text-gray-500
               dark:text-gray-300
               font-normal
@@ -76,6 +89,9 @@ export default Vue.extend({
           return ''
       }
     },
+  },
+  methods: {
+    noop() {},
   },
 })
 </script>

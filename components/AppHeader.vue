@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="fixed top-0 z-40 w-full border-b dark:border-gray-600 bg-white dark:bg-gray-900"
+    class="fixed top-0 z-40 w-full border-b dark:border-gray-700 bg-white dark:bg-gray-900"
     :class="{ 'shadow border-transparent': scrolled }"
     @click="scrollToTop"
   >
@@ -10,32 +10,32 @@
           <NuxtLink
             :to="localePath('/')"
             class="flex-shrink-0 flex-1 font-bold text-xl flex flex-row items-center"
-            :aria-label="`RootSocket Logo`"
+            :aria-label="`${$config.projectTitle} Logo`"
           >
             <img
               src="/logo.png"
               class="h-6 max-w-full rounded-full"
-              alt="RootSocket"
+              :alt="$config.projectTitle"
             />
 
-            <span class="text-2xl ml-2">RootSocket</span>
+            <span class="text-2xl ml-2">{{ $config.projectTitle }}</span>
           </NuxtLink>
         </div>
         <div class="lg:w-1/5 flex items-center pl-4 lg:pl-8 justify-end">
           <NuxtLink
-            to="/"
+            :to="localeLocation({ name: 'applications' })"
             class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base mr-7 hidden lg:block"
             exact-active-class="text-primary-500"
             >{{ $t('applications') }}</NuxtLink
           >
           <NuxtLink
-            to="/"
+            :to="localeLocation({ name: 'billing' })"
             class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base mr-7 hidden lg:block"
             exact-active-class="text-primary-500"
             >{{ $t('billing') }}</NuxtLink
           >
           <NuxtLink
-            to="/"
+            :to="localeLocation({ name: 'account' })"
             class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base hidden lg:block"
             exact-active-class="text-primary-500"
             >{{ $t('account') }}</NuxtLink

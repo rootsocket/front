@@ -3,7 +3,7 @@
     <div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
       <Logo class="mb-5" />
       <form
-        class="bg-white border dark:bg-gray-900 dark:border-gray-700 shadow w-full rounded-lg divide-y divide-gray-200 dark:divide-gray-600"
+        class="bg-white border dark:bg-gray-900 dark:border-gray-700 shadow w-full rounded-lg"
       >
         <div class="px-5 py-7">
           <TextLabel :value="$t('email')" />
@@ -14,16 +14,9 @@
             required
           />
           <ButtonPressable
-            :value="$t('createAccount')"
+            :value="$t('resetPassword')"
             type="submit"
             variant="primary"
-          />
-        </div>
-        <div class="p-5">
-          <ButtonPressable
-            :value="$t('login')"
-            variant="outline"
-            @click="$router.push(localeLocation({ name: 'login' }))"
           />
         </div>
       </form>
@@ -39,7 +32,7 @@
 import Vue from 'vue'
 
 export default Vue.extend({
-  name: 'RegisterPage',
+  name: 'ResetPage',
   auth: false,
   data() {
     return {
@@ -48,7 +41,7 @@ export default Vue.extend({
   },
   head(): { title: string } {
     return {
-      title: `${this.$t('createAccount')} - ${this.$config.projectTitle}`,
+      title: `${this.$t('resetPassword')} - ${this.$config.projectTitle}`,
     }
   },
 })
@@ -59,14 +52,12 @@ export default Vue.extend({
   "en": {
     "email": "Email address",
     "enterEmailAddress": "Enter email address",
-    "login": "Login",
-    "createAccount": "Create an account"
+    "resetPassword": "Reset password"
   },
   "es": {
     "email": "Correo electrónico",
     "enterEmailAddress": "Introduce el correo electrónico",
-    "login": "Iniciar sesión",
-    "createAccount": "Crear una cuenta"
+    "resetPassword": "Reiniciar contraseña"
   }
 }
 </i18n>

@@ -6,7 +6,7 @@
       <div class="flex flex-wrap relative">
         <AppNav />
 
-        <Nuxt class="w-full lg:w-4/5" />
+        <Nuxt class="w-full lg:w-4/5 mx-auto" />
       </div>
     </main>
 

@@ -12,11 +12,11 @@
 
     <ul class="py-2">
       <li v-for="locale in availableLocales" :key="locale.code">
-        <nuxt-link
+        <NuxtLink
           v-if="$i18n.locale !== locale.code"
           :to="switchLocalePath(locale.code)"
           class="flex px-4 items-center hover:text-primary-500 leading-7 whitespace-no-wrap"
-          >{{ locale.name }}</nuxt-link
+          >{{ locale.name }}</NuxtLink
         >
       </li>
     </ul>

@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen flex flex-col justify-center sm:py-12">
     <div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-      <RootSocketLogo class="mb-5" />
+      <Logo class="mb-5" />
       <form
-        class="bg-white border dark:bg-gray-900 dark:border-gray-600 shadow w-full rounded-lg divide-y divide-gray-200 dark:divide-gray-600"
+        class="bg-white border dark:bg-gray-900 dark:border-gray-700 shadow w-full rounded-lg divide-y divide-gray-200 dark:divide-gray-600"
       >
         <div class="px-5 py-7">
           <TextLabel :value="$t('email')" />
@@ -41,6 +41,10 @@
           />
         </div>
       </form>
+      <div class="flex items-center space-x-4 mt-4 justify-end">
+        <AppLangSwitcher />
+        <AppColorSwitcher />
+      </div>
     </div>
   </div>
 </template>
@@ -50,6 +54,7 @@ import Vue from 'vue'
 
 export default Vue.extend({
   name: 'LoginPage',
+  auth: false,
   data() {
     return {
       email: '',
@@ -58,7 +63,7 @@ export default Vue.extend({
   },
   head() {
     return {
-      title: `${this.$t('login')} - RootSocket`,
+      title: `${this.$t('login')} - ${this.$config.projectTitle}`,
     }
   },
 })

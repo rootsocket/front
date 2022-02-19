@@ -1,28 +1,30 @@
 <template>
   <footer
-    class="h-16 relative w-full border-t dark:border-gray-600 bg-white dark:bg-gray-900 z-20"
+    class="h-16 relative w-full border-t dark:border-gray-700 bg-white dark:bg-gray-900 z-20"
   >
     <div
       class="h-full w-full container mx-auto px-4 lg:px-8 flex items-center justify-between"
     >
       <div class="flex items-start flex-col">
-        <div class="text-lg">RootSocket</div>
+        <div class="text-lg">
+          {{ $t('application') }}
+        </div>
         <div class="flex space-x-4">
           <a
-            href="https://blog.rootsocket.com"
+            :href="$config.projectBlog"
             target="_blank"
             rel="noopener"
             class="text-sm text-gray-500 hover:text-primary-500"
           >
-            Blog
+            {{ $t('blog') }}
           </a>
           <a
-            href="https://docs.rootsocket.com"
+            :href="$config.projectDocs"
             target="_blank"
             rel="noopener"
             class="text-sm text-gray-500 hover:text-primary-500"
           >
-            Docs
+            {{ $t('docs') }}
           </a>
         </div>
       </div>
@@ -43,3 +45,18 @@ export default {
   },
 }
 </script>
+
+<i18n>
+{
+  "en": {
+    "application": "Application",
+    "blog": "Blog",
+    "docs": "Docs"
+  },
+  "es": {
+    "applicatios": "Aplicación",
+    "blog": "Blog",
+    "docs": "Docs"
+  }
+}
+</i18n>
