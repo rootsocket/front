@@ -25,7 +25,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ['@/plugins/menu.client'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -43,12 +43,13 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/auth-next',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     '@nuxtjs/i18n',
-    '@nuxtjs/auth-next',
+    '@nuxtjs/color-mode',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -68,13 +69,10 @@ export default {
   build: {},
   i18n: {
     vueI18nLoader: true,
-    locales: ['en', 'fr', 'es'],
-    defaultLocale: 'es',
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_redirected',
-      redirectOn: 'root', // recommended
-    },
+    locales: [
+      { code: 'en', iso: 'en-US', name: 'English' },
+      { code: 'es', iso: 'es-ES', name: 'Español' },
+    ],
   },
   googleFonts: {
     families: {
@@ -84,5 +82,8 @@ export default {
   },
   router: {
     middleware: ['auth'],
+  },
+  auth: {
+    plugins: ['~/plugins/auth.client.js'],
   },
 }

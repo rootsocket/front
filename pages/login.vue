@@ -1,5 +1,4 @@
 <template>
-  <!-- component -->
   <div class="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-12">
     <div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
       <RootSocketLogo class="mb-5" />
@@ -36,7 +35,7 @@
           <ButtonPressable
             :value="$t('createAccount')"
             variant="outline"
-            @click="$router.push(localePath('/register'))"
+            @click="$router.push(localeLocation({ name: 'register' }))"
           />
         </div>
       </form>
@@ -53,6 +52,11 @@ export default Vue.extend({
     return {
       email: '',
       password: '',
+    }
+  },
+  head() {
+    return {
+      title: `${this.$t('login')} - RootSocket`,
     }
   },
 })

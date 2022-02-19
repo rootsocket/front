@@ -10,7 +10,12 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 const selectorParser = require('postcss-selector-parser')
 const { getColors } = require('theme-colors')
 
+// We need to respect breakpoints that match with docs & blog.
+const containerScreens = Object.assign({}, defaultTheme.screens)
+delete containerScreens['2xl']
+
 module.exports = {
+  darkMode: 'class',
   future: {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
@@ -35,6 +40,9 @@ module.exports = {
       transitionProperty: {
         padding: 'padding',
       },
+    },
+    container: {
+      screens: containerScreens,
     },
     typography: (theme) => ({
       default: {
