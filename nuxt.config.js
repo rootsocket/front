@@ -47,6 +47,7 @@ export default {
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
     '@nuxtjs/google-fonts',
+    '@nuxtjs/color-mode',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -57,7 +58,6 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     '@nuxtjs/i18n',
-    '@nuxtjs/color-mode',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -88,11 +88,15 @@ export default {
       'DM+Sans': true,
       'DM+Mono': true,
     },
+    download: true,
   },
   router: {
     middleware: ['auth'],
   },
   auth: {
     plugins: ['~/plugins/auth.client.js'],
+  },
+  generate: {
+    fallback: '404.html',
   },
 }
