@@ -5,7 +5,8 @@
       relative
       text-center
       inline-block
-      w-full
+      justify-center
+      px-4
       py-2.5
       rounded-lg
       text-sm
@@ -23,7 +24,7 @@
     >
       <IconLoad />
     </div>
-    <span class="inline-block mr-2" :class="{ 'opacity-0': loading }">{{
+    <span class="inline-block" :class="{ 'opacity-0': loading }">{{
       value
     }}</span>
   </button>
@@ -79,9 +80,9 @@ export default Vue.extend({
         case Variant.outline:
           return `
               border
-              border-gray-200
+              border-gray-300
               dark:border-gray-800
-              text-gray-500
+              text-gray-600
               dark:text-gray-300
               font-normal
             `

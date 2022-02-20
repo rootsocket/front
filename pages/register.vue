@@ -17,12 +17,14 @@
             :value="$t('createAccount')"
             type="submit"
             variant="primary"
+            class="w-full"
           />
         </div>
         <div class="p-5">
           <ButtonPressable
             :value="$t('login')"
             variant="outline"
+            class="w-full"
             @click="$router.push(localeLocation({ name: 'login' }))"
           />
         </div>

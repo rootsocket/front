@@ -17,6 +17,7 @@
             :value="$t('resetPassword')"
             type="submit"
             variant="primary"
+            class="w-full"
           />
         </div>
       </form>

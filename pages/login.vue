@@ -30,6 +30,7 @@
           <ButtonPressable
             :value="$t('login')"
             type="submit"
+            class="w-full"
             variant="primary"
           />
         </div>
@@ -37,6 +38,7 @@
           <ButtonPressable
             :value="$t('createAccount')"
             variant="outline"
+            class="w-full"
             @click="$router.push(localeLocation({ name: 'register' }))"
           />
         </div>

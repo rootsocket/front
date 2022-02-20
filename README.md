@@ -87,6 +87,8 @@ Filename for users needs to be: `[email].json`
 
 ```json
 {
+  "firstName": "string",
+  "lastName": "string",
   "identifier": "UUIDv7",
   "password": "SHA256",
   "organizations": ["Orgnization identifier", "Organization identifier"]
@@ -112,23 +114,51 @@ We need applications to manage everything that has to do with connections.
 
 Filename for applications needs to be: `[orgIdentifier].json`
 
+NOTE: `hosts` is only used for public keys.
+
 ```json
 [
   {
     "identifier": "UUIDv7",
     "name": "string",
     "keys": [
-      { "token": "string", "type": "public/private" },
-      { "token": "string", "type": "public/private" }
-    ]
+      {
+        "token": "string",
+        "type": "public/private",
+        "hosts": ["https://www.example.com"],
+        "expires": 1645379187
+      },
+      {
+        "token": "string",
+        "type": "public/private",
+        "hosts": ["https://www.example.com"],
+        "expires": 1645379187
+      }
+    ],
+    "allowClientSend": "boolean",
+    "allowClientSubscription": "boolean",
+    "allowAnalytics": "boolean",
+    "location": "eu-west-1"
   },
   {
     "identifier": "UUIDv7",
     "name": "string",
     "keys": [
-      { "token": "string", "type": "public/private" },
-      { "token": "string", "type": "public/private" }
-    ]
+      {
+        "token": "string",
+        "type": "public/private",
+        "hosts": ["https://www.example.com"]
+      },
+      {
+        "token": "string",
+        "type": "public/private",
+        "hosts": ["https://www.example.com"]
+      }
+    ],
+    "allowClientSend": "boolean",
+    "allowClientSubscription": "boolean",
+    "allowAnalytics": "boolean",
+    "location": "eu-west-1"
   }
 ]
 ```

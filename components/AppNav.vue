@@ -11,8 +11,7 @@
           <p
             class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
           >
-            Panorama Staging&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp; (eu-west-1)
+            Panorama Staging (eu-west-1)
           </p>
           <li
             v-for="page of categories"
@@ -20,7 +19,12 @@
             class="text-gray-700 dark:text-gray-300"
           >
             <NuxtLink
-              :to="localeLocation({ name: page.name, params: { slug: 'a' } })"
+              :to="
+                localeLocation({
+                  name: page.name,
+                  params: { slug: $route.params.slug },
+                })
+              "
               class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between"
               exact-active-class="text-primary-500 bg-primary-100 hover:text-primary-500 dark:bg-primary-900"
             >
