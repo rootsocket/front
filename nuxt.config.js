@@ -42,11 +42,7 @@ export default {
   css: ['@/assets/css/main.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-    '@/plugins/menu.client',
-    '@/plugins/vue-tooltip.client',
-    '@/plugins/click-outside.client',
-  ],
+  plugins: ['@/plugins/menu.client'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,

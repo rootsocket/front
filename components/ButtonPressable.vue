@@ -36,6 +36,8 @@ import Vue from 'vue'
 enum Variant {
   primary = 'primary',
   outline = 'outline',
+  red = 'red',
+  outlineRed = 'outline-red',
 }
 
 enum ButtonType {
@@ -86,6 +88,27 @@ export default Vue.extend({
               dark:text-gray-300
               font-normal
             `
+        case Variant.red:
+          return `
+              bg-red-500
+              hover:bg-red-600
+              focus:bg-red-700
+              focus:shadow-sm
+              focus:ring-4
+              focus:ring-red-500
+              focus:ring-opacity-50
+              text-white
+              font-semibold
+          `
+        case Variant.outlineRed:
+          return `
+            border
+            border-red-500
+            dark:border-red-600
+            text-red-500
+            dark:text-red-600
+            font-normal
+          `
         default:
           return ''
       }

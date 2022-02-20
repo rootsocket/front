@@ -9,9 +9,9 @@
       <ul class="p-4 lg:py-8 lg:pl-0 lg:pr-8">
         <ul v-if="showAside">
           <p
-            class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
+            class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs w-full flex flex-row"
           >
-            Panorama Staging (eu-west-1)
+            <span class="truncate flex-1 mr">{{ application.name }}</span>
           </p>
           <li
             v-for="page of categories"
@@ -71,6 +71,8 @@
 </template>
 
 <script>
+import { getCurrentApplication } from '@/utils/application'
+
 export default {
   data() {
     return {
@@ -96,6 +98,9 @@ export default {
     },
     showAside() {
       return $nuxt.$data.layoutName === 'application'
+    },
+    application() {
+      return getCurrentApplication(this.$store.state, this.$route.params.slug)
     },
   },
   methods: {

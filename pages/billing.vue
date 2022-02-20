@@ -2,6 +2,7 @@
   <div class="flex flex-wrap-reverse">
     <AppPage>
       <h1>{{ $t('billing') }}</h1>
+      <span>{{ $t('noBill') }}</span>
     </AppPage>
   </div>
 </template>
@@ -22,10 +23,12 @@ export default Vue.extend({
 <i18n>
 {
   "en": {
-    "billing": "Billing"
+    "billing": "Billing",
+    "noBill": "We don't bill for connections or messages yet"
   },
   "es": {
-    "billing": "Facturación"
+    "billing": "Facturación",
+    "noBill": "Aún no facturamos por las conexiones o mensajes"
   }
 }
 </i18n>

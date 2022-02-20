@@ -12,11 +12,12 @@
       </div>
 
       <div v-for="organization in organizations" :key="organization.name">
-        <p
-          class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
-        >
-          {{ organization.name }}
-        </p>
+        <div class="flex flex-row items-center">
+          <p class="text-gray-500 uppercase tracking-wider font-bold text-md">
+            {{ organization.name }}
+          </p>
+          <IconPencil class="ml-2 h-7 w-7 cursor-pointer" />
+        </div>
         <div class="grid grid-cols-1 gap-4">
           <div
             v-for="application in organization.applications"
@@ -80,6 +81,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+
 export default Vue.extend({
   layout: 'user',
   auth: false,
@@ -90,95 +92,17 @@ export default Vue.extend({
         region: '',
         showModal: false,
       },
-      organizations: [
-        {
-          name: 'Invisen',
-          applications: [
-            {
-              identifier: 'UUIDv7',
-              name: 'Panorama Staging asdf asdfsa df sf dsafdsa f dsafdsa dsf a dsfaa wkl wfae feawjf alkf aekjlfa ejklaf jklfa wejlkfa wejklf eajklfa weljkf aweljk fewl',
-              location: 'eu-west-1',
-              keys: [
-                {
-                  token: 'string',
-                  type: 'public/private',
-                  hosts: [],
-                  expires: 1645379187,
-                },
-                {
-                  token: 'string',
-                  type: 'public/private',
-                  hosts: [],
-                  expires: 1645379187,
-                },
-              ],
-              allowClientSend: 'boolean',
-              allowClientSubscription: 'boolean',
-              allowAnalytics: 'boolean',
-            },
-            {
-              identifier: 'UUIDv2117',
-              name: 'Invisen not Staging',
-              location: 'eu-west-1',
-              keys: [],
-              allowClientSend: 'boolean',
-              allowClientSubscription: 'boolean',
-              allowAnalytics: 'boolean',
-            },
-            {
-              identifier: 'UUIDv2117',
-              name: 'Invisen not Staging',
-              location: 'eu-west-1',
-              keys: [],
-              allowClientSend: 'boolean',
-              allowClientSubscription: 'boolean',
-              allowAnalytics: 'boolean',
-            },
-            {
-              identifier: 'UUIDv2117',
-              name: 'Invisen not Staging',
-              location: 'eu-west-1',
-              keys: [],
-              allowClientSend: 'boolean',
-              allowClientSubscription: 'boolean',
-              allowAnalytics: 'boolean',
-            },
-            {
-              identifier: 'UUIDv2117',
-              name: 'Invisen not Staging',
-              location: 'eu-west-1',
-              keys: [],
-              allowClientSend: 'boolean',
-              allowClientSubscription: 'boolean',
-              allowAnalytics: 'boolean',
-            },
-            {
-              identifier: 'UUIDv2117',
-              name: 'Invisen not Staging',
-              location: 'eu-west-1',
-              keys: [],
-              allowClientSend: 'boolean',
-              allowClientSubscription: 'boolean',
-              allowAnalytics: 'boolean',
-            },
-            {
-              identifier: 'UUIDv2117',
-              name: 'Invisen not Staging',
-              location: 'eu-west-1',
-              keys: [],
-              allowClientSend: 'boolean',
-              allowClientSubscription: 'boolean',
-              allowAnalytics: 'boolean',
-            },
-          ],
-        },
-      ],
     }
   },
   head() {
     return {
       title: `${this.$t('applications')} - ${this.$config.projectTitle}`,
     }
+  },
+  computed: {
+    organizations() {
+      return this.$store.state.application.organizations
+    },
   },
   methods: {
     navigateToApplication(appIdentifier: string) {

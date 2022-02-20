@@ -2,6 +2,23 @@
   <div class="flex flex-wrap-reverse">
     <AppPage>
       <h1>{{ $t('account') }}</h1>
+      <div class="grid grid-cols-1 gap-4">
+        <div
+          v-for="organization in organizations"
+          :key="organization.identifier"
+          class="w-full p-4 border dark:border-gray-800 rounded-md flex flex-row justify-between items-center"
+        >
+          <span class="flex-1 truncate mr-2 text-lg">{{
+            organization.name
+          }}</span>
+
+          <ButtonPressable
+            :value="$t('leave')"
+            variant="outline-red"
+            type="button"
+          />
+        </div>
+      </div>
     </AppPage>
   </div>
 </template>
@@ -16,16 +33,23 @@ export default Vue.extend({
       title: `${this.$t('account')} - ${this.$config.projectTitle}`,
     }
   },
+  computed: {
+    organizations() {
+      return this.$store.state.application.organizations
+    },
+  },
 })
 </script>
 
 <i18n>
 {
   "en": {
-    "account": "Account"
+    "account": "Account",
+    "leave": "Leave organization"
   },
   "es": {
-    "account": "Cuenta"
+    "account": "Cuenta",
+    "leave": "Abandonar organización"
   }
 }
 </i18n>

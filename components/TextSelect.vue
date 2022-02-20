@@ -5,6 +5,7 @@
     @change="$emit('input', $event.target.value)"
   >
     <option
+      v-if="placeholder"
       value=""
       disabeld
       selected
