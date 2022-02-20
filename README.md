@@ -64,3 +64,83 @@ More information about the usage of this directory in [the documentation](https:
 This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
 
 More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+
+# Workers (Database & API)
+
+In this section we will comment on architecture and design decisions of the frontend Workers, we use this only to show users related information and staled connections data for
+past days.
+
+## Database
+
+Everything runs on S3-compatible services, we can use Backblaze, S3, Azure or any other service. This decision was made because we thought the frontend won't be used a lot
+and we don't really require a database for database this small, plus we save a lot of money on replication costs and mantainance.
+
+### Structure
+
+How the database is organized.
+
+#### User
+
+Used to allow access to the platform, create organizations, manage applications and create them.
+
+Filename for users needs to be: `[email].json`
+
+```json
+{
+  "identifier": "UUIDv7",
+  "password": "SHA256",
+  "organizations": ["Orgnization identifier", "Organization identifier"]
+}
+```
+
+#### Organizations
+
+We need organizations in order to be able to provide access to multiple users to the same application.
+
+Filename for organizations needs to be: `[orgIdentifier].json`
+
+```json
+{
+  "name": "string",
+  "members": ["User identifier UUIDv7", "User identifier  UUIDv7"]
+}
+```
+
+#### Applications
+
+We need applications to manage everything that has to do with connections.
+
+Filename for applications needs to be: `[orgIdentifier].json`
+
+```json
+[
+  {
+    "identifier": "UUIDv7",
+    "name": "string",
+    "keys": [
+      { "token": "string", "type": "public/private" },
+      { "token": "string", "type": "public/private" }
+    ]
+  },
+  {
+    "identifier": "UUIDv7",
+    "name": "string",
+    "keys": [
+      { "token": "string", "type": "public/private" },
+      { "token": "string", "type": "public/private" }
+    ]
+  }
+]
+```
+
+#### Connections
+
+Analytics about connections, we also use this for billing.
+
+Filename for connections needs to be: `[applicationIdentifierYYYYMMDD].json`
+
+NOTE: Remember that connections for today are not available in our database, we push them at the end of each day.
+
+```
+identifier;startDateTime;finishDateTime;ipAddress;userAgent
+```
