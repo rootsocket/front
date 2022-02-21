@@ -2,6 +2,11 @@
   <div class="flex flex-wrap-reverse">
     <AppPage>
       <h1>{{ $t('account') }}</h1>
+
+      <p class="text-gray-500 uppercase tracking-wider font-bold text-md">
+        {{ $t('organizations') }}
+      </p>
+
       <div class="grid grid-cols-1 gap-4">
         <div
           v-for="organization in organizations"
@@ -16,6 +21,12 @@
             :value="$t('leave')"
             variant="outline-red"
             type="button"
+          />
+          <ButtonPressable
+            :value="$t('edit')"
+            variant="outline"
+            type="button"
+            class="ml-2"
           />
         </div>
       </div>
@@ -45,11 +56,15 @@ export default Vue.extend({
 {
   "en": {
     "account": "Account",
-    "leave": "Leave organization"
+    "leave": "Leave",
+    "organizations": "Organizations",
+    "edit": "Edit"
   },
   "es": {
     "account": "Cuenta",
-    "leave": "Abandonar organización"
+    "leave": "Abandonar",
+    "organizations": "Organizaciones",
+    "edit": "Edit"
   }
 }
 </i18n>

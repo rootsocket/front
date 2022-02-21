@@ -11,6 +11,7 @@
             v-model="email"
             type="email"
             :placeholder="$t('enterEmailAddress')"
+            margin
             required
           />
           <div class="flex flex-row items-center justify-between pb-1">
@@ -25,6 +26,7 @@
             v-model="password"
             type="password"
             :placeholder="$t('enterPassword')"
+            margin
             required
           />
           <ButtonPressable

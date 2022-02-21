@@ -1,8 +1,11 @@
 <template>
   <input
     :type="type"
-    class="truncate leading-5 placeholder-gray-500 border border-transparent text-gray-700 dark:text-white dark-focus:text-white focus:border-gray-300 dark-focus:border-gray-800 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-50 dark:bg-gray-800 px-3 py-2 mt-1 mb-5 w-full"
-    :class="{ 'cursor-not-allowed bg-gray-200 dark:bg-gray-400': disabled }"
+    class="truncate leading-5 placeholder-gray-500 border border-transparent text-gray-700 dark:text-white dark-focus:text-white focus:border-gray-300 dark-focus:border-gray-800 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-50 dark:bg-gray-800 px-3 py-2 w-full"
+    :class="{
+      'cursor-not-allowed bg-gray-200 dark:bg-gray-400': disabled,
+      'mb-5 mt-1': margin,
+    }"
     :placeholder="placeholder"
     :pattern="pattern !== '' ? pattern : undefined"
     :required="required"
@@ -39,6 +42,10 @@ export default Vue.extend({
     pattern: {
       type: String,
       default: '',
+    },
+    margin: {
+      type: Boolean,
+      default: false,
     },
   },
 })

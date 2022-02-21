@@ -11,6 +11,7 @@
             v-model="email"
             type="email"
             :placeholder="$t('enterEmailAddress')"
+            margin
             required
           />
           <ButtonPressable

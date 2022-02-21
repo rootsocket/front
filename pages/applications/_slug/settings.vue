@@ -2,50 +2,41 @@
   <div class="flex flex-wrap-reverse">
     <AppPage>
       <h1>{{ $t('settings') }}</h1>
-      <div class="flex flex-row">
-        <div
-          class="w-full mr-4 h-62 border dark:border-gray-800 rounded-md p-4"
-        >
-          <TextLabel :value="$t('createdAt')" />
-          <span>{{
-            new Date(application.createdAt).toLocaleString('default', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })
-          }}</span>
-          <TextLabel :value="$t('region')" class="mt-4" />
-          <span>{{ application.location }}</span>
+
+      <div class="w-full mr-4 h-62 border dark:border-gray-800 rounded-md p-4">
+        <TextLabel :value="$t('createdAt')" />
+        <span>{{
+          new Date(application.createdAt).toLocaleString('default', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        }}</span>
+        <TextLabel :value="$t('region')" class="mt-4" />
+        <span>{{ application.location }}</span>
+        <TextLabel :value="$t('applicationIdentifier')" class="mt-4" />
+        <div class="flex flex-row items-center">
+          <span class="">{{ application.identifier }}</span>
+          <ButtonPressable
+            class="ml-4"
+            :value="$t('copy')"
+            variant="outline"
+            @click="copyIdentifier"
+          />
         </div>
-        <form
-          class="w-full h-62 border dark:border-gray-800 rounded-md divide-y dark:divide-gray-800"
-        >
-          <div class="p-4">
-            <TextLabel :value="$t('applicationIdentifier')" />
-            <div class="relative">
-              <TextInput :value="application.identifier" required disabled />
-              <div
-                class="absolute right-4 top-2 cursor-pointer"
-                @click="copyIdentifier"
-              >
-                {{ $t('copy') }}
-              </div>
-            </div>
-            <TextLabel :value="$t('applicationName')" />
-            <TextInput v-model="name" :placeholder="$t('enterName')" required />
-          </div>
-          <div class="w-full flex justify-end p-4">
-            <ButtonPressable
-              :value="$t('updateName')"
-              variant="outline"
-              type="submit"
-            />
-          </div>
-        </form>
       </div>
-      <div
+      <form
         class="border dark:border-gray-800 rounded-md mt-4 divide-y dark:divide-gray-800"
       >
+        <div class="flex flex-col p-4">
+          <TextLabel :value="$t('applicationName')" />
+          <TextInput
+            v-model="name"
+            :placeholder="$t('enterName')"
+            class="mt-1"
+            required
+          />
+        </div>
         <div class="flex flex-col p-4">
           <span class="text-xl font-semibold">{{ $t('analytics') }}</span>
           <span>{{ $t('analyticsDescription') }}</span>
@@ -78,11 +69,11 @@
         <div class="w-full flex justify-end p-4">
           <ButtonPressable
             :value="$t('updateApplication')"
-            variant="outline"
+            variant="primary"
             type="submit"
           />
         </div>
-      </div>
+      </form>
       <div
         class="border border-red-300 dark:border-red-800 rounded-md mt-4 divide-y divide-red-300 dark:divide-red-800"
       >
@@ -96,7 +87,7 @@
         <div class="w-full flex justify-end p-4">
           <ButtonPressable
             :value="$t('deleteApplication')"
-            variant="outline-red"
+            variant="red"
             type="submit"
           />
         </div>

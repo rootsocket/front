@@ -119,6 +119,7 @@
           v-model="createKey.dateExpire"
           :placeholder="$t('enterName')"
           type="date"
+          margin
           required
         />
 

@@ -16,7 +16,6 @@
           <p class="text-gray-500 uppercase tracking-wider font-bold text-md">
             {{ organization.name }}
           </p>
-          <IconPencil class="ml-2 h-7 w-7 cursor-pointer" />
         </div>
         <div class="grid grid-cols-1 gap-4">
           <div
@@ -48,6 +47,7 @@
         <TextInput
           v-model="createApplication.name"
           :placeholder="$t('enterName')"
+          margin
           required
         />
         <TextLabel :value="$t('region')" />
