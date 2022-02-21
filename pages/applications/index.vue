@@ -65,7 +65,7 @@
           <NuxtLink
             :to="localeLocation({ name: 'account' })"
             class="leading-none text-primary-500 text-xs"
-            >{{ $t('createOrganization') }}</NuxtLink
+            >{{ $t('createOrganizations') }}</NuxtLink
           >
         </div>
         <TextSelect
