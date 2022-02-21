@@ -60,6 +60,23 @@
           ]"
           required
         />
+        <div class="flex flex-row items-center justify-between">
+          <TextLabel :value="$t('organization')" />
+          <NuxtLink
+            :to="localeLocation({ name: 'account' })"
+            class="leading-none text-primary-500 text-xs"
+            >{{ $t('createOrganization') }}</NuxtLink
+          >
+        </div>
+        <TextSelect
+          v-model="createApplication.region"
+          :placeholder="$t('selectOrganization')"
+          :options="[
+            { value: 'eu-west-1', text: 'eu-west-1' },
+            { value: 'us-west-2', text: 'us-west-2' },
+          ]"
+          required
+        />
         <div class="w-full flex justify-end">
           <ButtonPressable
             :value="$t('cancel')"
@@ -133,7 +150,10 @@ export default Vue.extend({
     "enterName": "Enter a name",
     "cancel": "Cancel",
     "region": "Region",
-    "selectRegion": "Select a region"
+    "selectRegion": "Select a region",
+    "organization": "Organization",
+    "selectOrganization": "Select organization",
+    "createOrganization": "Create organization"
   },
   "es": {
     "applications": "Aplicaciones",
@@ -143,7 +163,10 @@ export default Vue.extend({
     "enterName": "Introduce un nombre",
     "cancel": "Cancelar",
     "region": "Región",
-    "selectRegion": "Selecciona una región"
+    "selectRegion": "Selecciona una región",
+    "organization": "Organización",
+    "selectOrganization": "Seleciona una organización",
+    "createOrganization": "Crear organización"
   }
 }
 </i18n>

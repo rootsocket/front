@@ -17,7 +17,7 @@
           <div class="flex flex-row items-center justify-between pb-1">
             <TextLabel :value="$t('password')" />
             <NuxtLink
-              :to="localePath('/forgot')"
+              :to="localeLocation({ name: 'forgot' })"
               class="leading-none text-primary-500 text-xs"
               >{{ $t('forgotPassword') }}</NuxtLink
             >

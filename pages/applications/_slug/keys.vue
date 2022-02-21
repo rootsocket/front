@@ -191,11 +191,13 @@ export default Vue.extend({
     },
     copyKey(token: string) {
       navigator.clipboard.writeText(token)
+      this.$toast.show(this.$t('copiedKey'))
     },
     copyConfig(token: string) {
       navigator.clipboard.writeText(
         `APPLICATION_IDENTIFIER=${this.application.identifier}\nKEY_TOKEN=${token}`
       )
+      this.$toast.show(this.$t('copiedConfig'))
     },
     createKeyForm() {},
   },
@@ -219,7 +221,9 @@ export default Vue.extend({
     "createKey": "Create key",
     "keyType": "Key type",
     "public": "Public",
-    "private": "Private"
+    "private": "Private",
+    "copiedKey": "Copied key",
+    "copiedConfig": "Copied application configuration"
   },
   "es": {
     "cancel": "Cancelar",
@@ -236,7 +240,9 @@ export default Vue.extend({
     "createKey": "Crear clave",
     "keyType": "Tipo de clave",
     "public": "Pública",
-    "private": "Privada"
+    "private": "Privada",
+    "copiedKey": "Clave copiada con éxito",
+    "copiedConfig": "Configuración de la aplicación copiada"
   }
 }
 </i18n>

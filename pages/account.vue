@@ -1,7 +1,15 @@
 <template>
   <div class="flex flex-wrap-reverse">
     <AppPage>
-      <h1>{{ $t('account') }}</h1>
+      <div class="flex flex-col md:flex-row justify-between md:items-center">
+        <h1>{{ $t('account') }}</h1>
+        <ButtonPressable
+          class="mb-8"
+          variant="outline"
+          :value="$t('createOrganization')"
+          @click="toggleShowCreateOrganization"
+        />
+      </div>
 
       <p class="text-gray-500 uppercase tracking-wider font-bold text-md">
         {{ $t('organizations') }}
@@ -30,7 +38,123 @@
           />
         </div>
       </div>
+
+      <p class="text-gray-500 uppercase tracking-wider font-bold text-md">
+        {{ $t('personalInformation') }}
+      </p>
+
+      <form
+        class="border dark:border-gray-800 rounded-md mt-4 divide-y dark:divide-gray-800"
+      >
+        <div class="flex flex-col p-4">
+          <TextLabel :value="$t('email')" />
+          <TextInput
+            v-model="name"
+            :placeholder="$t('enterEmail')"
+            class="mt-1"
+            margin
+            required
+          />
+          <TextLabel :value="$t('yourPassword')" />
+          <TextInput
+            v-model="name"
+            :placeholder="$t('enterYourPassword')"
+            class="mt-1"
+            margin
+            required
+          />
+        </div>
+        <div class="w-full flex justify-end p-4">
+          <ButtonPressable
+            :value="$t('updateEmail')"
+            variant="primary"
+            type="submit"
+          />
+        </div>
+      </form>
+      <form
+        class="border dark:border-gray-800 rounded-md mt-4 divide-y dark:divide-gray-800"
+      >
+        <div class="flex flex-col p-4">
+          <TextLabel :value="$t('newPassword')" />
+          <TextInput
+            v-model="name"
+            :placeholder="$t('enterNewPassword')"
+            class="mt-1"
+            margin
+            required
+          />
+          <TextLabel :value="$t('confirmNewPassword')" />
+          <TextInput
+            v-model="name"
+            :placeholder="$t('enterNewPassword')"
+            class="mt-1"
+            margin
+            required
+          />
+          <TextLabel :value="$t('yourPassword')" />
+          <TextInput
+            v-model="name"
+            :placeholder="$t('enterYourPassword')"
+            class="mt-1"
+            margin
+            required
+          />
+        </div>
+        <div class="w-full flex justify-end p-4">
+          <ButtonPressable
+            :value="$t('updatePassword')"
+            variant="primary"
+            type="submit"
+          />
+        </div>
+      </form>
+      <form
+        class="border border-red-300 dark:border-red-800 rounded-md mt-4 divide-y divide-gray-300 dark:divide-gray-800"
+      >
+        <div class="flex flex-col p-4">
+          <span class="text-xl font-semibold">{{ $t('deleteAccount') }}</span>
+          <span>{{ $t('deleteAccountDescription') }}</span>
+        </div>
+
+        <div class="w-full flex justify-end p-4">
+          <ButtonPressable
+            :value="$t('deleteAccount')"
+            variant="red"
+            type="submit"
+          />
+        </div>
+      </form>
     </AppPage>
+    <AppModal
+      :show="createOrganization.show"
+      :title="$t('createOrganization')"
+      @close="toggleShowCreateOrganization"
+    >
+      <form @submit.prevent="createOrganizationForm">
+        <TextLabel :value="$t('organizationName')" />
+        <TextInput
+          v-model="createOrganization.name"
+          :placeholder="$t('enterName')"
+          margin
+          required
+        />
+        <div class="w-full flex justify-end">
+          <ButtonPressable
+            :value="$t('cancel')"
+            variant="outline"
+            class="mr-2"
+            type="button"
+            @click="toggleShowCreateOrganization"
+          />
+          <ButtonPressable
+            :value="$t('createOrganization')"
+            variant="primary"
+            type="submit"
+          />
+        </div>
+      </form>
+    </AppModal>
   </div>
 </template>
 
@@ -39,6 +163,14 @@ import Vue from 'vue'
 export default Vue.extend({
   layout: 'user',
   auth: false,
+  data() {
+    return {
+      createOrganization: {
+        name: '',
+        show: false,
+      },
+    }
+  },
   head() {
     return {
       title: `${this.$t('account')} - ${this.$config.projectTitle}`,
@@ -49,6 +181,13 @@ export default Vue.extend({
       return this.$store.state.application.organizations
     },
   },
+  methods: {
+    toggleShowCreateOrganization() {
+      this.createOrganization.show = !this.createOrganization.show
+      this.createOrganization.name = ''
+    },
+    createOrganizationForm() {},
+  },
 })
 </script>
 
@@ -58,13 +197,45 @@ export default Vue.extend({
     "account": "Account",
     "leave": "Leave",
     "organizations": "Organizations",
-    "edit": "Edit"
+    "edit": "Edit",
+    "createOrganization": "Create organization",
+    "organizationName": "Organization name",
+    "enterName": "Enter name",
+    "cancel": "Cancel",
+    "email": "Email",
+    "enterEmail": "Enter an email address",
+    "updateEmail": "Update email",
+    "updatePassword": "Update password",
+    "yourPassword": "Your password",
+    "newPassword": "New passowrd",
+    "confirmNewPassword": "Confirm new password",
+    "enterYourPassword": "Enter your password",
+    "enterNewPassword": "Enter new password",
+    "deleteAccount": "Delete account",
+    "deleteAccountDescription": "All organizations, applications, members, keys and connections will be permanently deleted",
+    "personalInformation": "Personal information"
   },
   "es": {
     "account": "Cuenta",
     "leave": "Abandonar",
     "organizations": "Organizaciones",
-    "edit": "Edit"
+    "edit": "Edit",
+    "createOrganization": "Crear organización",
+    "organizationName": "Nombre de la organización",
+    "enterName": "Introduce un nombre",
+    "cancel": "Cancelar",
+    "email": "Correo electrónico",
+    "enterEmail": "Introduce un correo electrónico",
+    "updateEmail": "Actualizar correo electrónico",
+    "updatePassword": "Actualizar contraseña",
+    "yourPassword": "Tu contraseña",
+    "newPassword": "Nueva contraseña",
+    "confirmNewPassword": "Confirma tu nueva contraseña",
+    "enterYourPassword": "Introduce tu contraseña",
+    "enterNewPassword": "Introduce una nueva contraseña",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteAccountDescription": "Todas las organizaciones, aplicaciones, miembros, claves y conexiones serán eliminadas permanentemente",
+    "personalInformation": "Información personal"
   }
 }
 </i18n>

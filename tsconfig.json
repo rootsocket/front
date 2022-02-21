@@ -20,7 +20,8 @@
       "@nuxtjs/axios",
       "@types/node",
       "@nuxtjs/auth-next",
-      "@nuxtjs/i18n"
+      "@nuxtjs/i18n",
+      "@nuxtjs/toast"
     ]
   },
   "exclude": ["node_modules", ".nuxt", "dist"]

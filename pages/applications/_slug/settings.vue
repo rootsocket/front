@@ -75,7 +75,7 @@
         </div>
       </form>
       <div
-        class="border border-red-300 dark:border-red-800 rounded-md mt-4 divide-y divide-red-300 dark:divide-red-800"
+        class="border border-red-300 dark:border-red-800 rounded-md mt-4 divide-y divide-gray-300 dark:divide-gray-800"
       >
         <div class="flex flex-col p-4">
           <span class="text-xl font-semibold">{{
@@ -127,6 +127,7 @@ export default Vue.extend({
   methods: {
     copyIdentifier() {
       navigator.clipboard.writeText(this.application.identifier)
+      this.$toast.show(this.$t('copiedIdentifier'))
     },
   },
 })
@@ -154,7 +155,8 @@ export default Vue.extend({
     "clientSubscriptionDescription": "Enables subscription to channels from a client connection",
     "updateApplication": "Update application",
     "deleteApplication": "Delete application",
-    "deleteApplicationDescription": "All members, keys, connections and information related to this application will be permanently deleted and you won't be able to recover it"
+    "deleteApplicationDescription": "All members, keys, connections and information related to this application will be permanently deleted and you won't be able to recover it",
+    "copiedIdentifier": "Copied application identifier"
   },
   "es": {
     "settings": "Ajustes",
@@ -176,7 +178,8 @@ export default Vue.extend({
     "clientSubscriptionDescription": "Habilita la suscripción a un canal desde una conexión de cliente",
     "updateApplication": "Actualizar aplicación",
     "deleteApplication": "Eliminar aplicación",
-    "deleteApplicationDescription": "Todos los miembros, claves, conexiones e información relacionada con esta aplicación será eliminada de forma permanente y no se podrá recuperar"
+    "deleteApplicationDescription": "Todos los miembros, claves, conexiones e información relacionada con esta aplicación será eliminada de forma permanente y no se podrá recuperar",
+    "copiedIdentifier": "Copiado el identificador de la aplicación"
   }
 }
 </i18n>
