@@ -4,11 +4,32 @@
       <div class="flex flex-col md:flex-row justify-between md:items-center">
         <h1>{{ $t('applications') }}</h1>
         <ButtonPressable
+          v-if="organizations.length !== 0"
           class="mb-8"
           variant="outline"
           :value="$t('createApplication')"
           @click="toggleShowCreateApplicationModal"
         />
+      </div>
+      <div
+        v-if="organizations.length === 0"
+        class="w-full flex justify-center items-center"
+      >
+        <div class="flex flex-col items-center mt-10 mb-20">
+          <div
+            class="rounded-full h-20 w-20 flex flex-row items-center justify-center text-primary-500 bg-primary-100 dark:text-gray-100 dark:bg-gray-700"
+          >
+            <IconApplication class="h-14 w-14" />
+          </div>
+          <span class="my-4 w-60 text-center text-gray-600">
+            {{ $t('noApplications') }}
+          </span>
+          <ButtonPressable
+            variant="outline"
+            :value="$t('createApplication')"
+            @click="toggleShowCreateApplicationModal"
+          />
+        </div>
       </div>
 
       <div v-for="organization in organizations" :key="organization.name">
@@ -21,11 +42,11 @@
           <div
             v-for="application in organization.applications"
             :key="application.identifier"
-            class="w-full p-4 border dark:border-gray-800 rounded-md cursor-pointer hover:shadow-sm flex flex-row justify-between items-center"
+            class="w-full p-4 border dark:border-gray-800 rounded-md cursor-pointer hover:shadow-sm flex flex-col lg:flex-row justify-between lg:items-center"
             @click="navigateToApplication(application.identifier)"
           >
             <div class="flex-1 truncate mr-4">{{ application.name }}</div>
-            <div class="flex flex-row items-center">
+            <div class="flex flex-row items-center mt-2 lg:mt-0">
               <AppBadge :value="application.location" variant="default" />
               <AppBadge
                 :value="$tc('keys', application.keys.length)"
@@ -153,7 +174,8 @@ export default Vue.extend({
     "selectRegion": "Select a region",
     "organization": "Organization",
     "selectOrganization": "Select organization",
-    "createOrganization": "Create organization"
+    "createOrganization": "Create organization",
+    "noApplications": "There are no applications available for this account"
   },
   "es": {
     "applications": "Aplicaciones",
@@ -166,7 +188,8 @@ export default Vue.extend({
     "selectRegion": "Selecciona una región",
     "organization": "Organización",
     "selectOrganization": "Seleciona una organización",
-    "createOrganization": "Crear organización"
+    "createOrganization": "Crear organización",
+    "noApplications": "No hay aplicaciones disponibles para esta cuenta"
   }
 }
 </i18n>

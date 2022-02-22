@@ -21,7 +21,10 @@
             <span class="text-2xl ml-2">{{ $config.projectTitle }}</span>
           </NuxtLink>
         </div>
-        <div class="lg:w-1/5 flex items-center pl-4 lg:pl-8 justify-end">
+        <div v-if="showSearch" class="flex justify-start w-2/5">
+          <AppSearch class="hidden lg:block" />
+        </div>
+        <div class="flex items-center pl-4 lg:pl-8 justify-end">
           <NuxtLink
             :to="localeLocation({ name: 'applications' })"
             class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base mr-7 hidden lg:block"
@@ -74,6 +77,12 @@ export default {
       set(val) {
         this.$store.commit('menu/toggle', val)
       },
+    },
+    showSearch() {
+      const localeLocation = this.localeLocation({ name: 'applications' })
+      return this.$route.matched.some(
+        ({ name }) => name === localeLocation.name
+      )
     },
   },
   beforeMount() {

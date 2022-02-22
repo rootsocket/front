@@ -2,7 +2,20 @@
   <div class="flex flex-wrap-reverse">
     <AppPage>
       <h1>{{ $t('connections') }}</h1>
-      <span>{{ $t('unavailable') }}</span>
+
+      <div v-if="true" class="w-full flex justify-center items-center">
+        <div class="flex flex-col items-center mt-10 mb-20">
+          <div
+            class="rounded-full h-20 w-20 flex flex-row items-center justify-center text-primary-500 bg-primary-100 dark:text-gray-100 dark:bg-gray-700"
+          >
+            <IconSensor class="h-14 w-14" />
+          </div>
+          <span class="my-4 w-60 text-center text-gray-600">
+            {{ $t('noConnections') }}
+          </span>
+          <ButtonPressable variant="outline" :value="$t('readMore')" />
+        </div>
+      </div>
     </AppPage>
   </div>
 </template>
@@ -31,11 +44,13 @@ export default Vue.extend({
 {
   "en": {
     "connections": "Connections",
-    "unavailable": "This section is currently unavailable"
+    "noConnections": "There are no connections available for this application",
+    "readMore": "Read configuration steps"
   },
   "es": {
     "connections": "Conexiones",
-    "unavailable": "Esta sección no está disponible ahora mismo"
+    "noConnections": "No hay conexiones disponibles para esta aplicación",
+    "readMore": "Leer pasos de configuración"
   }
 }
 </i18n>

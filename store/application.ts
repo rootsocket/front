@@ -1,10 +1,21 @@
 import { KeyType, Organization } from '~/types/application'
+import { normalizeString } from '~/utils/string'
 
 interface State {
   organizations: Organization[]
+  filters: {
+    applications: {
+      search: string
+    }
+  }
 }
 
 export const state = (): State => ({
+  filters: {
+    applications: {
+      search: '',
+    },
+  },
   organizations: [
     {
       name: 'Invisen',
@@ -107,5 +118,39 @@ export const state = (): State => ({
 export const mutations = {
   setOrganizations(state: State, payload: Organization[]) {
     state.organizations = payload
+  },
+  setApplicationsFilter(state: State, payload: { search: string }) {
+    state.filters.applications.search = payload.search
+  },
+}
+
+export const getters = {
+  organizations(state: State) {
+    const searchTerm = normalizeString(
+      state.filters.applications.search.toLowerCase()
+    )
+    if (searchTerm.length === 0) {
+      return []
+    }
+
+    const filteredApplications = []
+    const organizations = state.organizations
+
+    for (let i = 0; i < organizations.length; i++) {
+      const organization = organizations[i]
+      const applications = organization.applications
+
+      for (let j = 0; j < applications.length; j++) {
+        const application = applications[j]
+
+        if (
+          normalizeString(application.name.toLowerCase()).includes(searchTerm)
+        ) {
+          filteredApplications.push(application)
+        }
+      }
+    }
+
+    return filteredApplications
   },
 }

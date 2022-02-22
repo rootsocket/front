@@ -7,6 +7,9 @@
       class="lg:sticky lg:top-16 overflow-y-auto h-full lg:h-auto lg:max-h-(screen-16)"
     >
       <ul class="p-4 lg:py-8 lg:pl-0 lg:pr-8">
+        <li class="mb-4 lg:hidden">
+          <AppSearch />
+        </li>
         <ul v-if="showAside">
           <p
             class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs w-full flex flex-row"

@@ -29,12 +29,16 @@
             :value="$t('leave')"
             variant="outline-red"
             type="button"
+            @click="toggleShowLeaveOrganization"
           />
           <ButtonPressable
             :value="$t('edit')"
             variant="outline"
             type="button"
             class="ml-2"
+            @click="
+              showEditOrganization(organization.name, organization.identifier)
+            "
           />
         </div>
       </div>
@@ -52,6 +56,7 @@
             v-model="name"
             :placeholder="$t('enterEmail')"
             class="mt-1"
+            type="email"
             margin
             required
           />
@@ -109,7 +114,7 @@
           />
         </div>
       </form>
-      <form
+      <div
         class="border border-red-300 dark:border-red-800 rounded-md mt-4 divide-y divide-gray-300 dark:divide-gray-800"
       >
         <div class="flex flex-col p-4">
@@ -121,10 +126,11 @@
           <ButtonPressable
             :value="$t('deleteAccount')"
             variant="red"
-            type="submit"
+            type="button"
+            @click="toggleShowDeleteAccount"
           />
         </div>
-      </form>
+      </div>
     </AppPage>
     <AppModal
       :show="createOrganization.show"
@@ -155,6 +161,83 @@
         </div>
       </form>
     </AppModal>
+    <AppModal
+      :show="showLeaveOrganization"
+      :title="$t('leaveOrganization')"
+      @close="toggleShowLeaveOrganization"
+    >
+      <form @submit.prevent="leaveOrganizationForm">
+        <span>{{ $t('leaveOrganizationDescription') }}</span>
+        <div class="w-full flex justify-end mt-4">
+          <ButtonPressable
+            :value="$t('cancel')"
+            variant="outline"
+            class="mr-2"
+            type="button"
+            @click="toggleShowLeaveOrganization"
+          />
+          <ButtonPressable
+            :value="$t('leaveOrganization')"
+            variant="red"
+            type="submit"
+          />
+        </div>
+      </form>
+    </AppModal>
+
+    <AppModal
+      :show="editOrganization.show"
+      :title="$t('editOrganization')"
+      @close="toggleShowEditOrganization"
+    >
+      <form @submit.prevent="editOrganizationForm">
+        <TextLabel :value="$t('organizationName')" />
+        <TextInput
+          v-model="editOrganization.name"
+          :placeholder="$t('enterName')"
+          margin
+          required
+        />
+        <input :value="editOrganization.identifier" required hidden />
+        <div class="w-full flex justify-end">
+          <ButtonPressable
+            :value="$t('cancel')"
+            variant="outline"
+            class="mr-2"
+            type="button"
+            @click="toggleShowEditOrganization"
+          />
+          <ButtonPressable
+            :value="$t('editOrganization')"
+            variant="primary"
+            type="submit"
+          />
+        </div>
+      </form>
+    </AppModal>
+    <AppModal
+      :show="showDeleteAccount"
+      :title="$t('deleteAccount')"
+      @close="toggleShowDeleteAccount"
+    >
+      <form @submit.prevent="deleteAccountForm">
+        <span>{{ $t('deleteAccountDescription') }}</span>
+        <div class="w-full flex justify-end mt-4">
+          <ButtonPressable
+            :value="$t('cancel')"
+            variant="outline"
+            class="mr-2"
+            type="button"
+            @click="toggleShowDeleteAccount"
+          />
+          <ButtonPressable
+            :value="$t('deleteAccount')"
+            variant="red"
+            type="submit"
+          />
+        </div>
+      </form>
+    </AppModal>
   </div>
 </template>
 
@@ -169,6 +252,13 @@ export default Vue.extend({
         name: '',
         show: false,
       },
+      editOrganization: {
+        name: '',
+        identifier: '',
+        show: false,
+      },
+      showLeaveOrganization: false,
+      showDeleteAccount: false,
     }
   },
   head() {
@@ -186,7 +276,28 @@ export default Vue.extend({
       this.createOrganization.show = !this.createOrganization.show
       this.createOrganization.name = ''
     },
+    toggleShowLeaveOrganization() {
+      this.showLeaveOrganization = !this.showLeaveOrganization
+    },
+    toggleShowDeleteAccount() {
+      this.showDeleteAccount = !this.showDeleteAccount
+    },
+    toggleShowEditOrganization() {
+      this.editOrganization.show = !this.editOrganization.show
+      this.editOrganization.name = ''
+      this.editOrganization.identifier = ''
+    },
+    showEditOrganization(name: string, identifier: string) {
+      this.editOrganization = {
+        name,
+        identifier,
+        show: true,
+      }
+    },
     createOrganizationForm() {},
+    editOrganizationForm() {},
+    leaveOrganizationForm() {},
+    deleteAccountForm() {},
   },
 })
 </script>
@@ -213,7 +324,10 @@ export default Vue.extend({
     "enterNewPassword": "Enter new password",
     "deleteAccount": "Delete account",
     "deleteAccountDescription": "All organizations, applications, members, keys and connections will be permanently deleted",
-    "personalInformation": "Personal information"
+    "personalInformation": "Personal information",
+    "leaveOrganization": "Leave organization",
+    "leaveOrganizationDescription": "All applications related to this organization will be removed from your account",
+    "editOrganization": "Edit organization"
   },
   "es": {
     "account": "Cuenta",
@@ -235,7 +349,10 @@ export default Vue.extend({
     "enterNewPassword": "Introduce una nueva contraseña",
     "deleteAccount": "Eliminar cuenta",
     "deleteAccountDescription": "Todas las organizaciones, aplicaciones, miembros, claves y conexiones serán eliminadas permanentemente",
-    "personalInformation": "Información personal"
+    "personalInformation": "Información personal",
+    "leaveOrganization": "Abandonar organización",
+    "leaveOrganizationDescription": "Todas las aplicaciones relacionadas con esta organización serán eliminadas de tu cuenta",
+    "editOrganization": "Editar organización"
   }
 }
 </i18n>

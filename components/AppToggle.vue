@@ -7,14 +7,14 @@
       class="relative inline-block w-8 mr-2 align-middle select-none transition duration-200 ease-in"
     >
       <input
-        id="toggle"
+        :id="computedId"
         type="checkbox"
         name="toggle"
         class="bg-white dark:bg-gray-700 mr-1 focus:ring-transparent toggle-checkbox absolute block w-3 h-3 rounded-full appearance-none cursor-pointer"
         :checked="value"
       />
       <label
-        for="toggle"
+        :for="computedId"
         class="toggle-label block h-5 -ml-1 -mt-1 rounded-full bg-gray-300 dark:bg-gray-800 cursor-pointer"
         @click="toggle"
       ></label>
@@ -35,6 +35,11 @@ export default Vue.extend({
     label: {
       type: String,
       default: '',
+    },
+  },
+  computed: {
+    computedId() {
+      return `${Math.random()}`
     },
   },
   methods: {
