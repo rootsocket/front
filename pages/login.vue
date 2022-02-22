@@ -18,6 +18,7 @@
             <TextLabel :value="$t('password')" />
             <NuxtLink
               :to="localeLocation({ name: 'forgot' })"
+              tabindex="-1"
               class="leading-none text-primary-500 text-xs"
               >{{ $t('forgotPassword') }}</NuxtLink
             >
