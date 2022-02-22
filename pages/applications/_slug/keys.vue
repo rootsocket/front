@@ -24,7 +24,11 @@
           <span class="my-4 w-60 text-center text-gray-600">
             {{ $t('noKeys') }}
           </span>
-          <ButtonPressable variant="outline" :value="$t('createKey')" />
+          <ButtonPressable
+            variant="outline"
+            :value="$t('createKey')"
+            @click="toggleShowCreateKey"
+          />
         </div>
       </div>
 

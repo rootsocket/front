@@ -37,7 +37,7 @@
         {{ $t('searching') }}
       </li>
       <li
-        v-for="(result, index) of results"
+        v-for="(result, index) of results.slice(0, 6)"
         :key="result.identifier"
         @mouseenter="focusIndex = index"
         @mousedown="go"
