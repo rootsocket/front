@@ -45,7 +45,7 @@
           <p
             class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
           >
-            More
+            {{ $t('more') }}
           </p>
           <div class="flex items-center space-x-4">
             <NuxtLink
@@ -123,7 +123,8 @@ export default {
     "debug": "Debug",
     "keys": "Keys",
     "connections": "Connections",
-    "settings": "Settings"
+    "settings": "Settings",
+    "more": "More"
   },
   "es": {
     "applications": "Aplicaciones",
@@ -132,7 +133,8 @@ export default {
     "debug": "Depurar",
     "keys": "Claves",
     "connections": "Conexiones",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "more": "Más"
   }
 }
 </i18n>

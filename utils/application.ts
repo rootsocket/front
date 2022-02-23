@@ -1,18 +1,18 @@
-import { Application, Organization } from '~/types/application'
+import { Application } from '~/types/application'
+
+interface State {
+  application: { applications: Application[] }
+}
 
 export const getCurrentApplication = (
-  state: { application: { organizations: Organization[] } },
+  state: State,
   applicationIdentifier: string
 ): Application => {
-  const organizations = state.application.organizations
-
-  for (let i = 0; i < organizations.length; i++) {
-    const apps = organizations[i].applications
-    for (let x = 0; x < apps.length; x++) {
-      const item = apps[x]
-      if (item.identifier === applicationIdentifier) {
-        return item
-      }
+  const apps = state.application.applications
+  for (let x = 0; x < apps.length; x++) {
+    const item = apps[x]
+    if (item.identifier === applicationIdentifier) {
+      return item
     }
   }
 

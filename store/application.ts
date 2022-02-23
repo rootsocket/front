@@ -1,8 +1,8 @@
-import { KeyType, Organization } from '~/types/application'
+import { Application, KeyType } from '~/types/application'
 import { normalizeString } from '~/utils/string'
 
 interface State {
-  organizations: Organization[]
+  applications: Application[]
   filters: {
     applications: {
       search: string
@@ -16,108 +16,102 @@ export const state = (): State => ({
       search: '',
     },
   },
-  organizations: [
+  applications: [
     {
-      name: 'Invisen',
-      identifier: 'asd',
-      applications: [
+      identifier: 'UUIDv7',
+      createdAt: 1645379187,
+      name: 'Panorama Staging asdf asdfsa df sf dsafdsa f dsafdsa dsf a dsfaa wkl wfae feawjf alkf aekjlfa ejklaf jklfa wejlkfa wejklf eajklfa weljkf aweljk fewl',
+      location: 'eu-west-1',
+      keys: [
         {
-          identifier: 'UUIDv7',
-          createdAt: 1645379187,
-          name: 'Panorama Staging asdf asdfsa df sf dsafdsa f dsafdsa dsf a dsfaa wkl wfae feawjf alkf aekjlfa ejklaf jklfa wejlkfa wejklf eajklfa weljkf aweljk fewl',
-          location: 'eu-west-1',
-          keys: [
-            {
-              token: 'stringa wef awef awf e afwe awfe awfe afewa fea efwa',
-              type: KeyType.private,
-              hosts: [
-                'www.google.com',
-                'www.google.com',
-                'www.google.com',
-                'www.google.com',
-                'www.google.com',
-              ],
-              expiresAt: 1645379187,
-            },
-            {
-              token: 'string',
-              type: KeyType.public,
-              hosts: [],
-              expiresAt: 1645379187,
-            },
+          token: 'stringa wef awef awf e afwe awfe awfe afewa fea efwa',
+          type: KeyType.private,
+          hosts: [
+            'www.google.com',
+            'www.google.com',
+            'www.google.com',
+            'www.google.com',
+            'www.google.com',
           ],
-          allowClientSend: true,
-          allowClientSubscription: false,
-          allowAnalytics: true,
+          expiresAt: 1645379187,
         },
         {
-          identifier: 'UUIDv2117',
-          name: 'Invisen not Staging',
-          createdAt: 1645379187,
-          location: 'eu-west-1',
-          keys: [],
-          allowClientSend: true,
-          allowClientSubscription: false,
-          allowAnalytics: true,
-        },
-        {
-          identifier: 'UUIDv2117',
-          name: 'Invisen not Staging',
-          createdAt: 1645379187,
-          location: 'eu-west-1',
-          keys: [],
-          allowClientSend: true,
-          allowClientSubscription: false,
-          allowAnalytics: true,
-        },
-        {
-          identifier: 'UUIDv2117',
-          name: 'Invisen not Staging',
-          location: 'eu-west-1',
-          createdAt: 1645379187,
-          keys: [],
-          allowClientSend: true,
-          allowClientSubscription: false,
-          allowAnalytics: true,
-        },
-        {
-          identifier: 'UUIDv2117',
-          createdAt: 1645379187,
-          name: 'Invisen not Staging',
-          location: 'eu-west-1',
-          keys: [],
-          allowClientSend: true,
-          allowClientSubscription: false,
-          allowAnalytics: true,
-        },
-        {
-          identifier: 'UUIDv2117',
-          createdAt: 1645379187,
-          name: 'Invisen not Staging',
-          location: 'eu-west-1',
-          keys: [],
-          allowClientSend: true,
-          allowClientSubscription: false,
-          allowAnalytics: true,
-        },
-        {
-          identifier: 'UUIDv2117',
-          name: 'Invisen not Staging',
-          createdAt: 1645379187,
-          location: 'eu-west-1',
-          keys: [],
-          allowClientSend: true,
-          allowClientSubscription: false,
-          allowAnalytics: true,
+          token: 'string',
+          type: KeyType.public,
+          hosts: [],
+          expiresAt: 1645379187,
         },
       ],
+      allowClientSend: true,
+      allowClientSubscription: false,
+      allowAnalytics: true,
+    },
+    {
+      identifier: 'UUIDv2117',
+      name: 'Invisen not Staging',
+      createdAt: 1645379187,
+      location: 'eu-west-1',
+      keys: [],
+      allowClientSend: true,
+      allowClientSubscription: false,
+      allowAnalytics: true,
+    },
+    {
+      identifier: 'UUIDv2117',
+      name: 'Invisen not Staging',
+      createdAt: 1645379187,
+      location: 'eu-west-1',
+      keys: [],
+      allowClientSend: true,
+      allowClientSubscription: false,
+      allowAnalytics: true,
+    },
+    {
+      identifier: 'UUIDv2117',
+      name: 'Invisen not Staging',
+      location: 'eu-west-1',
+      createdAt: 1645379187,
+      keys: [],
+      allowClientSend: true,
+      allowClientSubscription: false,
+      allowAnalytics: true,
+    },
+    {
+      identifier: 'UUIDv2117',
+      createdAt: 1645379187,
+      name: 'Invisen not Staging',
+      location: 'eu-west-1',
+      keys: [],
+      allowClientSend: true,
+      allowClientSubscription: false,
+      allowAnalytics: true,
+    },
+    {
+      identifier: 'UUIDv2117',
+      createdAt: 1645379187,
+      name: 'Invisen not Staging',
+      location: 'eu-west-1',
+      keys: [],
+      allowClientSend: true,
+      allowClientSubscription: false,
+      allowAnalytics: true,
+    },
+    {
+      identifier: 'UUIDv2117',
+      name: 'Invisen not Staging',
+      createdAt: 1645379187,
+      location: 'eu-west-1',
+      keys: [],
+      allowClientSend: true,
+      allowClientSubscription: false,
+      allowAnalytics: true,
     },
   ],
 })
 
 export const mutations = {
-  setOrganizations(state: State, payload: Organization[]) {
-    state.organizations = payload
+  setApplications(state: State, payload: Application[]) {
+    state.applications = payload
   },
   setApplicationsFilter(state: State, payload: { search: string }) {
     state.filters.applications.search = payload.search
@@ -125,7 +119,7 @@ export const mutations = {
 }
 
 export const getters = {
-  organizations(state: State) {
+  applications(state: State) {
     const searchTerm = normalizeString(
       state.filters.applications.search.toLowerCase()
     )
@@ -134,20 +128,15 @@ export const getters = {
     }
 
     const filteredApplications = []
-    const organizations = state.organizations
+    const applications = state.applications
 
-    for (let i = 0; i < organizations.length; i++) {
-      const organization = organizations[i]
-      const applications = organization.applications
+    for (let j = 0; j < applications.length; j++) {
+      const application = applications[j]
 
-      for (let j = 0; j < applications.length; j++) {
-        const application = applications[j]
-
-        if (
-          normalizeString(application.name.toLowerCase()).includes(searchTerm)
-        ) {
-          filteredApplications.push(application)
-        }
+      if (
+        normalizeString(application.name.toLowerCase()).includes(searchTerm)
+      ) {
+        filteredApplications.push(application)
       }
     }
 

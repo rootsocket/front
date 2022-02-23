@@ -11,6 +11,20 @@ export interface Key {
   expiresAt: number
 }
 
+export interface User {
+  identifier: string
+  email: string
+  // Application identifier as an Array
+  applications: string[]
+}
+
+export enum UserRole {
+  // There can only be 1 owner per application, billing info will be collected from this user.
+  owner = 'owner',
+  // Members can only see applications but cannot edit them or do anything.
+  normal = 'normal',
+}
+
 export interface Application {
   identifier: string
   // UNIX timestamp
@@ -24,28 +38,18 @@ export interface Application {
   allowClientSubscription: boolean
   // Collects information from the client when a user connects to a WebSocket.
   allowAnalytics: boolean
-}
-
-export interface User {
-  identifier: string
-  email: string
-  // Organization identifier as an Array
-  organizations: string[]
-}
-
-export enum UserRole {
-  // There can only be 1 owner per organization, billing info will be collected from this user.
-  owner = 'owner',
-  // Members can only see applications but cannot edit them or do anything.
-  normal = 'normal',
-}
-
-export interface Organization {
-  name: string
-  identifier: string
-  applications: Application[]
   members?: User &
     {
       role: UserRole
     }[]
+}
+
+export interface Connection {
+  identifier: string
+  // UNIX timestamp
+  startAt: number
+  // UNIX timestamp
+  finishAt: number
+  ipAddress: string
+  userAgent: string
 }

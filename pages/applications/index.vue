@@ -4,7 +4,7 @@
       <div class="flex flex-col md:flex-row justify-between md:items-center">
         <h1>{{ $t('applications') }}</h1>
         <ButtonPressable
-          v-if="organizations.length !== 0"
+          v-if="applications.length !== 0"
           class="mb-8"
           variant="outline"
           :value="$t('createApplication')"
@@ -12,7 +12,7 @@
         />
       </div>
       <div
-        v-if="organizations.length === 0"
+        v-if="applications.length === 0"
         class="w-full flex justify-center items-center"
       >
         <div class="flex flex-col items-center mt-10 mb-20">
@@ -32,28 +32,21 @@
         </div>
       </div>
 
-      <div v-for="organization in organizations" :key="organization.name">
-        <div class="flex flex-row items-center">
-          <p class="text-gray-500 uppercase tracking-wider font-bold text-md">
-            {{ organization.name }}
-          </p>
-        </div>
-        <div class="grid grid-cols-1 gap-4">
-          <div
-            v-for="application in organization.applications"
-            :key="application.identifier"
-            class="w-full p-4 border dark:border-gray-800 rounded-md cursor-pointer hover:shadow-sm flex flex-col lg:flex-row justify-between lg:items-center"
-            @click="navigateToApplication(application.identifier)"
-          >
-            <div class="flex-1 truncate mr-4">{{ application.name }}</div>
-            <div class="flex flex-row items-center mt-2 lg:mt-0">
-              <AppBadge :value="application.location" variant="default" />
-              <AppBadge
-                :value="$tc('keys', application.keys.length)"
-                :variant="application.keys.length === 0 ? 'red' : 'green'"
-                class="ml-2"
-              />
-            </div>
+      <div class="grid grid-cols-1 gap-4">
+        <div
+          v-for="application in applications"
+          :key="application.identifier"
+          class="w-full p-4 border dark:border-gray-800 rounded-md cursor-pointer hover:shadow-sm flex flex-col lg:flex-row justify-between lg:items-center"
+          @click="navigateToApplication(application.identifier)"
+        >
+          <div class="flex-1 truncate mr-4">{{ application.name }}</div>
+          <div class="flex flex-row items-center mt-2 lg:mt-0">
+            <AppBadge :value="application.location" variant="default" />
+            <AppBadge
+              :value="$tc('keys', application.keys.length)"
+              :variant="application.keys.length === 0 ? 'red' : 'green'"
+              class="ml-2"
+            />
           </div>
         </div>
       </div>
@@ -75,23 +68,6 @@
         <TextSelect
           v-model="createApplication.region"
           :placeholder="$t('selectRegion')"
-          :options="[
-            { value: 'eu-west-1', text: 'eu-west-1' },
-            { value: 'us-west-2', text: 'us-west-2' },
-          ]"
-          required
-        />
-        <div class="flex flex-row items-center justify-between">
-          <TextLabel :value="$t('organization')" />
-          <NuxtLink
-            :to="localeLocation({ name: 'account' })"
-            class="leading-none text-primary-500 text-xs"
-            >{{ $t('createOrganization') }}</NuxtLink
-          >
-        </div>
-        <TextSelect
-          v-model="createApplication.region"
-          :placeholder="$t('selectOrganization')"
           :options="[
             { value: 'eu-west-1', text: 'eu-west-1' },
             { value: 'us-west-2', text: 'us-west-2' },
@@ -138,8 +114,8 @@ export default Vue.extend({
     }
   },
   computed: {
-    organizations() {
-      return this.$store.state.application.organizations
+    applications() {
+      return this.$store.state.application.applications
     },
   },
   methods: {
@@ -172,9 +148,6 @@ export default Vue.extend({
     "cancel": "Cancel",
     "region": "Region",
     "selectRegion": "Select a region",
-    "organization": "Organization",
-    "selectOrganization": "Select organization",
-    "createOrganization": "Create organization",
     "noApplications": "There are no applications available for this account"
   },
   "es": {
@@ -186,9 +159,6 @@ export default Vue.extend({
     "cancel": "Cancelar",
     "region": "Región",
     "selectRegion": "Selecciona una región",
-    "organization": "Organización",
-    "selectOrganization": "Seleciona una organización",
-    "createOrganization": "Crear organización",
     "noApplications": "No hay aplicaciones disponibles para esta cuenta"
   }
 }

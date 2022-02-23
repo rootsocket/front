@@ -76,7 +76,7 @@ export default {
   },
   computed: {
     results() {
-      return this.$store.getters['application/organizations']
+      return this.$store.getters['application/applications']
     },
   },
   watch: {
