@@ -4,8 +4,8 @@ export default {
   publicRuntimeConfig: {
     clientVersion: pkg.version,
     projectTitle: pkg.name,
-    projectBlog: 'https://blog.rootsocket.com',
-    projectDocs: 'https://docs.rootsocket.com',
+    projectBlog: 'https://rootsocket.com/blog',
+    projectDocs: 'https://rootsocket.com/docs',
   },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
