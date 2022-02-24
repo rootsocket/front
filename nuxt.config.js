@@ -106,6 +106,7 @@ export default {
     download: true,
   },
   router: {
+    base: '/app',
     middleware: ['auth'],
   },
   auth: {

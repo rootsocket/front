@@ -13,7 +13,7 @@
             :aria-label="`${$config.projectTitle} Logo`"
           >
             <img
-              src="/logo.png"
+              src="logo.png"
               class="h-6 max-w-full rounded-full"
               :alt="$config.projectTitle"
             />
