@@ -86,6 +86,7 @@ export default {
           title: 'connections',
           name: 'applications-slug-connections',
         },
+        { title: 'members', name: 'applications-slug-members' },
         { title: 'settings', name: 'applications-slug-settings' },
       ],
     }
@@ -123,6 +124,7 @@ export default {
     "debug": "Debug",
     "keys": "Keys",
     "connections": "Connections",
+    "members": "Members",
     "settings": "Settings",
     "more": "More"
   },
@@ -133,6 +135,7 @@ export default {
     "debug": "Depurar",
     "keys": "Claves",
     "connections": "Conexiones",
+    "members": "Miembros",
     "settings": "Ajustes",
     "more": "Más"
   }

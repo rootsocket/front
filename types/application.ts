@@ -11,6 +11,8 @@ export interface Key {
   expiresAt: number
 }
 
+// User also needs a mapping between user email and user identifier
+// that way we can use it in applications.
 export interface User {
   identifier: string
   email: string
@@ -38,10 +40,11 @@ export interface Application {
   allowClientSubscription: boolean
   // Collects information from the client when a user connects to a WebSocket.
   allowAnalytics: boolean
-  members?: User &
-    {
-      role: UserRole
-    }[]
+  members: {
+    role: UserRole
+    // User identifier
+    identifier: string
+  }[]
 }
 
 export interface Connection {
@@ -52,4 +55,6 @@ export interface Connection {
   finishAt: number
   ipAddress: string
   userAgent: string
+  // messages sent and received by connection
+  messages: number
 }

@@ -1,4 +1,4 @@
-import { Application, KeyType } from '~/types/application'
+import { Application, KeyType, UserRole } from '~/types/application'
 import { normalizeString } from '~/utils/string'
 
 interface State {
@@ -42,6 +42,7 @@ export const state = (): State => ({
           expiresAt: 1645379187,
         },
       ],
+      members: [{ identifier: '', role: UserRole.normal }],
       allowClientSend: true,
       allowClientSubscription: false,
       allowAnalytics: true,
@@ -55,6 +56,7 @@ export const state = (): State => ({
       allowClientSend: true,
       allowClientSubscription: false,
       allowAnalytics: true,
+      members: [],
     },
     {
       identifier: 'UUIDv2117',
@@ -65,6 +67,7 @@ export const state = (): State => ({
       allowClientSend: true,
       allowClientSubscription: false,
       allowAnalytics: true,
+      members: [],
     },
     {
       identifier: 'UUIDv2117',
@@ -75,6 +78,7 @@ export const state = (): State => ({
       allowClientSend: true,
       allowClientSubscription: false,
       allowAnalytics: true,
+      members: [],
     },
     {
       identifier: 'UUIDv2117',
@@ -85,6 +89,7 @@ export const state = (): State => ({
       allowClientSend: true,
       allowClientSubscription: false,
       allowAnalytics: true,
+      members: [],
     },
     {
       identifier: 'UUIDv2117',
@@ -95,6 +100,7 @@ export const state = (): State => ({
       allowClientSend: true,
       allowClientSubscription: false,
       allowAnalytics: true,
+      members: [],
     },
     {
       identifier: 'UUIDv2117',
@@ -105,6 +111,7 @@ export const state = (): State => ({
       allowClientSend: true,
       allowClientSubscription: false,
       allowAnalytics: true,
+      members: [],
     },
   ],
 })
