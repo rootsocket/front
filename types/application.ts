@@ -44,6 +44,8 @@ export interface Application {
     role: UserRole
     // User identifier
     identifier: string
+    // Backend needs to make additional requests to get members data
+    email: string
   }[]
 }
 

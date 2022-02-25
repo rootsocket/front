@@ -13,7 +13,8 @@
     "lint": "yarn lint:js && yarn lint:style && yarn lint:prettier",
     "lintfix": "prettier --write --list-different . && yarn lint:js --fix && yarn lint:style --fix",
     "prepare": "husky install",
-    "test": "jest"
+    "test": "jest",
+    "api": "wrangler pages dev functions --kv ROOTSOCKET --binding ACCOUNT_AUTH=\"MDAyY2JiZDMxMjY4MDRiMDAwMDAwMDAwNTpLMDAycGVvUzFjU2RvVExFaHh3Q0kwbGZjQVByc0xF\""
   },
   "lint-staged": {
     "*.{js,ts,vue}": "eslint --cache",
@@ -68,6 +69,7 @@
     "tailwind-css-variables": "^3.0.1",
     "theme-colors": "^0.0.5",
     "ts-jest": "^27.1.1",
-    "vue-jest": "^3.0.4"
+    "vue-jest": "^3.0.4",
+    "wrangler": "^0.0.17"
   }
 }
