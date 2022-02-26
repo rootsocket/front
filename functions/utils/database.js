@@ -13,33 +13,34 @@ export class Database {
 
   uploadUrl = null
   authorizeAccount = null
-  namespace = null
   accountAuth = null
 
-  constructor(env) {
-    this.namespace = env.ROOTSOCKET
+  constructor(env, cache) {
+    this.cache = cache
     this.accountAuth = env.ACCOUNT_AUTH
   }
 
   async _getUploadUrl() {
     if (this.uploadUrl) return this.uploadUrl
 
-    let res = await this.namespace.get(this.CACHE_KEY_UPLOAD)
+    let res = await this.cache.get(this.CACHE_KEY_UPLOAD)
+
     if (!res) {
       const bucketId = await this.getBucketId()
       const url = this.b2_get_upload_url.replace(
         '<apiUrl>',
         await this.getApiUrl()
       )
+
       const response = await fetch(url, {
         method: 'POST',
-        body: { bucketId },
+        body: JSON.stringify({ bucketId }),
         headers: { Authorization: await this.getAuthorizationToken() },
       })
       res = await response.json()
-      this.namespace.put(this.CACHE_KEY_UPLOAD, JSON.stringify(res))
-    } else {
-      res = JSON.parse(res)
+      if (res.status !== 400) {
+        this.cache.put(this.CACHE_KEY_UPLOAD, res)
+      }
     }
 
     this.uploadUrl = res
@@ -49,16 +50,17 @@ export class Database {
   async _getAuthorizeAccountData() {
     if (this.authorizeAccount) return this.authorizeAccount
 
-    let res = await this.namespace.get(this.CACHE_KEY_AUTHORIZE_ACCOUNT)
+    let res = await this.cache.get(this.CACHE_KEY_AUTHORIZE_ACCOUNT)
+
     if (!res) {
       const response = await fetch(this.b2_authorize_account, {
         method: 'GET',
         headers: { Authorization: `Basic ${this.accountAuth}` },
       })
       res = await response.json()
-      this.namespace.put(this.CACHE_KEY_AUTHORIZE_ACCOUNT, JSON.stringify(res))
-    } else {
-      res = JSON.parse(res)
+      if (res.status !== 400) {
+        this.cache.put(this.CACHE_KEY_AUTHORIZE_ACCOUNT, res)
+      }
     }
 
     this.authorizeAccount = res
@@ -109,7 +111,7 @@ export class Database {
     const bucketId = await this.getBucketId()
     const res = await fetch(url, {
       method: 'POST',
-      body: { bucketId, startFileName: name },
+      body: JSON.stringify({ bucketId, startFileName: name }),
       headers: { Authorization: await this.getAuthorizationToken() },
     })
     const parsed = await res.json()
@@ -117,44 +119,59 @@ export class Database {
     return parsed.fileId
   }
 
-  async download(name) {
+  async download(path) {
     const url = this.b2_download
       .replace('<downloadUrl>', await this.getDownloadUrl())
       .replace('<bucket>', await this.getBucketName())
-      .replace('<path>', name)
+      .replace('<path>', path)
     const res = await fetch(url, {
       method: 'GET',
       headers: { Authorization: await this.getAuthorizationToken() },
     })
-    return await res.json()
+
+    if (res.status === 200) {
+      return await res.json()
+    }
+
+    return null
   }
 
-  async upload(name, body) {
+  async upload(path, body) {
     const url = await this.getUploadUrl()
     const res = await fetch(url, {
       method: 'POST',
-      body,
+      body: JSON.stringify(body),
       headers: {
-        Authorization: await this.getAuthorizationToken(),
+        Authorization: await this.getUploadAuthorizationToken(),
         'Content-Type': 'application/json',
-        'X-Bz-File-Name': name,
+        'X-Bz-File-Name': path,
         'X-Bz-Content-Sha1': 'do_not_verify',
       },
     })
-    return await res.json()
+
+    if (res.status === 200) {
+      return await res.json()
+    }
+
+    return null
   }
 
-  async delete(name) {
+  async delete(path) {
     const url = this.b2_delete_file_version.replace(
       '<apiUrl>',
       await this.getApiUrl()
     )
-    const fileId = await this.getFileId(name)
+    const fileId = await this.getFileId(path)
     const res = await fetch(url, {
       method: 'POST',
-      body: { fileId, fileName: name },
+      body: JSON.stringify({ fileId, fileName: path }),
       headers: { Authorization: await this.getAuthorizationToken() },
     })
-    return await res.json()
+
+    if (res.status === 200) {
+      return await res.json()
+    }
+
+    return null
   }
 }

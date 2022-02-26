@@ -151,7 +151,16 @@ class JWT {
     return Base64URL.stringify(new Uint8Array(res)) === tokenParts[2]
   }
 
-  decode(token) {
+  async decode(token, secret) {
+    try {
+      await this.verify(token, secret)
+      return this.unsafeDecoode(token)
+    } catch {}
+
+    return null
+  }
+
+  unsafeDecoode(token) {
     return this._decodePayload(
       token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
     )
