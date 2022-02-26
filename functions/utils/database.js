@@ -17,7 +17,7 @@ export class Database {
 
   constructor(env, cache) {
     this.cache = cache
-    this.accountAuth = env.ACCOUNT_AUTH
+    this.accountAuth = env.BACKBLAZE_ACCOUNT_AUTH
   }
 
   async _getUploadUrl() {
@@ -37,10 +37,14 @@ export class Database {
         body: JSON.stringify({ bucketId }),
         headers: { Authorization: await this.getAuthorizationToken() },
       })
+
       res = await response.json()
-      if (res.status !== 400) {
-        this.cache.put(this.CACHE_KEY_UPLOAD, res)
-      }
+      if (res.status >= 400)
+        throw new Error(
+          `Received error when trying to get upload url: ${JSON.stringify(res)}`
+        )
+
+      this.cache.put(this.CACHE_KEY_UPLOAD, res)
     }
 
     this.uploadUrl = res
@@ -57,10 +61,14 @@ export class Database {
         method: 'GET',
         headers: { Authorization: `Basic ${this.accountAuth}` },
       })
+
       res = await response.json()
-      if (res.status !== 400) {
-        this.cache.put(this.CACHE_KEY_AUTHORIZE_ACCOUNT, res)
-      }
+      if (res.status >= 400)
+        throw new Error(
+          `Received error when trying to get upload url: ${JSON.stringify(res)}`
+        )
+
+      this.cache.put(this.CACHE_KEY_AUTHORIZE_ACCOUNT, res)
     }
 
     this.authorizeAccount = res
