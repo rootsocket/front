@@ -1,3 +1,3 @@
-export function onRequestGet() {
-  return new Response('', null, 2)
+export function onRequestGet({ env }) {
+  return new Response(JSON.stringify(env), { status: 200 })
 }

@@ -1,5 +1,5 @@
-import { authMiddleware } from '~/functions/middleware/auth'
+// import { authMiddleware } from '~/functions/middleware/auth'
 import { errorMiddleware } from '~/functions/middleware/error'
 import { fillMiddleware } from '~/functions/middleware/fill'
 
-export const onRequest = [fillMiddleware, errorMiddleware, authMiddleware]
+export const onRequest = [fillMiddleware, errorMiddleware]
