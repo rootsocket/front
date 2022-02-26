@@ -42,7 +42,9 @@ export const state = (): State => ({
           expiresAt: 1645379187,
         },
       ],
-      members: [{ identifier: '', role: UserRole.normal }],
+      members: [
+        { identifier: '', email: 'awef@asf.com', role: UserRole.normal },
+      ],
       allowClientSend: true,
       allowClientSubscription: false,
       allowAnalytics: true,
