@@ -33,7 +33,12 @@ export const setUserAuthCookie = async (env, response, user) => {
   setCookie(
     response,
     'auth',
-    `${await jwtSignUser(env, user)}; Path=/; HttpOnly`
+    // We only want to use this with HTTPS, JS shouldn't access it and only for our domain and don't send this cookie if a third-party domain
+    // tries to send a request.
+    `${await jwtSignUser(
+      env,
+      user
+    )}; Path=/; HttpOnly; SameSite=Strict; Max-Age:2160000; Secure`
   )
 }
 
@@ -45,7 +50,9 @@ export const jwtSignUser = async (env, user) => {
   delete user.password
   return await jwt.sign(
     { ...user, tokenType: TOKEN_TYPE.ACCESS },
-    userSecret(env, user.password)
+    userSecret(env, user.password),
+    // 30 days
+    60 * 60 * 24 * 30
   )
 }
 

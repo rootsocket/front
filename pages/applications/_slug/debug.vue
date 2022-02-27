@@ -25,7 +25,6 @@ import { getCurrentApplication } from '@/utils/application'
 
 export default Vue.extend({
   layout: 'application',
-  auth: false,
   head() {
     return {
       title: `${this.$t('debug')} - ${this.$config.projectTitle}`,

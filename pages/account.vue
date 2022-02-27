@@ -3,6 +3,12 @@
     <AppPage>
       <div class="flex flex-col md:flex-row justify-between md:items-center">
         <h1>{{ $t('account') }}</h1>
+        <ButtonPressable
+          class="mb-8"
+          variant="outline-red"
+          :value="$t('logout')"
+          @click="logout"
+        />
       </div>
       <p class="text-gray-500 uppercase tracking-wider font-bold text-md">
         {{ $t('personalInformation') }}
@@ -14,7 +20,7 @@
         <div class="flex flex-col p-4">
           <TextLabel :value="$t('email')" />
           <TextInput
-            v-model="name"
+            v-model="email"
             :placeholder="$t('enterEmail')"
             class="mt-1"
             type="email"
@@ -23,7 +29,7 @@
           />
           <TextLabel :value="$t('yourPassword')" />
           <TextInput
-            v-model="name"
+            v-model="currentPassword"
             :placeholder="$t('enterYourPassword')"
             class="mt-1"
             margin
@@ -44,7 +50,7 @@
         <div class="flex flex-col p-4">
           <TextLabel :value="$t('newPassword')" />
           <TextInput
-            v-model="name"
+            v-model="newPassword"
             :placeholder="$t('enterNewPassword')"
             class="mt-1"
             margin
@@ -52,7 +58,7 @@
           />
           <TextLabel :value="$t('confirmNewPassword')" />
           <TextInput
-            v-model="name"
+            v-model="newPasswordConfirm"
             :placeholder="$t('enterNewPassword')"
             class="mt-1"
             margin
@@ -60,7 +66,7 @@
           />
           <TextLabel :value="$t('yourPassword')" />
           <TextInput
-            v-model="name"
+            v-model="currentPassword"
             :placeholder="$t('enterYourPassword')"
             class="mt-1"
             margin
@@ -127,6 +133,10 @@ export default Vue.extend({
   data() {
     return {
       showDeleteAccount: false,
+      currentPassword: '',
+      email: this.$auth.user?.email ?? '',
+      newPassword: '',
+      newPasswordConfirm: '',
     }
   },
   head() {
@@ -140,6 +150,10 @@ export default Vue.extend({
     },
 
     deleteAccountForm() {},
+    logout() {
+      this.$auth.logout()
+      this.$router.push('/')
+    },
   },
 })
 </script>
@@ -163,7 +177,8 @@ export default Vue.extend({
     "enterNewPassword": "Enter new password",
     "deleteAccount": "Delete account",
     "deleteAccountDescription": "All applications, members, keys and connections will be permanently deleted",
-    "personalInformation": "Personal information"
+    "personalInformation": "Personal information",
+    "logout": "Log out"
   },
   "es": {
     "account": "Cuenta",
@@ -182,7 +197,8 @@ export default Vue.extend({
     "enterNewPassword": "Introduce una nueva contraseña",
     "deleteAccount": "Eliminar cuenta",
     "deleteAccountDescription": "Todas las aplicaciones, miembros, claves y conexiones serán eliminadas permanentemente",
-    "personalInformation": "Información personal"
+    "personalInformation": "Información personal",
+    "logout": "Cerrar sesión"
   }
 }
 </i18n>

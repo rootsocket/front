@@ -59,6 +59,7 @@ export class RootSocket {
     if (!user) return null
     if (user.password !== hashedPassword) return null
 
+    delete user.password
     return user
   }
 
@@ -67,7 +68,7 @@ export class RootSocket {
     const safeEmail = this.createSafeEmail(email)
     const userPath = `users/${safeEmail}.json`
 
-    let user = this.cache.get(cacheKey)
+    let user = await this.cache.get(cacheKey)
     if (!user) {
       user = await this.database.download(userPath)
       if (!user) return null

@@ -159,7 +159,6 @@ import { getCurrentApplication } from '@/utils/application'
 
 export default Vue.extend({
   layout: 'application',
-  auth: false,
   data() {
     return {
       subscribeChannel: {

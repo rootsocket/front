@@ -4,6 +4,7 @@
       <Logo class="mb-5" />
       <form
         class="bg-white border dark:bg-gray-900 dark:border-gray-800 shadow w-full rounded-lg divide-y divide-gray-200 dark:divide-gray-800 shadow"
+        @submit.prevent="login"
       >
         <div class="px-5 py-7">
           <TextLabel :value="$t('email')" />
@@ -30,11 +31,21 @@
             margin
             required
           />
+          <div class="mb-4 flex flex-row justify-center w-full">
+            <vue-hcaptcha
+              ref="captcha"
+              :sitekey="siteKey"
+              :theme="$colorMode.preference"
+              size="invisible"
+              @verify="onVerify"
+            ></vue-hcaptcha>
+          </div>
           <ButtonPressable
             :value="$t('login')"
             type="submit"
             class="w-full"
             variant="primary"
+            :loading="loading"
           />
         </div>
         <div class="p-5">
@@ -64,12 +75,50 @@ export default Vue.extend({
     return {
       email: '',
       password: '',
+      loading: false,
     }
   },
   head() {
     return {
       title: `${this.$t('login')} - ${this.$config.projectTitle}`,
     }
+  },
+  computed: {
+    siteKey() {
+      return process.env.captchaSiteKey
+    },
+  },
+  beforeMount() {
+    if (this.$auth.loggedIn) {
+      this.$router.push('/')
+    }
+  },
+  methods: {
+    login() {
+      this.$refs.captcha.execute()
+    },
+    async onVerify(token: string) {
+      if (this.email && this.password && token) {
+        try {
+          this.loading = true
+          const response = await this.$auth.loginWith('cookie', {
+            data: {
+              email: this.email,
+              password: this.password,
+              captcha: token,
+            },
+          })
+          this.$auth.setUser(response.data)
+          this.$router.push(this.localePath({ name: 'applications' }))
+        } catch (e: any) {
+          const err = e.response?.data?.detail ?? 'failedLogin'
+          this.$toast.show(this.$t(err))
+        } finally {
+          this.loading = false
+          this.$refs.captcha.reset()
+        }
+      }
+    },
   },
 })
 </script>
@@ -83,7 +132,8 @@ export default Vue.extend({
     "enterPassword": "Enter password",
     "login": "Login",
     "createAccount": "Create an account",
-    "forgotPassword": "Forgot password?"
+    "forgotPassword": "Forgot password?",
+    "failedLogin": "Failed to login with provided credentials"
   },
   "es": {
     "email": "Correo electrónico",
@@ -92,7 +142,8 @@ export default Vue.extend({
     "enterPassword": "Introduce la contraseña",
     "login": "Iniciar sesión",
     "createAccount": "Crear una cuenta",
-    "forgotPassword": "Contraseña olvidada?"
+    "forgotPassword": "Contraseña olvidada?",
+    "failedLogin": "No se ha podido iniciar sesión con esas credenciales"
   }
 }
 </i18n>

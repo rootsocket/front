@@ -11,11 +11,11 @@ export class Cache {
   }
 
   unwrap(wrappedData) {
-    const { data, timestamp } = wrappedData
+    const { data, timestamp } = JSON.parse(wrappedData)
     if (timestamp < new Date().getTime()) {
       throw new Error('Cache expired')
     }
-    return JSON.parse(data)
+    return data
   }
 
   async get(key) {
@@ -25,8 +25,17 @@ export class Cache {
     try {
       const data = this.unwrap(response)
       return data
-    } catch {
-      this.namespace.delete(key)
+    } catch (e) {
+      if (e.message.includes('expired')) {
+        this.namespace.delete(key)
+      } else {
+        throw new Error(
+          JSON.stringify({
+            error: e,
+            response,
+          })
+        )
+      }
       return null
     }
   }

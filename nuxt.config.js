@@ -1,6 +1,14 @@
 import pkg from './package.json'
 
+const apiUrl = process.env.API_URL || 'http://localhost:8788'
+const captchaSiteKey =
+  process.env.CAPTCHA_SITE_KEY || '10000000-ffff-ffff-ffff-000000000001'
+
 export default {
+  env: {
+    captchaSiteKey,
+    apiUrl,
+  },
   publicRuntimeConfig: {
     clientVersion: pkg.version,
     projectTitle: pkg.name,
@@ -42,7 +50,7 @@ export default {
   css: ['@/assets/css/main.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['@/plugins/menu.client'],
+  plugins: ['@/plugins/menu.client', '@/plugins/captcha.client'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -109,7 +117,26 @@ export default {
     middleware: ['auth'],
   },
   auth: {
+    cookie: false,
+    redirect: {
+      login: '/login',
+      logout: '/login',
+      home: '/',
+    },
     plugins: ['~/plugins/auth.client.js'],
+    strategies: {
+      cookie: {
+        localStorage: {
+          maxAge: 60 * 60 * 24 * 365,
+        },
+        user: {
+          autoFetch: false,
+        },
+        endpoints: {
+          login: { url: `${apiUrl}/api/v1/users/me/login/`, method: 'post' },
+        },
+      },
+    },
   },
   generate: {
     fallback: '404.html',

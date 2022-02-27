@@ -11,10 +11,6 @@ export class Database {
   b2_list_file_names = '<apiUrl>/b2api/v2/b2_list_file_names'
   b2_delete_file_version = '<apiUrl>/b2api/v2/b2_delete_file_version'
 
-  uploadUrl = null
-  authorizeAccount = null
-  accountAuth = null
-
   constructor(env, cache) {
     this.cache = cache
     this.accountAuth = env.BACKBLAZE_ACCOUNT_AUTH

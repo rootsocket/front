@@ -64,7 +64,14 @@ class JWT {
     }
   }
 
-  async sign(payload, secret, options = { algorithm: 'HS256' }) {
+  async sign(
+    payload,
+    secret,
+    expiresTTLSeconds = 60 * 5,
+    options = { algorithm: 'HS256' }
+  ) {
+    payload._expires = new Date().getTime() + expiresTTLSeconds * 1000
+
     if (typeof options === 'string') options = { algorithm: options }
     if (payload === null || typeof payload !== 'object')
       throw new Error('payload must be an object')
@@ -154,7 +161,10 @@ class JWT {
   async decode(token, secret) {
     try {
       await this.verify(token, secret)
-      return this.unsafeDecoode(token)
+      const data = this.unsafeDecoode(token)
+      if (data._expires > new Date().getTime()) {
+        return data
+      }
     } catch {}
 
     return null

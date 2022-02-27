@@ -98,7 +98,6 @@ import Vue from 'vue'
 
 export default Vue.extend({
   layout: 'user',
-  auth: false,
   data() {
     return {
       createApplication: {

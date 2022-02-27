@@ -10,8 +10,9 @@ export const authMiddleware = async ({ request, next, data, env }) => {
   // Rejects connection if the user is not identified.
   const unverifiedUser = getUnverifiedUserFromRequest(request)
   if (unverifiedUser) {
-    const db = new Database(env)
-    const rootSocket = new RootSocket(db)
+    const cache = new Cache()
+    const db = new Database(env, cache)
+    const rootSocket = new RootSocket(db, cache)
 
     const user = await rootSocket.getUser(unverifiedUser.email)
     if (user) {
@@ -22,9 +23,11 @@ export const authMiddleware = async ({ request, next, data, env }) => {
           user.password,
           getTokenFromRequest(request)
         )
-        // We are using both objects because we want to update the user with the latest info
-        data.user = { ...decodedUserInfo, ...user }
-        return await next()
+        if (decodedUserInfo) {
+          // We are using both objects because we want to update the user with the latest info
+          data.user = { ...decodedUserInfo, ...user }
+          return await next()
+        }
       } catch (e) {
         // pass
       }

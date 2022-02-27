@@ -173,7 +173,6 @@ import { KeyType } from '@/types/application'
 
 export default Vue.extend({
   layout: 'application',
-  auth: false,
   data() {
     return {
       selectedKey: {
