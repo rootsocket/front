@@ -132,7 +132,6 @@ export class Database {
       method: 'GET',
       headers: { Authorization: await this.getAuthorizationToken() },
     })
-
     if (res.status === 200) {
       return await res.json()
     }
@@ -152,7 +151,6 @@ export class Database {
         'X-Bz-Content-Sha1': 'do_not_verify',
       },
     })
-
     if (res.status === 200) {
       return await res.json()
     }

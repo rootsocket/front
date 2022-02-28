@@ -117,7 +117,6 @@ export default {
     middleware: ['auth'],
   },
   auth: {
-    cookie: false,
     redirect: {
       login: '/login',
       logout: '/login',
@@ -125,7 +124,7 @@ export default {
     },
     plugins: ['~/plugins/auth.client.js'],
     strategies: {
-      cookie: {
+      local: {
         localStorage: {
           maxAge: 60 * 60 * 24 * 365,
         },
@@ -134,6 +133,7 @@ export default {
         },
         endpoints: {
           login: { url: `${apiUrl}api/v1/users/me/login/`, method: 'post' },
+          logout: { url: `${apiUrl}api/v1/users/me/logout/`, method: 'post' },
         },
       },
     },

@@ -38,7 +38,15 @@ export const setUserAuthCookie = async (env, response, user) => {
     `${await jwtSignUser(
       env,
       user
-    )}; Path=/; HttpOnly; SameSite=Strict; Max-Age:2160000; Secure`
+    )}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2160000; Secure`
+  )
+}
+
+export const setUserAuthCookieLogout = (response) => {
+  setCookie(
+    response,
+    'auth',
+    'Path=/; HttpOnly; SameSite=Strict; Max-Age=1; Secure'
   )
 }
 

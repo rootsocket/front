@@ -91,7 +91,7 @@ export default Vue.extend({
             { email: this.email, password: this.password, captcha: token }
           )
           this.$auth.setUser(response.data)
-          this.$auth.setUserToken('')
+          this.$auth.$storage.setUniversal('loggedIn', true)
           this.$router.push(this.localePath({ name: 'applications' }))
         } catch (e: any) {
           const err = e.response?.data?.detail ?? 'failedRegister'
