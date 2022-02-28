@@ -31,15 +31,13 @@
             margin
             required
           />
-          <div class="mb-4 flex flex-row justify-center w-full">
-            <vue-hcaptcha
-              ref="captcha"
-              :sitekey="siteKey"
-              :theme="$colorMode.preference"
-              size="invisible"
-              @verify="onVerify"
-            ></vue-hcaptcha>
-          </div>
+          <vue-hcaptcha
+            ref="captcha"
+            :sitekey="siteKey"
+            :theme="$colorMode.preference"
+            size="invisible"
+            @verify="onVerify"
+          ></vue-hcaptcha>
           <ButtonPressable
             :value="$t('login')"
             type="submit"

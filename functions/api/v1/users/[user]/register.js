@@ -13,7 +13,7 @@ export const onRequestPost = async ({ request, env, data }) => {
   if (user) {
     // const mailer = new Mail(env)
     // await mailer.sendVerifyEmail(user)
-    const response = new Response(null, { status: 200 })
+    const response = new Response(JSON.stringify(user), { status: 200 })
     await setUserAuthCookie(env, response, user)
     return response
   }
