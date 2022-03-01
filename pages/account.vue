@@ -152,7 +152,7 @@ export default Vue.extend({
     deleteAccountForm() {},
     logout() {
       this.$auth.logout()
-      this.$router.push('/')
+      this.$router.push(this.localePath({ name: 'login' }))
     },
   },
 })

@@ -50,7 +50,11 @@ export default {
   css: ['@/assets/css/main.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['@/plugins/menu.client', '@/plugins/captcha.client'],
+  plugins: [
+    '@/plugins/menu.client',
+    '@/plugins/captcha.client',
+    '@/plugins/persist.client',
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -126,7 +130,7 @@ export default {
     strategies: {
       local: {
         localStorage: {
-          maxAge: 60 * 60 * 24 * 365,
+          maxAge: 60 * 60 * 24,
         },
         user: {
           autoFetch: false,

@@ -15,7 +15,7 @@
             margin
             required
           />
-          <div class="flex flex-row items-center justify-between pb-1">
+          <div class="flex flex-row items-center justify-between">
             <TextLabel :value="$t('password')" />
             <NuxtLink
               :to="localeLocation({ name: 'forgot' })"
@@ -99,7 +99,7 @@ export default Vue.extend({
       if (this.email && this.password && token) {
         try {
           this.loading = true
-          const response = await this.$auth.loginWith('cookie', {
+          const response = await this.$auth.loginWith('local', {
             data: {
               email: this.email,
               password: this.password,
@@ -107,6 +107,7 @@ export default Vue.extend({
             },
           })
           this.$auth.setUser(response.data)
+          this.$auth.$storage.setState('loggedIn', true)
           this.$router.push(this.localePath({ name: 'applications' }))
         } catch (e: any) {
           const err = e.response?.data?.detail ?? 'failedLogin'
