@@ -1,5 +1,7 @@
+// This can only be consumed once
+let cookieString
 export const getCookie = (request, key) => {
-  const cookieString = request.headers.get('Cookie')
+  if (!cookieString) cookieString = request.headers.get('cookie')
   if (cookieString) {
     const allCookies = cookieString.split('; ')
     const targetCookie = allCookies.find((cookie) => cookie.includes(key))

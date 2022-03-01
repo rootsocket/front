@@ -1,8 +1,9 @@
-import { Application, KeyType, UserRole } from '~/types/application'
+import { Application } from '~/types/application'
 import { normalizeString } from '~/utils/string'
+import { VuexRequest } from '~/types/vuex'
 
 interface State {
-  applications: Application[]
+  applications: VuexRequest<Application[]>
   filters: {
     applications: {
       search: string
@@ -16,111 +17,16 @@ export const state = (): State => ({
       search: '',
     },
   },
-  applications: [
-    {
-      identifier: 'UUIDv7',
-      createdAt: 1645379187,
-      name: 'Panorama Staging asdf asdfsa df sf dsafdsa f dsafdsa dsf a dsfaa wkl wfae feawjf alkf aekjlfa ejklaf jklfa wejlkfa wejklf eajklfa weljkf aweljk fewl',
-      location: 'eu-west-1',
-      keys: [
-        {
-          token: 'stringa wef awef awf e afwe awfe awfe afewa fea efwa',
-          type: KeyType.private,
-          hosts: [
-            'www.google.com',
-            'www.google.com',
-            'www.google.com',
-            'www.google.com',
-            'www.google.com',
-          ],
-          expiresAt: 1645379187,
-        },
-        {
-          token: 'string',
-          type: KeyType.public,
-          hosts: [],
-          expiresAt: 1645379187,
-        },
-      ],
-      members: [
-        { identifier: '', email: 'awef@asf.com', role: UserRole.normal },
-      ],
-      allowClientSend: true,
-      allowClientSubscription: false,
-      allowAnalytics: true,
-    },
-    {
-      identifier: 'UUIDv2117',
-      name: 'Invisen not Staging',
-      createdAt: 1645379187,
-      location: 'eu-west-1',
-      keys: [],
-      allowClientSend: true,
-      allowClientSubscription: false,
-      allowAnalytics: true,
-      members: [],
-    },
-    {
-      identifier: 'UUIDv2117',
-      name: 'Invisen not Staging',
-      createdAt: 1645379187,
-      location: 'eu-west-1',
-      keys: [],
-      allowClientSend: true,
-      allowClientSubscription: false,
-      allowAnalytics: true,
-      members: [],
-    },
-    {
-      identifier: 'UUIDv2117',
-      name: 'Invisen not Staging',
-      location: 'eu-west-1',
-      createdAt: 1645379187,
-      keys: [],
-      allowClientSend: true,
-      allowClientSubscription: false,
-      allowAnalytics: true,
-      members: [],
-    },
-    {
-      identifier: 'UUIDv2117',
-      createdAt: 1645379187,
-      name: 'Invisen not Staging',
-      location: 'eu-west-1',
-      keys: [],
-      allowClientSend: true,
-      allowClientSubscription: false,
-      allowAnalytics: true,
-      members: [],
-    },
-    {
-      identifier: 'UUIDv2117',
-      createdAt: 1645379187,
-      name: 'Invisen not Staging',
-      location: 'eu-west-1',
-      keys: [],
-      allowClientSend: true,
-      allowClientSubscription: false,
-      allowAnalytics: true,
-      members: [],
-    },
-    {
-      identifier: 'UUIDv2117',
-      name: 'Invisen not Staging',
-      createdAt: 1645379187,
-      location: 'eu-west-1',
-      keys: [],
-      allowClientSend: true,
-      allowClientSubscription: false,
-      allowAnalytics: true,
-      members: [],
-    },
-  ],
+  applications: {
+    data: [],
+    isLoading: false,
+    error: undefined,
+  },
 })
 
 export const mutations = {
-  setApplications(state: State, payload: Application[]) {
-    state.applications = payload
+  setApplicationsRequest(state: State, payload: VuexRequest<Application[]>) {
+    state.applications = { ...state.applications, ...payload }
   },
   setApplicationsFilter(state: State, payload: { search: string }) {
     state.filters.applications.search = payload.search
@@ -137,7 +43,7 @@ export const getters = {
     }
 
     const filteredApplications = []
-    const applications = state.applications
+    const applications = state.applications.data ?? []
 
     for (let j = 0; j < applications.length; j++) {
       const application = applications[j]
@@ -150,5 +56,26 @@ export const getters = {
     }
 
     return filteredApplications
+  },
+}
+
+export const actions = {
+  async getApplications({ commit }: any) {
+    try {
+      commit('setApplicationsRequest', { isLoading: true })
+      const response = await (this as any).$axios.get(
+        `${process.env.apiUrl}api/v1/applications/`
+      )
+      commit('setApplicationsRequest', {
+        data: response.data,
+        error: undefined,
+      })
+      return response
+    } catch (e: any) {
+      commit('setApplicationsRequest', { data: undefined, error: e.message })
+      throw e
+    } finally {
+      commit('setApplicationsRequest', { isLoading: false })
+    }
   },
 }

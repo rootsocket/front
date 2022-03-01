@@ -171,9 +171,13 @@ class JWT {
   }
 
   unsafeDecoode(token) {
-    return this._decodePayload(
-      token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
-    )
+    try {
+      return this._decodePayload(
+        token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+      )
+    } catch {
+      return null
+    }
   }
 }
 

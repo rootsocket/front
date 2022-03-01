@@ -12,7 +12,7 @@
         />
       </div>
       <div
-        v-if="applications.length === 0"
+        v-if="!isLoadingApplications && applications.length === 0"
         class="w-full flex justify-center items-center"
       >
         <div class="flex flex-col items-center mt-10 mb-20">
@@ -31,7 +31,12 @@
           />
         </div>
       </div>
-
+      <div
+        v-if="isLoadingApplications"
+        class="w-full flex justify-center my-10"
+      >
+        <IconLoad />
+      </div>
       <div class="grid grid-cols-1 gap-4">
         <div
           v-for="application in applications"
@@ -114,8 +119,14 @@ export default Vue.extend({
   },
   computed: {
     applications() {
-      return this.$store.state.application.applications
+      return this.$store.state.application.applications.data ?? []
     },
+    isLoadingApplications() {
+      return this.$store.state.application.applications.isLoading
+    },
+  },
+  beforeMount() {
+    this.$store.dispatch('application/getApplications')
   },
   methods: {
     navigateToApplication(appIdentifier: string) {
