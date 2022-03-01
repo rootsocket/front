@@ -6,20 +6,6 @@ export const getTokenFromRequest = (request) => {
   return getCookie(request, 'auth')
 }
 
-export const getResetPasswordTokenFromRequest = (request) => {
-  const { searchParams } = new URL(request.url)
-  return searchParams.get('token')
-}
-
-export const getUnverifiedUserResetPasswordRequest = (request) => {
-  // This is not a guarantee that the JWT is signed by us!
-  // Use the response with caution.
-  const token = getResetPasswordTokenFromRequest(request)
-  if (token) return jwt.unsafeDecoode(token)
-
-  return null
-}
-
 export const getUnverifiedUserFromRequest = (request) => {
   // This is not a guarantee that the JWT is signed by us!
   // Use the response with caution.
@@ -35,12 +21,19 @@ export const setUserAuthCookie = async (env, response, user) => {
     'auth',
     // We only want to use this with HTTPS, JS shouldn't access it and only for our domain and don't send this cookie if a third-party domain
     // tries to send a request.
-    `${await jwtSignUser(env, user)}; path=/; HttpOnly; Max-Age=2160000;`
+    `${await jwtSignUser(
+      env,
+      user
+    )}; path=/; HttpOnly; Max-Age=2160000; Secure; SameSite=Strict;`
   )
 }
 
 export const setUserAuthCookieLogout = (response) => {
-  setCookie(response, 'auth', 'Path=/; HttpOnly; Max-Age=1;')
+  setCookie(
+    response,
+    'auth',
+    'Path=/; HttpOnly; Max-Age=1; Secure; SameSite=Strict;'
+  )
 }
 
 const userSecret = (env, userPassword) => {
@@ -79,14 +72,15 @@ export const jwtSignResetPassword = async (env, user) => {
   )
 }
 
-export const jwtDecodeResetPassword = async (env, request) => {
-  const unverifiedUser = getUnverifiedUserResetPasswordRequest(request)
+export const jwtDecodeResetPassword = async (env, token) => {
+  const unverifiedUser = jwt.unsafeDecoode(token)
+  if (!unverifiedUser) return null
   if (unverifiedUser.tokenType !== TOKEN_TYPE.RESET_PASSWORD) return null
   else {
     delete unverifiedUser.tokenType
   }
 
-  const token = getResetPasswordTokenFromRequest(request)
+  console.log('adaewd', unverifiedUser)
   return await jwt.decode(token, env.SECRET)
 }
 

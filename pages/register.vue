@@ -4,7 +4,7 @@
       <Logo class="mb-5" />
       <form
         class="bg-white border dark:bg-gray-900 dark:border-gray-800 shadow w-full rounded-lg divide-y divide-gray-200 dark:divide-gray-800"
-        @submit.prevent="login"
+        @submit.prevent="register"
       >
         <div class="px-5 py-7">
           <TextLabel :value="$t('email')" />
@@ -79,7 +79,7 @@ export default Vue.extend({
     },
   },
   methods: {
-    login() {
+    register() {
       this.$refs.captcha.execute()
     },
     async onVerify(token: string) {

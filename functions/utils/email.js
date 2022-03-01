@@ -43,7 +43,7 @@ export class Mail {
 
   // eslint-disable-next-line require-await
   async sendVerifyEmail(user) {
-    this.send(
+    await this.send(
       user.email,
       'Verify email address',
       'Hello, verify your email address.'
@@ -60,6 +60,6 @@ export class Mail {
 
         <a href="${resetPasswordUrl}">${resetPasswordUrl}</a>
       `
-    this.send(user.email, 'Reset password', message)
+    await this.send(user.email, 'Reset password', message)
   }
 }
