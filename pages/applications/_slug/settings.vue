@@ -13,7 +13,7 @@
           })
         }}</span>
         <TextLabel :value="$t('region')" class="mt-4" />
-        <span>{{ application.location }}</span>
+        <span>{{ application.region }}</span>
         <TextLabel :value="$t('applicationIdentifier')" class="mt-4" />
         <div class="flex flex-row items-center">
           <span class="">{{ application.identifier }}</span>
@@ -122,6 +122,9 @@ export default Vue.extend({
   },
   mounted() {
     this.name = this.application.name
+    this.allowClientSend = this.application.allowClientSend
+    this.allowAnalytics = this.application.allowAnalytics
+    this.allowClientSubscription = this.application.allowClientSubscription
   },
   methods: {
     copyIdentifier() {

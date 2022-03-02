@@ -19,7 +19,7 @@
     @click="loading ? noop : $emit('click')"
   >
     <div
-      class="absolute w-full flex justify-center"
+      class="absolute left-0 ml-2 w-full flex justify-center items-center"
       :class="{ 'opacity-0': !loading }"
     >
       <IconLoad />

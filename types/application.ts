@@ -27,12 +27,16 @@ export enum UserRole {
   normal = 'normal',
 }
 
+export enum ApplicationRegion {
+  euCentral1 = 'eu-central-1',
+}
+
 export interface Application {
   identifier: string
   // UNIX timestamp
   createdAt: number
   name: string
-  location: string
+  region: string
   keys: Key[]
   // Allows a connection to send messages to other connections.
   allowClientSend: boolean

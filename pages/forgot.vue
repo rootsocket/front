@@ -35,7 +35,7 @@
       <form
         v-else
         class="bg-white border dark:bg-gray-900 dark:border-gray-800 shadow w-full rounded-lg"
-        @submit.prevent="reset"
+        @submit.prevent="resetConfirm"
       >
         <div class="px-5 py-7">
           <TextLabel :value="$t('newPassword')" />
@@ -54,13 +54,6 @@
             margin
             required
           />
-          <vue-hcaptcha
-            ref="captcha"
-            :sitekey="siteKey"
-            :theme="$colorMode.preference"
-            size="invisible"
-            @verify="onVerify"
-          ></vue-hcaptcha>
           <ButtonPressable
             :value="$t('resetPassword')"
             type="submit"
@@ -110,26 +103,6 @@ export default Vue.extend({
       this.$refs.captcha.execute()
     },
     async onVerify(token: string) {
-      if (this.token) {
-        try {
-          this.loading = true
-          const response = await this.$axios.post(
-            `${process.env.apiUrl}api/v1/users/me/reset-confirm/`,
-            { password: this.newPassword, token: this.token, captcha: token }
-          )
-          this.$auth.setUser(response.data)
-          this.$auth.$storage.setState('loggedIn', true)
-          this.$router.push(this.localePath({ name: 'applications' }))
-        } catch (e: any) {
-          const err = e.response?.data?.detail ?? 'failedForgot'
-          this.$toast.show(this.$t(err))
-        } finally {
-          this.loading = false
-          this.$refs.captcha.reset()
-        }
-        return
-      }
-
       if (this.email && token) {
         try {
           this.loading = true
@@ -146,6 +119,23 @@ export default Vue.extend({
           this.loading = false
           this.$refs.captcha.reset()
         }
+      }
+    },
+    async resetConfirm() {
+      try {
+        this.loading = true
+        const response = await this.$axios.post(
+          `${process.env.apiUrl}api/v1/users/me/reset-confirm/`,
+          { password: this.newPassword, token: this.token }
+        )
+        this.$auth.setUser(response.data)
+        this.$auth.$storage.setState('loggedIn', true)
+        this.$router.push(this.localePath({ name: 'applications' }))
+      } catch (e: any) {
+        const err = e.response?.data?.detail ?? 'failedForgot'
+        this.$toast.show(this.$t(err))
+      } finally {
+        this.loading = false
       }
     },
   },

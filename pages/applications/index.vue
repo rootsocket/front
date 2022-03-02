@@ -33,11 +33,11 @@
       </div>
       <div
         v-if="isLoadingApplications"
-        class="w-full flex justify-center my-10"
+        class="w-full flex justify-center items-center h-40"
       >
         <IconLoad />
       </div>
-      <div class="grid grid-cols-1 gap-4">
+      <div v-if="!isLoadingApplications" class="grid grid-cols-1 gap-4">
         <div
           v-for="application in applications"
           :key="application.identifier"
@@ -46,7 +46,7 @@
         >
           <div class="flex-1 truncate mr-4">{{ application.name }}</div>
           <div class="flex flex-row items-center mt-2 lg:mt-0">
-            <AppBadge :value="application.location" variant="default" />
+            <AppBadge :value="application.region" variant="default" />
             <AppBadge
               :value="$tc('keys', application.keys.length)"
               :variant="application.keys.length === 0 ? 'red' : 'green'"
@@ -73,10 +73,7 @@
         <TextSelect
           v-model="createApplication.region"
           :placeholder="$t('selectRegion')"
-          :options="[
-            { value: 'eu-west-1', text: 'eu-west-1' },
-            { value: 'us-west-2', text: 'us-west-2' },
-          ]"
+          :options="regions.map((i) => ({ value: i, text: i }))"
           required
         />
         <div class="w-full flex justify-end">
@@ -91,6 +88,7 @@
             :value="$t('createApplication')"
             variant="primary"
             type="submit"
+            :loading="isLoadingCreateApplication"
           />
         </div>
       </form>
@@ -100,6 +98,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { ApplicationRegion } from '~/types/application'
 
 export default Vue.extend({
   layout: 'user',
@@ -109,6 +108,7 @@ export default Vue.extend({
         name: '',
         region: '',
         showModal: false,
+        loading: false,
       },
     }
   },
@@ -123,6 +123,12 @@ export default Vue.extend({
     },
     isLoadingApplications() {
       return this.$store.state.application.applications.isLoading
+    },
+    isLoadingCreateApplication() {
+      return this.$store.state.application.createApplication.isLoading
+    },
+    regions() {
+      return Object.values(ApplicationRegion)
     },
   },
   beforeMount() {
@@ -142,7 +148,17 @@ export default Vue.extend({
       this.createApplication.name = ''
       this.createApplication.region = ''
     },
-    createApplicationForm() {},
+    async createApplicationForm() {
+      try {
+        await this.$store.dispatch('application/createApplication', {
+          name: this.createApplication.name,
+          region: this.createApplication.region,
+        })
+        this.toggleShowCreateApplicationModal()
+      } catch (e) {
+        this.$toast.show(this.$t('noCreateApplication'))
+      }
+    },
   },
 })
 </script>
@@ -158,7 +174,8 @@ export default Vue.extend({
     "cancel": "Cancel",
     "region": "Region",
     "selectRegion": "Select a region",
-    "noApplications": "There are no applications available for this account"
+    "noApplications": "There are no applications available for this account",
+    "noCreateApplication": "We were unable to create the application"
   },
   "es": {
     "applications": "Aplicaciones",
@@ -169,7 +186,8 @@ export default Vue.extend({
     "cancel": "Cancelar",
     "region": "Región",
     "selectRegion": "Selecciona una región",
-    "noApplications": "No hay aplicaciones disponibles para esta cuenta"
+    "noApplications": "No hay aplicaciones disponibles para esta cuenta",
+    "noCreateApplication": "No ha sido posible crear la aplicación"
   }
 }
 </i18n>

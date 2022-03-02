@@ -1,4 +1,5 @@
 import { uuid } from './random'
+import { UserRole } from '~/types/application'
 
 export class RootSocket {
   constructor(database, cache) {
@@ -14,7 +15,7 @@ export class RootSocket {
       .join('')
   }
 
-  createSafeEmail(email) {
+  createSafeInput(email) {
     return btoa(unescape(encodeURIComponent(email)))
   }
 
@@ -29,7 +30,7 @@ export class RootSocket {
   async createUser(email, password) {
     if (!this.validateEmail(email)) return null
 
-    const safeEmail = this.createSafeEmail(email)
+    const safeEmail = this.createSafeInput(email)
     const userPath = `users/${safeEmail}.json`
     const hashedPassword = await this.makePassword(password)
 
@@ -50,7 +51,7 @@ export class RootSocket {
   }
 
   async login(email, password) {
-    const safeEmail = this.createSafeEmail(email)
+    const safeEmail = this.createSafeInput(email)
 
     const userPath = `users/${safeEmail}.json`
     const hashedPassword = await this.makePassword(password)
@@ -65,7 +66,7 @@ export class RootSocket {
 
   async getUser(email) {
     const cacheKey = 'USER_KEY'
-    const safeEmail = this.createSafeEmail(email)
+    const safeEmail = this.createSafeInput(email)
     const userPath = `users/${safeEmail}.json`
 
     let user = await this.cache.get(cacheKey)
@@ -80,7 +81,7 @@ export class RootSocket {
   }
 
   async changeUserPassword(email, password) {
-    const safeEmail = this.createSafeEmail(email)
+    const safeEmail = this.createSafeInput(email)
     const userPath = `users/${safeEmail}.json`
 
     const user = await this.database.download(userPath)
@@ -91,5 +92,60 @@ export class RootSocket {
     await this.database.upload(userPath, user)
 
     return user
+  }
+
+  async createApplication(user, name, region) {
+    const safeEmail = this.createSafeInput(user.email)
+    const userPath = `users/${safeEmail}.json`
+    const applicationIdentifier = uuid()
+    const applicationPath = `applications/${applicationIdentifier}.json`
+    const application = {
+      name,
+      region,
+      identifier: applicationIdentifier,
+      createdAt: new Date().getTime(),
+      keys: [],
+      allowClientSend: false,
+      allowClientSubscription: true,
+      allowAnalytics: true,
+      members: [{ role: UserRole.owner, identifier: user.identifier }],
+    }
+    const userRefreshed = await this.getUser(user.email)
+    const updatedUser = {
+      ...userRefreshed,
+      applications: [...userRefreshed.applications, applicationIdentifier],
+    }
+    const isUserUpdated = await this.database.upload(userPath, updatedUser)
+
+    if (isUserUpdated) {
+      const cacheKey = 'USER_KEY'
+      this.cache.put(cacheKey, updatedUser, 60)
+      const isApplicationCreated = await this.database.upload(
+        applicationPath,
+        application
+      )
+
+      if (isApplicationCreated) {
+        return application
+      }
+    }
+
+    return null
+  }
+
+  async getApplications(applicationsIdentifier) {
+    if (applicationsIdentifier.length === 0) return []
+
+    const calls = []
+    applicationsIdentifier.forEach((identifier) => {
+      calls.push(
+        (async () => {
+          const applicationPath = `applications/${identifier}.json`
+          return await this.database.download(applicationPath)
+        })()
+      )
+    })
+
+    return await Promise.all(calls)
   }
 }
