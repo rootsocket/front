@@ -27,6 +27,10 @@ export class RootSocket {
       )
   }
 
+  getUserCacheKey(email) {
+    return `${this.createSafeInput(email)}_CACHE_KEY`
+  }
+
   async createUser(email, password) {
     if (!this.validateEmail(email)) return null
 
@@ -65,7 +69,7 @@ export class RootSocket {
   }
 
   async getUser(email) {
-    const cacheKey = 'USER_KEY'
+    const cacheKey = this.getUserCacheKey(email)
     const safeEmail = this.createSafeInput(email)
     const userPath = `users/${safeEmail}.json`
 
@@ -118,7 +122,7 @@ export class RootSocket {
     const isUserUpdated = await this.database.upload(userPath, updatedUser)
 
     if (isUserUpdated) {
-      const cacheKey = 'USER_KEY'
+      const cacheKey = this.getUserCacheKey(user.email)
       this.cache.put(cacheKey, updatedUser, 60)
       const isApplicationCreated = await this.database.upload(
         applicationPath,
@@ -147,5 +151,61 @@ export class RootSocket {
     })
 
     return await Promise.all(calls)
+  }
+
+  async getApplication(applicationIdentifier) {
+    const applicationPath = `applications/${applicationIdentifier}.json`
+    const application = await this.database.download(applicationPath)
+    if (!application) return null
+
+    return application
+  }
+
+  async updateApplication(
+    applicationIdentifier,
+    { keys = [], members = [], ...data }
+  ) {
+    const application = await this.getApplication(applicationIdentifier)
+    if (!application) return null
+
+    const updatedApplication = {
+      ...application,
+      ...data,
+      keys: [...application.keys, ...keys],
+      members: [...application.members, ...members],
+    }
+
+    const isApplicationUpdated = await this.database.upload(
+      applicationPath,
+      updatedApplication
+    )
+    if (!isApplicationUpdated) return null
+    return updatedApplication
+  }
+
+  async removeApplication(user, applicationIdentifier) {
+    const safeEmail = this.createSafeInput(user.email)
+    const userPath = `users/${safeEmail}.json`
+    const applicationPath = `applications/${applicationIdentifier}.json`
+    const isApplicationDeleted = await this.database.delete(applicationPath)
+
+    if (isApplicationDeleted) {
+      const userRefreshed = await this.getUser(user.email)
+      const updatedUser = {
+        ...userRefreshed,
+        applications: userRefreshed.applications.filter(
+          (i) => i !== applicationIdentifier
+        ),
+      }
+      const isUserUpdated = await this.database.upload(userPath, updatedUser)
+
+      if (isUserUpdated) {
+        const cacheKey = this.getUserCacheKey(user.email)
+        this.cache.put(cacheKey, updatedUser, 60)
+        return true
+      }
+    }
+
+    return false
   }
 }

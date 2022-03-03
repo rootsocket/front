@@ -119,8 +119,7 @@ export class Database {
       headers: { Authorization: await this.getAuthorizationToken() },
     })
     const parsed = await res.json()
-
-    return parsed.fileId
+    return parsed.files.find((i) => i.fileName === name)?.fileId ?? null
   }
 
   async download(path) {
