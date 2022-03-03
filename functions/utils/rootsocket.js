@@ -161,18 +161,14 @@ export class RootSocket {
     return application
   }
 
-  async updateApplication(
-    applicationIdentifier,
-    { keys = [], members = [], ...data }
-  ) {
+  async updateApplication(applicationIdentifier, data) {
+    const applicationPath = `applications/${applicationIdentifier}.json`
     const application = await this.getApplication(applicationIdentifier)
     if (!application) return null
 
     const updatedApplication = {
       ...application,
       ...data,
-      keys: [...application.keys, ...keys],
-      members: [...application.members, ...members],
     }
 
     const isApplicationUpdated = await this.database.upload(
