@@ -31,6 +31,16 @@
           />
         </div>
       </div>
+
+      <div class="grid grid-cols-1 gap-4">
+        <div
+          v-for="member in application.members"
+          :key="member.identifier"
+          class="w-full border dark:border-gray-800 rounded-md hover:shadow-sm flex flex-col items-start divide-y dark:divide-gray-800"
+        >
+          {{ member }}
+        </div>
+      </div>
     </AppPage>
 
     <AppModal

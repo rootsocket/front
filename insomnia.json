@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-02-27T22:51:59.123Z",
+  "__export_date": "2022-03-03T15:36:14.945Z",
   "__export_source": "insomnia.desktop.app:v2021.7.2",
   "resources": [
     {
@@ -644,7 +644,7 @@
     {
       "_id": "req_b4174a3ed94c46edaddbdbec0e00fe59",
       "parentId": "fld_55ff15e1936b47ae96918e723f14e294",
-      "modified": 1646002273351,
+      "modified": 1646297288663,
       "created": 1645863811969,
       "url": "{{ _.API_URL }}/api/v1/users/me/login",
       "name": "Log in",
@@ -704,7 +704,7 @@
     {
       "_id": "req_6180df8b5cc946a0b0854f72a18ddb4e",
       "parentId": "fld_55ff15e1936b47ae96918e723f14e294",
-      "modified": 1645979787410,
+      "modified": 1646295238019,
       "created": 1645869891290,
       "url": "{{ _.API_URL }}/api/v1/users/me/register",
       "name": "Register",
@@ -740,32 +740,9 @@
       "_type": "request"
     },
     {
-      "_id": "req_9f409a0cc3c14f4e9ef54c80da7dc191",
-      "parentId": "fld_55ff15e1936b47ae96918e723f14e294",
-      "modified": 1645904324621,
-      "created": 1645875436254,
-      "url": "{{ _.API_URL }}/api/v1/applications/",
-      "name": "Applications",
-      "description": "",
-      "method": "GET",
-      "body": {},
-      "parameters": [],
-      "headers": [],
-      "authentication": {},
-      "metaSortKey": -1645811599597.75,
-      "isPrivate": false,
-      "settingStoreCookies": true,
-      "settingSendCookies": true,
-      "settingDisableRenderRequestBody": false,
-      "settingEncodeUrl": true,
-      "settingRebuildPath": true,
-      "settingFollowRedirects": "global",
-      "_type": "request"
-    },
-    {
       "_id": "req_6c5e0686fcd94e3ca3fd91b36dfff9fd",
       "parentId": "fld_55ff15e1936b47ae96918e723f14e294",
-      "modified": 1645958751764,
+      "modified": 1646295237408,
       "created": 1645890029637,
       "url": "{{ _.API_URL }}/api/v1/users/me/reset-confirm?token=eyJhbGciOiJIUzI1NiJ9.eyJpZGVudGlmaWVyIjoiZTU1NjRlMTQtNDg4NC00YTVkLWI0OTUtMmFiZmRkNTQxNmQxIiwiYXBwbGljYXRpb25zIjpbXSwidmVyaWZpZWQiOmZhbHNlLCJlbWFpbCI6InNvcHJvbW9AcG0ubWUiLCJ0b2tlblR5cGUiOjIsImlhdCI6MTY0NTg5NzMyNX0.K0f2Lfq9JTrd_Wac4P1RGsqLQAESniXcc6CDEW0SksY",
       "name": "Reset password confirm",
@@ -803,7 +780,7 @@
     {
       "_id": "req_12e63bbf89384fa69642625c2ce33f04",
       "parentId": "fld_55ff15e1936b47ae96918e723f14e294",
-      "modified": 1646002146122,
+      "modified": 1646295236955,
       "created": 1645890463144,
       "url": "{{ _.API_URL }}/api/v1/users/me/reset",
       "name": "Reset password",
@@ -829,6 +806,333 @@
       ],
       "authentication": {},
       "metaSortKey": -1645837705783.375,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_6a40b2fd6ae341fb84ef0182d8b52c00",
+      "parentId": "fld_55ff15e1936b47ae96918e723f14e294",
+      "modified": 1646057721169,
+      "created": 1646057692753,
+      "url": "{{ _.API_URL }}/api/v1/users/me/logout/",
+      "name": "Logout",
+      "description": "",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "id": "pair_47416c8dfad24096aeef514f94f10445",
+          "name": "",
+          "value": "",
+          "description": ""
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1645802897535.875,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_9f409a0cc3c14f4e9ef54c80da7dc191",
+      "parentId": "fld_b65c1588183e45ffadbcc0b37ecb8980",
+      "modified": 1646205167094,
+      "created": 1645875436254,
+      "url": "{{ _.API_URL }}/api/v1/applications/",
+      "name": "Applications",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1645811599597.75,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_b65c1588183e45ffadbcc0b37ecb8980",
+      "parentId": "wrk_392d022659f74bdab9d85879ece8fbb1",
+      "modified": 1646205164274,
+      "created": 1646205164274,
+      "name": "Applications",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1646205164274,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_d58e80316d91455d87771b4cf40a5940",
+      "parentId": "fld_b65c1588183e45ffadbcc0b37ecb8980",
+      "modified": 1646319287088,
+      "created": 1646207188791,
+      "url": "{{ _.API_URL }}/api/v1/applications/",
+      "name": "Create application",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"name\": \"Invisen staging\",\n\t\"region\": \"eu-central-1\"\n}\n"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_301f8796d4354e5f837af1cda717a707"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1645807248566.8125,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_d7c56273823348cca9868bbf9243b530",
+      "parentId": "fld_b65c1588183e45ffadbcc0b37ecb8980",
+      "modified": 1646320658121,
+      "created": 1646258492706,
+      "url": "{{ _.API_URL }}/api/v1/applications/{% response 'body', 'req_9f409a0cc3c14f4e9ef54c80da7dc191', 'b64::JC4wLmlkZW50aWZpZXI=::46b', 'never', 60 %}/",
+      "name": "Update application",
+      "description": "",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"allowClientSend\": false,\n\t\"allowAnalytics\": false,\n\t\"allowClientSubscription\": true\n}\n"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_301f8796d4354e5f837af1cda717a707"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1645805073051.3438,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_80e3ab81da8c49159764d924569fb1b3",
+      "parentId": "fld_b65c1588183e45ffadbcc0b37ecb8980",
+      "modified": 1646295230785,
+      "created": 1646258939983,
+      "url": "{{ _.API_URL }}/api/v1/applications/{% response 'body', 'req_9f409a0cc3c14f4e9ef54c80da7dc191', 'b64::JC4wLmlkZW50aWZpZXI=::46b', 'never', 60 %}/",
+      "name": "Delete application",
+      "description": "",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1645803985293.6094,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_59a509c0af034643b460614860ea404e",
+      "parentId": "fld_e934df58afed4241a02242423166e195",
+      "modified": 1646320664960,
+      "created": 1646318674136,
+      "url": "{{ _.API_URL }}/api/v1/applications/{% response 'body', 'req_9f409a0cc3c14f4e9ef54c80da7dc191', 'b64::JC4wLmlkZW50aWZpZXI=::46b', 'never', 60 %}/members/",
+      "name": "Accept member invitation",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoibm9ybWFsIiwiZW1haWwiOiJ3b3JrQGNzb3Jpbi5jb20iLCJ0b2tlblR5cGUiOjMsImFwcGxpY2F0aW9uSWRlbnRpZmllciI6IjZlN2Y0NjQ0LWQyNGUtNGRkYy04MGVlLTFlNmZiOThhMDc1MyIsIl9leHBpcmVzIjoxNjQ2MzM0MTI0NDc2LCJpYXQiOjE2NDYzMTk3MjR9.bUhjxtd1GF_2gW97oxa9e2xNWr7kNs9sqbu_m_CWhWo\"\n}\n"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_301f8796d4354e5f837af1cda717a707"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1645806704687.9453,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_e934df58afed4241a02242423166e195",
+      "parentId": "fld_b65c1588183e45ffadbcc0b37ecb8980",
+      "modified": 1646320613205,
+      "created": 1646320613205,
+      "name": "Members",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1646320613205,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_ac52dcef47c6477ea4f16d8c020472a4",
+      "parentId": "fld_e934df58afed4241a02242423166e195",
+      "modified": 1646320628165,
+      "created": 1646318725341,
+      "url": "{{ _.API_URL }}/api/v1/applications/{% response 'body', 'req_9f409a0cc3c14f4e9ef54c80da7dc191', 'b64::JC4wLmlkZW50aWZpZXI=::46b', 'never', 60 %}/members/invite/",
+      "name": "Invite member",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"email\": \"work@csorin.com\",\n\t\"role\": \"normal\"\n}\n"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_301f8796d4354e5f837af1cda717a707"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1645806704787.9453,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_723d9393d7cf4664a9eb2aa1a5434006",
+      "parentId": "fld_e934df58afed4241a02242423166e195",
+      "modified": 1646320681489,
+      "created": 1646320607214,
+      "url": "{{ _.API_URL }}/api/v1/applications/{% response 'body', 'req_9f409a0cc3c14f4e9ef54c80da7dc191', 'b64::JC4wLmlkZW50aWZpZXI=::46b', 'never', 60 %}/members/leave/",
+      "name": "Leave member",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"email\": \"work@csorin.com\"\n}\n"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_301f8796d4354e5f837af1cda717a707"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1645806704737.9453,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_fbe76c69e5e0432780159537cd9aa08a",
+      "parentId": "fld_0fe789d3ab26456a84e17f4b4377f957",
+      "modified": 1646320642040,
+      "created": 1646260961844,
+      "url": "{{ _.API_URL }}/api/v1/applications/{% response 'body', 'req_9f409a0cc3c14f4e9ef54c80da7dc191', 'b64::JC4wLmlkZW50aWZpZXI=::46b', 'never', 60 %}/keys/",
+      "name": "Create key",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"type\": \"private\",\n\t\"expiresAt\": 23912212903912\n}\n"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_301f8796d4354e5f837af1cda717a707"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1645806160809.0781,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_0fe789d3ab26456a84e17f4b4377f957",
+      "parentId": "fld_b65c1588183e45ffadbcc0b37ecb8980",
+      "modified": 1646320638813,
+      "created": 1646320638813,
+      "name": "Keys",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1646320638813,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_b20c86a95fed4e78bccd5f86eb7adc28",
+      "parentId": "fld_0fe789d3ab26456a84e17f4b4377f957",
+      "modified": 1646320644721,
+      "created": 1646261496265,
+      "url": "{{ _.API_URL }}/api/v1/applications/{% response 'body', 'req_9f409a0cc3c14f4e9ef54c80da7dc191', 'b64::JC4wLmlkZW50aWZpZXI=::46b', 'never', 60 %}/keys/{% response 'body', 'req_9f409a0cc3c14f4e9ef54c80da7dc191', 'b64::JC4wLmtleXMuMC50b2tlbg==::46b', 'never', 60 %}",
+      "name": "Delete key",
+      "description": "",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1645806160859.0781,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
@@ -921,22 +1225,34 @@
     {
       "_id": "jar_8fa75b6727530acbacec520cad8fa2848a1d5fe8",
       "parentId": "wrk_392d022659f74bdab9d85879ece8fbb1",
-      "modified": 1645979809061,
+      "modified": 1646294966332,
       "created": 1645863793079,
       "name": "Default Jar",
       "cookies": [
         {
           "key": "auth",
-          "value": "eyJhbGciOiJIUzI1NiJ9.eyJpZGVudGlmaWVyIjoiNDk2ZDNlNzktOTg3My00MDJkLWEzYzUtNzk3MDA4NTk1NTk1IiwiYXBwbGljYXRpb25zIjpbXSwidmVyaWZpZWQiOmZhbHNlLCJlbWFpbCI6IndvcmtAY3NvcmluLmNvbSIsInRva2VuVHlwZSI6MSwiX2V4cGlyZXMiOjE2NDg1NzE4MDkwNTEsImlhdCI6MTY0NTk3OTgwOX0.2gEKJXusPk-E57Pyp5b2rRcWffoQqFF0w_n1rjm5f7k",
+          "value": "eyJhbGciOiJIUzI1NiJ9.eyJpZGVudGlmaWVyIjoiMDI5MDMzZGMtYTFiYy00NjgzLWIxN2YtYjQ0Y2M4ZWQwYzllIiwiYXBwbGljYXRpb25zIjpbXSwidmVyaWZpZWQiOmZhbHNlLCJlbWFpbCI6IndvcmtAY3NvcmluLmNvbSIsInRva2VuVHlwZSI6MSwiX2V4cGlyZXMiOjE2NDg4MjE3ODYxMzIsImlhdCI6MTY0NjIyOTc4Nn0.I6OoQN8IGZi_M4Eu6K5Dhuse5rfjU5YvoaJRcuto0GI",
+          "expires": null,
+          "domain": "app.rootsocket.com",
+          "path": "/",
+          "httpOnly": true,
+          "creation": "2022-03-03T08:09:18.570Z",
+          "id": "0597330230731854"
+        },
+        {
+          "key": "auth",
+          "value": "eyJhbGciOiJIUzI1NiJ9.eyJpZGVudGlmaWVyIjoiNDk2ZDNlNzktOTg3My00MDJkLWEzYzUtNzk3MDA4NTk1NTk1IiwiYXBwbGljYXRpb25zIjpbImRmMGZkOTIwLTVmNWMtNDU0Ni1hNTJmLTA3MTEzZWI2NmU1NSIsIjZlN2Y0NjQ0LWQyNGUtNGRkYy04MGVlLTFlNmZiOThhMDc1MyIsImFiMTBmMzcyLWU3MmUtNDg4OC05OTI4LWY3OGQwNzRmYTVlYiIsIjliOWViNmQxLWYwNjctNDk1Zi05MTEwLWY3NTU3ZjM0MTAwZCIsImQ5Mzc4YWM5LTlhN2EtNGQyZS05NzlmLWQ5ZTU2Njc0N2IzYiIsImYwYTE5NDgzLTFjOGQtNGExMy1iMDdhLTM2MzA0ZmY0YzRhNSJdLCJ2ZXJpZmllZCI6ZmFsc2UsImVtYWlsIjoid29ya0Bjc29yaW4uY29tIiwidG9rZW5UeXBlIjoxLCJfZXhwaXJlcyI6MTY0ODg4Njk1ODU1OCwiaWF0IjoxNjQ2Mjk0OTU4fQ.2Yr2DmrlazahULVADwBvfGSuBUgZZCqXvUAwoAATrl4",
+          "maxAge": 2160000,
           "domain": "localhost",
           "path": "/",
-          "secure": true,
+          "secure": false,
           "httpOnly": true,
-          "extensions": ["SameSite=Strict", "Max-Age:2160000"],
+          "extensions": ["SameSite=Strict"],
           "hostOnly": true,
           "creation": "2022-02-26T11:40:52.396Z",
-          "lastAccessed": "2022-02-27T16:36:49.059Z",
-          "id": "2702896588744763"
+          "lastAccessed": "2022-03-03T08:09:18.571Z",
+          "id": "7849327989631332",
+          "expires": null
         }
       ],
       "_type": "cookie_jar"
@@ -954,7 +1270,7 @@
     {
       "_id": "env_a4af0b9b7545441685e4368e925c608d",
       "parentId": "env_8fa75b6727530acbacec520cad8fa2848a1d5fe8",
-      "modified": 1646002142846,
+      "modified": 1646297282697,
       "created": 1645900172943,
       "name": "staging",
       "data": {

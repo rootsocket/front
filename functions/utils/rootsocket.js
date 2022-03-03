@@ -98,6 +98,27 @@ export class RootSocket {
     return user
   }
 
+  async updateUser(email, data) {
+    const safeEmail = this.createSafeInput(email)
+    const userPath = `users/${safeEmail}.json`
+
+    const user = await this.database.download(userPath)
+    if (!user) return null
+
+    const updatedUser = {
+      ...user,
+      ...data,
+    }
+
+    const isUserUpdated = await this.database.upload(userPath, updatedUser)
+    if (!isUserUpdated) return null
+
+    const cacheKey = this.getUserCacheKey(user.email)
+    this.cache.put(cacheKey, updatedUser, 60)
+
+    return isUserUpdated
+  }
+
   async createApplication(user, name, region) {
     const safeEmail = this.createSafeInput(user.email)
     const userPath = `users/${safeEmail}.json`
@@ -112,7 +133,7 @@ export class RootSocket {
       allowClientSend: false,
       allowClientSubscription: true,
       allowAnalytics: true,
-      members: [{ role: UserRole.owner, identifier: user.identifier }],
+      members: [{ role: UserRole.owner, email: user.email }],
     }
     const userRefreshed = await this.getUser(user.email)
     const updatedUser = {
