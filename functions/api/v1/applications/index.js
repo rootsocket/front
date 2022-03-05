@@ -9,16 +9,15 @@ export async function onRequestGet({ data }) {
 
 export async function onRequestPost({ data, request }) {
   const { name, region } = await request.json()
-  if (Object.values(ApplicationRegion).includes(region)) {
-    const application = await data.rootSocket.createApplication(
-      data.user,
-      name,
-      region
-    )
-    if (application) {
-      return new Response(JSON.stringify(application), { status: 200 })
-    }
+
+  if (!Object.values(ApplicationRegion).includes(region)) {
+    return new Response(null, { status: 400 })
   }
 
-  return new Response(null, { status: 400 })
+  const application = await data.rootSocket.createApplication(
+    data.user,
+    name,
+    region
+  )
+  return new Response(JSON.stringify(application), { status: 200 })
 }

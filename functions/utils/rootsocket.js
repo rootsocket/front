@@ -1,4 +1,5 @@
 import { uuid } from './random'
+import { memoizeAsync } from './memoize'
 import { UserRole } from '~/types/application'
 
 export class RootSocket {
@@ -27,12 +28,16 @@ export class RootSocket {
       )
   }
 
+  validatePassword(_password) {
+    return true
+  }
+
   getUserCacheKey(email) {
     return `${this.createSafeInput(email)}_CACHE_KEY`
   }
 
   async createUser(email, password) {
-    if (!this.validateEmail(email)) return null
+    if (!this.validateEmail(email)) throw new Error(`Invalid email ${email}`)
 
     const safeEmail = this.createSafeInput(email)
     const userPath = `users/${safeEmail}.json`
@@ -40,7 +45,7 @@ export class RootSocket {
 
     // We need to verify that there is no other user with this email
     const existingUser = await this.database.download(userPath)
-    if (existingUser) return null
+    if (existingUser) throw new Error(`User with email ${email} already exists`)
 
     const user = {
       identifier: uuid(),
@@ -61,14 +66,14 @@ export class RootSocket {
     const hashedPassword = await this.makePassword(password)
 
     const user = await this.database.download(userPath)
-    if (!user) return null
-    if (user.password !== hashedPassword) return null
+    if (!user) throw new Error(`User with email ${email} does not exist`)
+    if (user.password !== hashedPassword)
+      throw new Error(`Password doesn't match for email ${email}`)
 
-    delete user.password
     return user
   }
 
-  async getUser(email) {
+  getUser = memoizeAsync(async (email) => {
     const cacheKey = this.getUserCacheKey(email)
     const safeEmail = this.createSafeInput(email)
     const userPath = `users/${safeEmail}.json`
@@ -76,20 +81,31 @@ export class RootSocket {
     let user = await this.cache.get(cacheKey)
     if (!user) {
       user = await this.database.download(userPath)
-      if (!user) return null
+      if (!user) throw new Error(`User with email ${email} does not exist`)
 
       this.cache.put(cacheKey, user, 60)
     }
 
     return user
-  }
+  })
+
+  getApplication = memoizeAsync(async (applicationIdentifier) => {
+    const applicationPath = `applications/${applicationIdentifier}.json`
+    const application = await this.database.download(applicationPath)
+    if (!application)
+      throw new Error(
+        `Application with identifier ${applicationIdentifier} does not exist`
+      )
+
+    return application
+  })
 
   async changeUserPassword(email, password) {
     const safeEmail = this.createSafeInput(email)
     const userPath = `users/${safeEmail}.json`
 
     const user = await this.database.download(userPath)
-    if (!user) return null
+    if (!user) throw new Error(`User with email ${email} does not exist`)
 
     const hashedPassword = await this.makePassword(password)
     user.password = hashedPassword
@@ -103,7 +119,7 @@ export class RootSocket {
     const userPath = `users/${safeEmail}.json`
 
     const user = await this.database.download(userPath)
-    if (!user) return null
+    if (!user) throw new Error(`User with email ${email} does not exist`)
 
     const updatedUser = {
       ...user,
@@ -111,12 +127,13 @@ export class RootSocket {
     }
 
     const isUserUpdated = await this.database.upload(userPath, updatedUser)
-    if (!isUserUpdated) return null
+    if (!isUserUpdated)
+      throw new Error(`User with email ${email} was not updated`)
 
     const cacheKey = this.getUserCacheKey(user.email)
     this.cache.put(cacheKey, updatedUser, 60)
 
-    return isUserUpdated
+    return updatedUser
   }
 
   async createApplication(user, name, region) {
@@ -140,22 +157,13 @@ export class RootSocket {
       ...userRefreshed,
       applications: [...userRefreshed.applications, applicationIdentifier],
     }
-    const isUserUpdated = await this.database.upload(userPath, updatedUser)
+    await this.database.upload(userPath, updatedUser)
 
-    if (isUserUpdated) {
-      const cacheKey = this.getUserCacheKey(user.email)
-      this.cache.put(cacheKey, updatedUser, 60)
-      const isApplicationCreated = await this.database.upload(
-        applicationPath,
-        application
-      )
+    const cacheKey = this.getUserCacheKey(user.email)
+    this.cache.put(cacheKey, updatedUser, 60)
+    await this.database.upload(applicationPath, application)
 
-      if (isApplicationCreated) {
-        return application
-      }
-    }
-
-    return null
+    return application
   }
 
   async getApplications(applicationsIdentifier) {
@@ -165,8 +173,7 @@ export class RootSocket {
     applicationsIdentifier.forEach((identifier) => {
       calls.push(
         (async () => {
-          const applicationPath = `applications/${identifier}.json`
-          return await this.database.download(applicationPath)
+          return await this.getApplication(identifier)
         })()
       )
     })
@@ -174,29 +181,16 @@ export class RootSocket {
     return await Promise.all(calls)
   }
 
-  async getApplication(applicationIdentifier) {
-    const applicationPath = `applications/${applicationIdentifier}.json`
-    const application = await this.database.download(applicationPath)
-    if (!application) return null
-
-    return application
-  }
-
   async updateApplication(applicationIdentifier, data) {
     const applicationPath = `applications/${applicationIdentifier}.json`
     const application = await this.getApplication(applicationIdentifier)
-    if (!application) return null
 
     const updatedApplication = {
       ...application,
       ...data,
     }
 
-    const isApplicationUpdated = await this.database.upload(
-      applicationPath,
-      updatedApplication
-    )
-    if (!isApplicationUpdated) return null
+    await this.database.upload(applicationPath, updatedApplication)
     return updatedApplication
   }
 
@@ -204,25 +198,19 @@ export class RootSocket {
     const safeEmail = this.createSafeInput(user.email)
     const userPath = `users/${safeEmail}.json`
     const applicationPath = `applications/${applicationIdentifier}.json`
-    const isApplicationDeleted = await this.database.delete(applicationPath)
+    await this.database.delete(applicationPath)
 
-    if (isApplicationDeleted) {
-      const userRefreshed = await this.getUser(user.email)
-      const updatedUser = {
-        ...userRefreshed,
-        applications: userRefreshed.applications.filter(
-          (i) => i !== applicationIdentifier
-        ),
-      }
-      const isUserUpdated = await this.database.upload(userPath, updatedUser)
-
-      if (isUserUpdated) {
-        const cacheKey = this.getUserCacheKey(user.email)
-        this.cache.put(cacheKey, updatedUser, 60)
-        return true
-      }
+    const userRefreshed = await this.getUser(user.email)
+    const updatedUser = {
+      ...userRefreshed,
+      applications: userRefreshed.applications.filter(
+        (i) => i !== applicationIdentifier
+      ),
     }
+    await this.database.upload(userPath, updatedUser)
 
-    return false
+    const cacheKey = this.getUserCacheKey(user.email)
+    this.cache.put(cacheKey, updatedUser, 60)
+    return true
   }
 }

@@ -11,32 +11,28 @@ export async function onRequestPost({ data, request, params }) {
   const application = await data.rootSocket.getApplication(
     applicationIdentifier
   )
-  if (application) {
-    if (
-      application.members.find(
-        (i) =>
-          i.email === email ||
-          (i.role === UserRole.owner && i.email === data.user.email)
-      )
-    ) {
-      const updatedApplication = await data.rootSocket.updateApplication(
-        applicationIdentifier,
-        { members: application.members.filter((i) => i.email !== email) }
-      )
-      if (updatedApplication) {
-        const user = await data.rootSocket.updateUser(data.user.email, {
-          applications: data.user.applications.filter(
-            (i) => i !== applicationIdentifier
-          ),
-        })
-        if (user) {
-          return new Response(JSON.stringify(updatedApplication), {
-            status: 200,
-          })
-        }
-      }
-    }
+  const user = await data.rootSocket.getUser(email)
+
+  const isApplicationOwner = (i) =>
+    i.email === data.user.email && i.role === UserRole.owner
+  const isSameUser = (i) => i.email === email && data.user.email === email
+
+  if (
+    !application.members.some(
+      (i) =>
+        i.role !== UserRole.owner && (isSameUser(i) || isApplicationOwner(i))
+    )
+  ) {
+    return new Response(null, { status: 403 })
   }
 
-  return new Response(null, { status: 400 })
+  await data.rootSocket.updateApplication(applicationIdentifier, {
+    members: application.members.filter((i) => i.email !== email),
+  })
+  await data.rootSocket.updateUser(email, {
+    applications: user.applications.filter((i) => i !== applicationIdentifier),
+  })
+  return new Response(null, {
+    status: 204,
+  })
 }

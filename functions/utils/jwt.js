@@ -70,7 +70,7 @@ class JWT {
     expiresTTLSeconds = 60 * 5,
     options = { algorithm: 'HS256' }
   ) {
-    payload._expires = new Date().getTime() + expiresTTLSeconds * 1000
+    payload.exp = new Date().getTime() + expiresTTLSeconds * 1000
 
     if (typeof options === 'string') options = { algorithm: options }
     if (payload === null || typeof payload !== 'object')
@@ -112,6 +112,7 @@ class JWT {
       key,
       this._utf8ToUint8Array(partialToken)
     )
+
     return `${partialToken}.${Base64URL.stringify(new Uint8Array(signature))}`
   }
 
@@ -126,10 +127,11 @@ class JWT {
       throw new Error('token must consist of 3 parts')
     const importAlgorithm = this.algorithms[options.algorithm]
     if (!importAlgorithm) throw new Error('algorithm not found')
-    const payload = this.decode(token)
+    const payload = this.unsafeDecoode(token)
     if (payload.nbf && payload.nbf >= Math.floor(Date.now() / 1000))
-      return false
-    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return false
+      throw new Error('Token verification failed')
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000))
+      throw new Error('Token expired')
     let keyFormat = 'raw'
     let keyData
     if (secret.startsWith('-----BEGIN')) {
@@ -155,29 +157,21 @@ class JWT {
       key,
       this._utf8ToUint8Array(tokenParts.slice(0, 2).join('.'))
     )
-    return Base64URL.stringify(new Uint8Array(res)) === tokenParts[2]
+
+    if (!(Base64URL.stringify(new Uint8Array(res)) === tokenParts[2])) {
+      throw new Error('Token verification failed')
+    }
   }
 
   async decode(token, secret) {
-    try {
-      await this.verify(token, secret)
-      const data = this.unsafeDecoode(token)
-      if (data._expires > new Date().getTime()) {
-        return data
-      }
-    } catch {}
-
-    return null
+    await this.verify(token, secret)
+    return this.unsafeDecoode(token)
   }
 
   unsafeDecoode(token) {
-    try {
-      return this._decodePayload(
-        token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
-      )
-    } catch {
-      return null
-    }
+    return this._decodePayload(
+      token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+    )
   }
 }
 

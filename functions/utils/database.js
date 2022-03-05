@@ -135,7 +135,7 @@ export class Database {
       return await res.json()
     }
 
-    return null
+    throw new Error(`received unexpected response: ${JSON.stringify(res)}`)
   }
 
   async upload(path, body) {
@@ -154,7 +154,7 @@ export class Database {
       return await res.json()
     }
 
-    return null
+    throw new Error(`received unexpected response: ${JSON.stringify(res)}`)
   }
 
   async delete(path) {
@@ -173,6 +173,6 @@ export class Database {
       return await res.json()
     }
 
-    return null
+    throw new Error(`received unexpected response: ${JSON.stringify(res)}`)
   }
 }

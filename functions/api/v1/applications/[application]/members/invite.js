@@ -16,16 +16,14 @@ export async function onRequestPost({ data, request, params, env }) {
   const application = await data.rootSocket.getApplication(
     applicationIdentifier
   )
-  if (application) {
-    if (!application.members.find((i) => i.email === email)) {
-      const user = await data.rootSocket.getUser(email)
-      if (user) {
-        const mailer = new Mail(env)
-        await mailer.sendApplicationInvitation(application, user, role)
-        return new Response(null, { status: 200 })
-      }
-    }
+
+  if (application.members.find((i) => i.email === email)) {
+    return new Response(null, { status: 400 })
   }
 
-  return new Response(null, { status: 400 })
+  const user = await data.rootSocket.getUser(email)
+
+  const mailer = new Mail(env)
+  await mailer.sendApplicationInvitation(application, user, role)
+  return new Response(null, { status: 200 })
 }

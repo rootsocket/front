@@ -71,6 +71,7 @@
             :value="$t('updateApplication')"
             variant="primary"
             type="submit"
+            :disabled="!isApplicationOwner"
           />
         </div>
       </form>
@@ -89,6 +90,7 @@
             :value="$t('deleteApplication')"
             variant="red"
             type="submit"
+            :disabled="!isApplicationOwner"
           />
         </div>
       </div>
@@ -99,6 +101,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
+import { UserRole } from '~/types/application'
 
 export default Vue.extend({
   layout: 'application',
@@ -118,6 +121,14 @@ export default Vue.extend({
   computed: {
     application() {
       return getCurrentApplication(this.$store.state, this.$route.params.slug)
+    },
+    isApplicationOwner() {
+      return getCurrentApplication(
+        this.$store.state,
+        this.$route.params.slug
+      ).members.some(
+        (i) => i.email === this.$auth.user?.email && i.role === UserRole.owner
+      )
     },
   },
   mounted() {

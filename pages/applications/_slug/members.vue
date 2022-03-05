@@ -4,7 +4,7 @@
       <div class="flex flex-col md:flex-row justify-between md:items-center">
         <h1>{{ $t('members') }}</h1>
         <ButtonPressable
-          v-if="application.members.length !== 0"
+          v-if="application.members.length !== 0 && isApplicationOwner"
           class="mb-8"
           variant="outline"
           :value="$t('addMember')"
@@ -25,6 +25,7 @@
             {{ $t('membersWarning') }}
           </span>
           <ButtonPressable
+            v-if="isApplicationOwner"
             variant="outline"
             :value="$t('addMember')"
             @click="toggleShowAddMember"
@@ -38,7 +39,23 @@
           :key="member.identifier"
           class="w-full border dark:border-gray-800 rounded-md hover:shadow-sm flex flex-col items-start divide-y dark:divide-gray-800"
         >
-          {{ member }}
+          <div
+            class="flex flex-row justify-between items-center w-full py-2 px-4 h-16"
+          >
+            <div>
+              <span>{{ member.email }}</span>
+              <AppBadge
+                :value="$t(member.role)"
+                :variant="member.role === UserRole.owner ? 'green' : 'default'"
+                class="md:ml-2"
+              />
+            </div>
+            <ButtonPressable
+              v-if="canRemoveMember(member)"
+              variant="outline-red"
+              :value="$t('remove')"
+            />
+          </div>
         </div>
       </div>
     </AppPage>
@@ -80,6 +97,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
+import { Member, UserRole } from '~/types/application'
 
 export default Vue.extend({
   layout: 'application',
@@ -100,6 +118,17 @@ export default Vue.extend({
     application() {
       return getCurrentApplication(this.$store.state, this.$route.params.slug)
     },
+    isApplicationOwner() {
+      return getCurrentApplication(
+        this.$store.state,
+        this.$route.params.slug
+      ).members.some(
+        (i) => i.email === this.$auth.user?.email && i.role === UserRole.owner
+      )
+    },
+    UserRole() {
+      return UserRole
+    },
   },
   methods: {
     toggleShowAddMember() {
@@ -107,6 +136,11 @@ export default Vue.extend({
       this.addMember.email = ''
     },
     addMemberForm() {},
+    canRemoveMember(member: Member) {
+      if (member.role === UserRole.owner) return false
+
+      return this.isApplicationOwner || member.email === this.$auth.user?.email
+    },
   },
 })
 </script>
@@ -119,7 +153,10 @@ export default Vue.extend({
       "addMember": "Add member",
       "email": "Email",
       "enterEmail": "Enter email",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "owner": "Owner",
+      "normal": "Normal",
+      "remove": "Remove"
   },
   "es": {
       "members": "Miembros",
@@ -127,7 +164,10 @@ export default Vue.extend({
       "addMember": "Añadir miembro",
       "email": "Correo electrónico",
       "enterEmail": "Introduce un correo electrónico",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "owner": "Proprietario",
+      "normal": "Normal",
+      "remove": "Eliminar"
   }
 }
 </i18n>

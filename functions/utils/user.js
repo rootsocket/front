@@ -10,9 +10,7 @@ export const getUnverifiedUserFromRequest = (request) => {
   // This is not a guarantee that the JWT is signed by us!
   // Use the response with caution.
   const token = getTokenFromRequest(request)
-  if (token) return jwt.unsafeDecoode(token)
-
-  return null
+  return jwt.unsafeDecoode(token)
 }
 
 export const setUserAuthCookie = async (env, response, user) => {
@@ -41,26 +39,29 @@ const userSecret = (env, userPassword) => {
 }
 
 export const jwtSignUser = async (env, user) => {
+  const secretKey = userSecret(env, user.password)
   delete user.password
   return await jwt.sign(
     { ...user, tokenType: TOKEN_TYPE.ACCESS },
-    userSecret(env, user.password),
+    secretKey,
     // 30 days
     60 * 60 * 24 * 30
   )
 }
 
-export const jwtDecodeUser = async (env, userPassword, request) => {
-  const unverifiedUser = getUnverifiedUserFromRequest(request)
-  if (unverifiedUser.tokenType !== TOKEN_TYPE.ACCESS) return null
+export const jwtDecodeUser = async (env, userPassword, token) => {
+  if (!token) throw new Error('Token not provided')
+
+  const unverifiedUser = jwt.unsafeDecoode(token)
+  if (unverifiedUser.tokenType !== TOKEN_TYPE.ACCESS)
+    throw new Error(
+      `Incorrect token type, expected ${TOKEN_TYPE.ACCESS} got ${unverifiedUser.tokenType}`
+    )
   else {
     delete unverifiedUser.tokenType
   }
 
-  return await jwt.decode(
-    getTokenFromRequest(request),
-    userSecret(env, userPassword)
-  )
+  return await jwt.decode(token, userSecret(env, userPassword))
 }
 
 export const jwtSignResetPassword = async (env, user) => {
@@ -74,8 +75,10 @@ export const jwtSignResetPassword = async (env, user) => {
 
 export const jwtDecodeResetPassword = async (env, token) => {
   const unverifiedUser = jwt.unsafeDecoode(token)
-  if (!unverifiedUser) return null
-  if (unverifiedUser.tokenType !== TOKEN_TYPE.RESET_PASSWORD) return null
+  if (unverifiedUser.tokenType !== TOKEN_TYPE.RESET_PASSWORD)
+    throw new Error(
+      `Token type not ok, expected ${TOKEN_TYPE.RESET_PASSWORD} got ${unverifiedUser.tokenType}`
+    )
   else {
     delete unverifiedUser.tokenType
   }
@@ -104,8 +107,10 @@ export const jwtSignMemberInvitation = async (env, application, user, role) => {
 
 export const jwtDecodeMemberInvitation = async (env, token) => {
   const data = jwt.unsafeDecoode(token)
-  if (!data) return null
-  if (data.tokenType !== TOKEN_TYPE.INVITATION) return null
+  if (data.tokenType !== TOKEN_TYPE.INVITATION)
+    throw new Error(
+      `Token type not ok, expected ${TOKEN_TYPE.INVITATION} got ${data.tokenType}`
+    )
   else {
     delete data.tokenType
   }

@@ -10,15 +10,9 @@ export async function onRequestDelete({ data, params }) {
   const application = await data.rootSocket.getApplication(
     applicationIdentifier
   )
-  if (application) {
-    const updatedApplication = await data.rootSocket.updateApplication(
-      applicationIdentifier,
-      { keys: application.keys.filter((i) => i.token !== key) }
-    )
-    if (updatedApplication) {
-      return new Response(JSON.stringify(updatedApplication), { status: 200 })
-    }
-  }
-
-  return new Response(null, { status: 400 })
+  const updatedApplication = await data.rootSocket.updateApplication(
+    applicationIdentifier,
+    { keys: application.keys.filter((i) => i.token !== key) }
+  )
+  return new Response(JSON.stringify(updatedApplication), { status: 200 })
 }

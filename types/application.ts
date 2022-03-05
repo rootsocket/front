@@ -31,6 +31,11 @@ export enum ApplicationRegion {
   euCentral1 = 'eu-central-1',
 }
 
+export interface Member {
+  role: UserRole
+  email: string
+}
+
 export interface Application {
   identifier: string
   // UNIX timestamp
@@ -44,13 +49,7 @@ export interface Application {
   allowClientSubscription: boolean
   // Collects information from the client when a user connects to a WebSocket.
   allowAnalytics: boolean
-  members: {
-    role: UserRole
-    // User identifier
-    identifier: string
-    // Backend needs to make additional requests to get members data
-    email: string
-  }[]
+  members: Member[]
 }
 
 export interface Connection {

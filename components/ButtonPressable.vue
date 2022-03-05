@@ -1,6 +1,6 @@
 <template>
   <button
-    :type="loading ? 'button' : type"
+    :type="disabled || loading ? 'button' : type"
     :class="`
       relative
       text-center
@@ -15,8 +15,9 @@
       transition
       duration-200
       ${classes}
+      ${disabled ? 'opacity-40' : ''}
     `"
-    @click="loading ? noop : $emit('click')"
+    @click="disabled || loading ? noop : $emit('click')"
   >
     <div
       class="absolute left-0 ml-2 w-full flex justify-center items-center"
@@ -60,6 +61,10 @@ export default Vue.extend({
       required: true,
     },
     loading: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

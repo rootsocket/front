@@ -55,7 +55,6 @@ export const getters = {
 
     for (let j = 0; j < applications.length; j++) {
       const application = applications[j]
-
       if (
         normalizeString(application.name.toLowerCase()).includes(searchTerm)
       ) {

@@ -10,12 +10,10 @@ export const onRequestPost = async ({ request, env, data }) => {
   }
 
   const user = await data.rootSocket.createUser(email, password)
-  if (user) {
-    // const mailer = new Mail(env)
-    // await mailer.sendVerifyEmail(user)
-    const response = new Response(JSON.stringify(user), { status: 200 })
-    await setUserAuthCookie(env, response, user)
-    return response
-  }
-  return new Response(null, { status: 400 })
+
+  // const mailer = new Mail(env)
+  // await mailer.sendVerifyEmail(user)
+  const response = new Response(JSON.stringify(user), { status: 200 })
+  await setUserAuthCookie(env, response, user)
+  return response
 }

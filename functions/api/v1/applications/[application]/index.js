@@ -11,11 +11,7 @@ export async function onRequestPut({ data, request, params }) {
     applicationIdentifier,
     { name, allowClientSend, allowAnalytics, allowClientSubscription }
   )
-  if (application) {
-    return new Response(JSON.stringify(application), { status: 200 })
-  }
-
-  return new Response(null, { status: 400 })
+  return new Response(JSON.stringify(application), { status: 200 })
 }
 
 export async function onRequestDelete({ data, params }) {
@@ -25,12 +21,6 @@ export async function onRequestDelete({ data, params }) {
     return new Response(null, { status: 403 })
   }
 
-  const isApplicationRemoved = await data.rootSocket.removeApplication(
-    data.user,
-    applicationIdentifier
-  )
-  if (isApplicationRemoved) {
-    return new Response(null, { status: 204 })
-  }
-  return new Response(null, { status: 400 })
+  await data.rootSocket.removeApplication(data.user, applicationIdentifier)
+  return new Response(null, { status: 204 })
 }

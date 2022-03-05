@@ -9,10 +9,8 @@ export const onRequestPost = async ({ request, env, data }) => {
   }
 
   const user = await data.rootSocket.getUser(email)
-  if (user) {
-    const mailer = new Mail(env)
-    await mailer.sendResetPassword(user)
-  }
+  const mailer = new Mail(env)
+  await mailer.sendResetPassword(user)
 
   return new Response(null, { status: 200 })
 }
