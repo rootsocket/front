@@ -235,7 +235,7 @@ export default Vue.extend({
         await this.$store.dispatch('application/createKey', {
           identifier: this.application.identifier,
           expiresAt: this.createKey.dateExpire,
-          category: this.createKey.type,
+          category: parseInt(this.createKey.type as any),
         })
         this.toggleShowCreateKey()
       } catch {
