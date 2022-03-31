@@ -86,11 +86,12 @@ export default Vue.extend({
       if (this.email && this.password && token) {
         try {
           this.loading = true
-          const response = await this.$axios.post(
-            `${process.env.apiUrl}api/v1/users/me/register/`,
-            { email: this.email, password: this.password, captcha: token }
-          )
-          this.$auth.setUser(response.data)
+          await this.$store.dispatch('application/registerAccount', {
+            email: this.email,
+            password: this.password,
+            captcha: token,
+          })
+          this.$auth.setUser({ email: this.email })
           this.$auth.$storage.setState('loggedIn', true)
           this.$router.push(this.localePath({ name: 'applications' }))
         } catch (e: any) {

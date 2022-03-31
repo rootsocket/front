@@ -15,10 +15,9 @@
         <TextLabel :value="$t('region')" class="mt-4" />
         <span>{{ application.region }}</span>
         <TextLabel :value="$t('applicationIdentifier')" class="mt-4" />
-        <div class="flex flex-row items-center">
-          <span class="">{{ application.identifier }}</span>
+        <div class="flex flex-row flex-wrap items-center">
+          <span class="mr-4">{{ application.identifier }}</span>
           <ButtonPressable
-            class="ml-4"
             :value="$t('copy')"
             variant="outline"
             @click="copyIdentifier"
@@ -27,6 +26,7 @@
       </div>
       <form
         class="border dark:border-gray-800 rounded-md mt-4 divide-y dark:divide-gray-800"
+        @submit.prevent="updateApplication"
       >
         <div class="flex flex-col p-4">
           <TextLabel :value="$t('applicationName')" />
@@ -41,7 +41,7 @@
           <span class="text-xl font-semibold">{{ $t('analytics') }}</span>
           <span>{{ $t('analyticsDescription') }}</span>
           <AppToggle
-            v-model="allowAnalytics"
+            v-model="allowClientData"
             :label="$t('allowAnalytics')"
             class="mt-4"
           />
@@ -61,7 +61,7 @@
           }}</span>
           <span>{{ $t('clientSubscriptionDescription') }}</span>
           <AppToggle
-            v-model="allowClientSubscription"
+            v-model="allowChannelSubscription"
             :label="$t('allowClientSubscription')"
             class="mt-4"
           />
@@ -71,7 +71,7 @@
             :value="$t('updateApplication')"
             variant="primary"
             type="submit"
-            :disabled="!isApplicationOwner"
+            :loading="loadingUpdate"
           />
         </div>
       </form>
@@ -89,12 +89,39 @@
           <ButtonPressable
             :value="$t('deleteApplication')"
             variant="red"
-            type="submit"
+            type="button"
             :disabled="!isApplicationOwner"
+            @click="toggleShowDeleteApplication"
           />
         </div>
       </div>
     </AppPage>
+
+    <AppModal
+      :show="showDeleteApplication"
+      :title="$t('deleteApplication')"
+      @close="toggleShowDeleteApplication"
+    >
+      <form @submit.prevent="deleteApplicationForm">
+        <span>{{ $t('deleteApplicationDescription') }}</span>
+        <div class="w-full flex justify-end mt-4">
+          <ButtonPressable
+            :value="$t('cancel')"
+            variant="outline"
+            class="mr-2"
+            type="button"
+            @click="toggleShowDeleteApplication"
+          />
+          <ButtonPressable
+            :value="$t('deleteApplication')"
+            variant="red"
+            type="button"
+            :loading="loadingDelete"
+            @click="deleteApplicationForm"
+          />
+        </div>
+      </form>
+    </AppModal>
   </div>
 </template>
 
@@ -109,8 +136,11 @@ export default Vue.extend({
     return {
       name: '',
       allowClientSend: false,
-      allowAnalytics: false,
-      allowClientSubscription: false,
+      allowClientData: false,
+      allowChannelSubscription: false,
+      showDeleteApplication: false,
+      loadingUpdate: false,
+      loadingDelete: false,
     }
   },
   head() {
@@ -126,7 +156,7 @@ export default Vue.extend({
       return getCurrentApplication(
         this.$store.state,
         this.$route.params.slug
-      ).members.some(
+      ).members?.some(
         (i) => i.email === this.$auth.user?.email && i.role === UserRole.owner
       )
     },
@@ -134,13 +164,47 @@ export default Vue.extend({
   mounted() {
     this.name = this.application.name
     this.allowClientSend = this.application.allowClientSend
-    this.allowAnalytics = this.application.allowAnalytics
-    this.allowClientSubscription = this.application.allowClientSubscription
+    this.allowClientData = this.application.allowClientData
+    this.allowChannelSubscription = this.application.allowChannelSubscription
   },
   methods: {
     copyIdentifier() {
       navigator.clipboard.writeText(this.application.identifier)
       this.$toast.show(this.$t('copiedIdentifier'))
+    },
+    updateApplication() {
+      try {
+        this.loadingUpdate = true
+        this.$store.dispatch('application/updateApplication', {
+          identifier: this.application.identifier,
+          name: this.name,
+          allowClientSend: this.allowClientSend,
+          allowClientData: this.allowClientData,
+          allowChannelSubscription: this.allowChannelSubscription,
+        })
+      } catch {
+      } finally {
+        this.loadingUpdate = false
+      }
+    },
+    toggleShowDeleteApplication() {
+      this.showDeleteApplication = !this.showDeleteApplication
+    },
+    async deleteApplicationForm() {
+      try {
+        this.loadingDelete = true
+        await this.$store.dispatch('application/deleteApplication', {
+          identifier: this.application.identifier,
+        })
+        this.$router.push(
+          this.localeLocation({
+            name: 'applications',
+          })
+        )
+      } catch {
+      } finally {
+        this.loadingDelete = false
+      }
     },
   },
 })
@@ -149,6 +213,7 @@ export default Vue.extend({
 <i18n>
 {
   "en": {
+    "cancel": "Cancel",
     "settings": "Settings",
     "applicationName": "Application name",
     "enterName": "Enter name",
@@ -160,8 +225,8 @@ export default Vue.extend({
     "analyticsDescription": "It will allow to visualize IP Address and User Agent information",
     "copy": "Copy",
     "allowClientSend": "Allow client connections to send messages",
-    "allowClientSubscription": "Allow client connections to subscribe to channels",
-    "allowAnalytics": "Allow connections analytics",
+    "allowClientSubscription": "Allow client connections to subscribe to a channel",
+    "allowAnalytics": "Allow client connections analytics",
     "clientSend": "Messages",
     "clientSendDescription": "Enables the client connection to send messages to other connections, if disabled connections can only receive messages",
     "clientSubscription": "Subscriptions",
@@ -172,6 +237,7 @@ export default Vue.extend({
     "copiedIdentifier": "Copied application identifier"
   },
   "es": {
+    "cancel": "Cancelar",
     "settings": "Ajustes",
     "applicationName": "Nombre de la aplicación",
     "enterName": "Introduce el nombre",

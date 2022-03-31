@@ -79,7 +79,7 @@ export default Vue.extend({
   auth: false,
   data() {
     return {
-      email: '',
+      email: this.$route.query.email,
       loading: false,
       newPassword: '',
       newPasswordConfirm: '',
@@ -107,7 +107,7 @@ export default Vue.extend({
         try {
           this.loading = true
           await this.$axios.post(
-            `${process.env.apiUrl}api/v1/users/me/reset/`,
+            `${process.env.apiUrl}api/v1/users/reset-password/`,
             { email: this.email, captcha: token }
           )
           this.$toast.show(this.$t('success'))
@@ -124,11 +124,11 @@ export default Vue.extend({
     async resetConfirm() {
       try {
         this.loading = true
-        const response = await this.$axios.post(
-          `${process.env.apiUrl}api/v1/users/me/reset-confirm/`,
+        await this.$axios.post(
+          `${process.env.apiUrl}api/v1/users/reset-password-confirm/`,
           { password: this.newPassword, token: this.token }
         )
-        this.$auth.setUser(response.data)
+        this.$auth.setUser({ email: this.email })
         this.$auth.$storage.setState('loggedIn', true)
         this.$router.push(this.localePath({ name: 'applications' }))
       } catch (e: any) {
@@ -149,7 +149,7 @@ export default Vue.extend({
     "enterEmailAddress": "Enter email address",
     "resetPassword": "Reset password",
     "failedForgot": "Unable to process your request",
-    "success": "Success! If you have an account with us you should receive an email",
+    "success": "We sent you an email",
     "newPassword": "New password",
     "newPasswordConfirm": "New password confirm",
     "enterNewPassword": "Enter new password"
@@ -159,7 +159,7 @@ export default Vue.extend({
     "enterEmailAddress": "Introduce el correo electrónico",
     "resetPassword": "Reiniciar contraseña",
     "failedForgot": "No hemos sido capaces de procesar tu solicitud",
-    "success": "Hecho! Si tienes una cuenta con nosotros deberías recibir un correo electrónico",
+    "success": "Te hemos enviado correo electrónico",
     "newPassword": "Nueva contraseña",
     "newPasswordConfirm": "Confirmación nueva contraseña",
     "enterNewPassword": "Introduce una nueva contraseña"

@@ -967,24 +967,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@cfworker/sentry@^1.12.1":
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/@cfworker/sentry/-/sentry-1.12.1.tgz#268a278640b68813d4a5be64d00ada0d1eb04d86"
-  integrity sha512-oo8FelXtDb+2GCsz2KKncayIyriBAQwN0LfE09LwzSpPDUz8ZuZbZgxfj8te/HiA9KStaQ8Xmb4+gek/KYX1ag==
-  dependencies:
-    "@cfworker/worker-types" "^1.12.1"
-    "@cloudflare/workers-types" "^2.2.2"
-
-"@cfworker/worker-types@^1.12.1":
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/@cfworker/worker-types/-/worker-types-1.12.1.tgz#c1e651d5a71d6da5a1e34c64b427612d8472a3e0"
-  integrity sha512-DDZpu6FhT1MXH3USZ1+S1mscnYUZAZrtfFIwtSwuVSEp+vOSxZ3Bsm9eTbSDUffoXs3ZPhKFcUNa1++p/2l6cA==
-
-"@cloudflare/workers-types@^2.2.2":
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-2.2.2.tgz#1bced16bba801d7af987da835467545bb5cc7ac6"
-  integrity sha512-kaMn2rueJ0PL1TYVGknTCh0X0x0d9G+FNXAFep7/4uqecEZoQb/63o6rOmMuiqI09zLuHV6xhKRXinokV/MY9A==
-
 "@commitlint/cli@^15.0.0":
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-15.0.0.tgz#8e78e86ee2b6955c1a5d140e734a6c171ce367ee"

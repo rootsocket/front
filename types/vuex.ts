@@ -1,4 +1,4 @@
-import { Application } from './application'
+import { Application, User } from './application'
 
 export interface VuexRequest<T> {
   data?: T
@@ -9,6 +9,16 @@ export interface VuexRequest<T> {
 export interface VuexApplicationState {
   applications: VuexRequest<Application[]>
   createApplication: VuexRequest<Application>
+  updateApplication: VuexRequest<Application>
+  deleteApplication: VuexRequest<null>
+  createKey: VuexRequest<Application>
+  deleteKey: VuexRequest<Application>
+  inviteMember: VuexRequest<null>
+  acceptInvitation: VuexRequest<null>
+  deleteMember: VuexRequest<null>
+  updateAccount: VuexRequest<User>
+  registerAccount: VuexRequest<User>
+  deleteAccount: VuexRequest<null>
   filters: {
     applications: {
       search: string

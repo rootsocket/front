@@ -1,12 +1,11 @@
 export enum KeyType {
-  private = 'private',
-  public = 'public',
+  private = 1,
+  public = 2,
 }
 
 export interface Key {
-  token: string
-  type: KeyType
-  hosts: string[]
+  identifier: string
+  category: KeyType
   // UNIX timestamp
   expiresAt: number
 }
@@ -16,15 +15,13 @@ export interface Key {
 export interface User {
   identifier: string
   email: string
-  // Application identifier as an Array
-  applications: string[]
 }
 
 export enum UserRole {
   // There can only be 1 owner per application, billing info will be collected from this user.
-  owner = 'owner',
+  owner = 1,
   // Members can only see applications but cannot edit them or do anything.
-  normal = 'normal',
+  normal = 2,
 }
 
 export enum ApplicationRegion {
@@ -34,6 +31,9 @@ export enum ApplicationRegion {
 export interface Member {
   role: UserRole
   email: string
+  identifier: string
+  createdAt: string
+  accepted: boolean
 }
 
 export interface Application {
@@ -42,14 +42,14 @@ export interface Application {
   createdAt: number
   name: string
   region: string
-  keys: Key[]
+  keys?: Key[]
   // Allows a connection to send messages to other connections.
   allowClientSend: boolean
   // Subscription to channels will only be available through the API.
-  allowClientSubscription: boolean
+  allowChannelSubscription: boolean
   // Collects information from the client when a user connects to a WebSocket.
-  allowAnalytics: boolean
-  members: Member[]
+  allowClientData: boolean
+  members?: Member[]
 }
 
 export interface Connection {

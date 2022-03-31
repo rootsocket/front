@@ -4,7 +4,7 @@
       <div class="flex flex-col md:flex-row justify-between md:items-center">
         <h1>{{ $t('keys') }}</h1>
         <ButtonPressable
-          v-if="application.keys.length !== 0"
+          v-if="(application.keys || []).length !== 0"
           class="mb-8"
           variant="outline"
           :value="$t('createKey')"
@@ -12,7 +12,7 @@
         />
       </div>
       <div
-        v-if="application.keys.length === 0"
+        v-if="(application.keys || []).length === 0"
         class="w-full flex justify-center items-center"
       >
         <div class="flex flex-col items-center mt-10 mb-20">
@@ -34,16 +34,18 @@
 
       <div class="grid grid-cols-1 gap-4">
         <div
-          v-for="key in application.keys"
-          :key="key.token"
+          v-for="key in application.keys || []"
+          :key="key.identifier"
           class="w-full border dark:border-gray-800 rounded-md hover:shadow-sm flex flex-col items-start divide-y dark:divide-gray-800"
         >
           <div
             class="flex flex-row justify-between items-center w-full p-2 px-4 pt-3"
           >
             <AppBadge
-              :value="$t(key.type)"
-              :variant="key.type === KeyType.private ? 'green' : 'default'"
+              :value="
+                $t(key.category === KeyType.private ? 'private' : 'public')
+              "
+              :variant="key.category === KeyType.private ? 'green' : 'default'"
               class="mr-2"
             />
             <AppDropdown class="inline-flex ml-4">
@@ -63,19 +65,19 @@
               <ul class="px-4">
                 <span
                   class="flex text-red-400 items-center leading-8 whitespace-nowrap cursor-pointer"
-                  @click="showDeleteKey(key.token)"
+                  @click="toggleShowDeleteKey(key.identifier)"
                 >
                   {{ $t('deleteKey') }}
                 </span>
                 <span
                   class="flex items-center hover:text-primary-500 leading-8 whitespace-nowrap cursor-pointer"
-                  @click="copyKey(key.token)"
+                  @click="copyKey(key.identifier)"
                 >
                   {{ $t('copyKey') }}
                 </span>
                 <span
                   class="flex items-center hover:text-primary-500 leading-8 whitespace-nowrap cursor-pointer"
-                  @click="copyConfig(key.token)"
+                  @click="copyConfig(key.identifier)"
                 >
                   {{ $t('copyConfig') }}
                 </span>
@@ -85,8 +87,8 @@
           <div class="flex flex-row mt-2 overflow-x-auto w-full p-4">
             <AppBadge
               :value="`${$t('expires')} ${new Date(
-                key.expires
-              ).toLocaleDateString('default', {
+                key.expiresAt
+              ).toLocaleDateString($i18n.locale, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
@@ -106,7 +108,7 @@
       </div>
     </AppPage>
     <AppModal
-      :show="selectedKey.show"
+      :show="deleteKey.show"
       :title="$t('deleteKeyTitle')"
       @close="toggleShowDeleteKey"
     >
@@ -120,7 +122,13 @@
           type="button"
           @click="toggleShowDeleteKey"
         />
-        <ButtonPressable :value="$t('deleteKey')" variant="red" type="submit" />
+        <ButtonPressable
+          :value="$t('deleteKey')"
+          variant="red"
+          type="button"
+          :loading="deleteKey.loading"
+          @click="deleteKeyForm"
+        />
       </div>
     </AppModal>
     <AppModal
@@ -133,8 +141,8 @@
         <TextSelect
           v-model="createKey.type"
           :options="[
-            { value: KeyType.private, text: $t(KeyType.private) },
-            { value: KeyType.public, text: $t(KeyType.public) },
+            { value: KeyType.private, text: $t('private') },
+            { value: KeyType.public, text: $t('public') },
           ]"
           required
         />
@@ -159,6 +167,7 @@
             :value="$t('createKey')"
             variant="primary"
             type="submit"
+            :loading="createKey.loading"
           />
         </div>
       </form>
@@ -175,14 +184,16 @@ export default Vue.extend({
   layout: 'application',
   data() {
     return {
-      selectedKey: {
-        token: '',
+      deleteKey: {
+        identifier: '',
         show: false,
+        loading: false,
       },
       createKey: {
         type: KeyType.private,
         dateExpire: '',
         show: false,
+        loading: false,
       },
     }
   },
@@ -200,29 +211,51 @@ export default Vue.extend({
     },
   },
   methods: {
-    showDeleteKey(token: string) {
-      this.selectedKey.token = token
-      this.toggleShowDeleteKey()
-    },
-    toggleShowDeleteKey() {
-      this.selectedKey.show = !this.selectedKey.show
-      this.selectedKey.token = ''
+    toggleShowDeleteKey(identifier = '') {
+      this.deleteKey.show = !this.deleteKey.show
+      this.deleteKey.identifier = identifier
     },
     toggleShowCreateKey() {
       this.createKey.show = !this.createKey.show
       this.createKey.type = KeyType.private
     },
-    copyKey(token: string) {
-      navigator.clipboard.writeText(token)
+    copyKey(identifier: string) {
+      navigator.clipboard.writeText(identifier)
       this.$toast.show(this.$t('copiedKey'))
     },
-    copyConfig(token: string) {
+    copyConfig(identifier: string) {
       navigator.clipboard.writeText(
-        `APPLICATION_IDENTIFIER=${this.application.identifier}\nKEY_TOKEN=${token}`
+        `APPLICATION_IDENTIFIER=${this.application.identifier}\nKEY_TOKEN=${identifier}`
       )
       this.$toast.show(this.$t('copiedConfig'))
     },
-    createKeyForm() {},
+    async createKeyForm() {
+      try {
+        this.createKey.loading = true
+        await this.$store.dispatch('application/createKey', {
+          identifier: this.application.identifier,
+          expiresAt: this.createKey.dateExpire,
+          category: this.createKey.type,
+        })
+        this.toggleShowCreateKey()
+      } catch {
+      } finally {
+        this.createKey.loading = false
+      }
+    },
+    async deleteKeyForm() {
+      try {
+        this.deleteKey.loading = true
+        await this.$store.dispatch('application/deleteKey', {
+          identifier: this.application.identifier,
+          keyIdentifier: this.deleteKey.identifier,
+        })
+        this.toggleShowDeleteKey()
+      } catch {
+      } finally {
+        this.deleteKey.loading = false
+      }
+    },
   },
 })
 </script>

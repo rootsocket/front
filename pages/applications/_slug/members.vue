@@ -7,7 +7,7 @@
           v-if="application.members.length !== 0 && isApplicationOwner"
           class="mb-8"
           variant="outline"
-          :value="$t('addMember')"
+          :value="$t('inviteMember')"
           @click="toggleShowAddMember"
         />
       </div>
@@ -27,7 +27,7 @@
           <ButtonPressable
             v-if="isApplicationOwner"
             variant="outline"
-            :value="$t('addMember')"
+            :value="$t('inviteMember')"
             @click="toggleShowAddMember"
           />
         </div>
@@ -45,15 +45,22 @@
             <div>
               <span>{{ member.email }}</span>
               <AppBadge
-                :value="$t(member.role)"
+                :value="$t(member.role === UserRole.owner ? 'owner' : 'normal')"
                 :variant="member.role === UserRole.owner ? 'green' : 'default'"
                 class="md:ml-2"
+              />
+              <AppBadge
+                v-if="!member.accepted"
+                :value="$t('pending')"
+                variant="warning"
+                class="md:ml"
               />
             </div>
             <ButtonPressable
               v-if="canRemoveMember(member)"
               variant="outline-red"
               :value="$t('remove')"
+              @click="toggleShowRemoveMember(member.identifier, member.email)"
             />
           </div>
         </div>
@@ -62,7 +69,7 @@
 
     <AppModal
       :show="addMember.show"
-      :title="$t('addMember')"
+      :title="$t('inviteMember')"
       @close="toggleShowAddMember"
     >
       <form @submit.prevent="addMemberForm">
@@ -84,9 +91,44 @@
             @click="toggleShowAddMember"
           />
           <ButtonPressable
-            :value="$t('addMember')"
+            :value="$t('inviteMember')"
             variant="primary"
             type="submit"
+            :loading="addMember.loading"
+          />
+        </div>
+      </form>
+    </AppModal>
+
+    <AppModal
+      :show="removeMember.show"
+      :title="$t('removeMember')"
+      @close="toggleShowRemoveMember"
+    >
+      <form @submit.prevent="removeMemberForm">
+        <TextLabel :value="$t('email')" />
+        <TextInput
+          v-model="removeMember.email"
+          :placeholder="$t('enterEmail')"
+          type="email"
+          margin
+          required
+          disabled
+        />
+
+        <div class="w-full flex justify-end mt-4">
+          <ButtonPressable
+            :value="$t('cancel')"
+            variant="outline"
+            class="mr-2"
+            type="button"
+            @click="toggleShowRemoveMember"
+          />
+          <ButtonPressable
+            :value="$t('removeMember')"
+            variant="red"
+            type="submit"
+            :loading="removeMember.loading"
           />
         </div>
       </form>
@@ -106,6 +148,13 @@ export default Vue.extend({
       addMember: {
         email: '',
         show: false,
+        loading: false,
+      },
+      removeMember: {
+        identifier: '',
+        email: '',
+        show: false,
+        loading: false,
       },
     }
   },
@@ -122,7 +171,7 @@ export default Vue.extend({
       return getCurrentApplication(
         this.$store.state,
         this.$route.params.slug
-      ).members.some(
+      ).members?.some(
         (i) => i.email === this.$auth.user?.email && i.role === UserRole.owner
       )
     },
@@ -135,7 +184,43 @@ export default Vue.extend({
       this.addMember.show = !this.addMember.show
       this.addMember.email = ''
     },
-    addMemberForm() {},
+    toggleShowRemoveMember(identifier = '', email = '') {
+      this.removeMember.identifier = identifier
+      this.removeMember.email = email
+      this.removeMember.show = !this.removeMember.show
+    },
+    async addMemberForm() {
+      try {
+        this.addMember.loading = true
+        await this.$store.dispatch('application/inviteMember', {
+          identifier: this.application.identifier,
+          email: this.addMember.email,
+        })
+        this.$toast.show(this.$t('invited'))
+        this.toggleShowAddMember()
+      } catch (e) {
+        this.$toast.show(this.$t('noInvited'))
+      } finally {
+        this.addMember.loading = false
+      }
+    },
+    async removeMemberForm() {
+      try {
+        this.removeMember.loading = true
+        await this.$store.dispatch('application/deleteMember', {
+          identifier: this.application.identifier,
+          userIdentifier: this.removeMember.identifier,
+        })
+        if (this.removeMember.email === this.$auth.user?.email) {
+          this.$router.push(this.localeLocation({ name: 'applications' }))
+        }
+        this.toggleShowRemoveMember()
+      } catch (e) {
+        this.$toast.show(this.$t('noDeleteMember'))
+      } finally {
+        this.removeMember.loading = false
+      }
+    },
     canRemoveMember(member: Member) {
       if (member.role === UserRole.owner) return false
 
@@ -150,24 +235,34 @@ export default Vue.extend({
   "en": {
       "members": "Members",
       "membersWarning": "There are no other account related to this application",
-      "addMember": "Add member",
+      "inviteMember": "Invite member",
       "email": "Email",
       "enterEmail": "Enter email",
       "cancel": "Cancel",
       "owner": "Owner",
       "normal": "Normal",
-      "remove": "Remove"
+      "remove": "Remove",
+      "removeMember": "Remove member",
+      "invited": "Invitation sent",
+      "noInvited": "We couldn't send the invitation",
+      "noDeleteMember": "We couldn't delete that members",
+      "pending": "Pending"
   },
   "es": {
       "members": "Miembros",
       "membersWarning": "No hay ninguna otra cuenta relacionada con esta aplicación",
-      "addMember": "Añadir miembro",
+      "inviteMember": "Invitar miembro",
       "email": "Correo electrónico",
       "enterEmail": "Introduce un correo electrónico",
       "cancel": "Cancelar",
       "owner": "Proprietario",
       "normal": "Normal",
-      "remove": "Eliminar"
+      "remove": "Eliminar",
+      "removeMember": "Eliminar miembro",
+      "invited": "Invitación enviada",
+      "noInvited": "No hemos podido enviar la invitación",
+      "noDeleteMember": "No hemos podido eliminar ese miembro",
+      "pending": "Pendiente"
   }
 }
 </i18n>

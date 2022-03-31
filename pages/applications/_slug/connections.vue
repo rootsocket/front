@@ -20,7 +20,10 @@
         </div>
       </div>
 
-      <p class="text-gray-500 uppercase tracking-wider font-bold text-md">
+      <p
+        v-if="connections.length !== 0"
+        class="text-gray-500 uppercase tracking-wider font-bold text-md"
+      >
         {{ $t('active') }}
       </p>
       <div class="grid grid-cols-1 gap-4">
@@ -183,27 +186,13 @@ export default Vue.extend({
     },
     connections() {
       return [
-        {
-          identifier: 'aweoij34ioj35323423',
-          startAt: 123123123123123,
-          finishAt: 1238912347192348,
-          ipAddress: '192.168.1.1',
-          userAgent: 'Firefox MacOS 2.20',
-        },
-        {
-          identifier: 'otyhoityjhoityh',
-          startAt: 123123123123123,
-          finishAt: 1238912347192348,
-          ipAddress: '192.168.1.1',
-          userAgent: 'Firefox MacOS 2.20',
-        },
-        {
-          identifier: 'awefawefawef',
-          startAt: 123123123123123,
-          finishAt: 1238912347192348,
-          ipAddress: '192.168.1.1',
-          userAgent: 'Firefox MacOS 2.20',
-        },
+        // {
+        //   identifier: 'aweoij34ioj35323423',
+        //   startAt: 123123123123123,
+        //   finishAt: 1238912347192348,
+        //   ipAddress: '192.168.1.1',
+        //   userAgent: 'Firefox MacOS 2.20',
+        // },
       ]
     },
   },

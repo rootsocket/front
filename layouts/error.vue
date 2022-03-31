@@ -9,7 +9,7 @@
         variant="primary"
         :value="$t('goBack')"
         class="mt-5"
-        @click="$router.go(-1)"
+        @click="$router.push(localeLocation('/'))"
       />
       <div
         class="p-4 bg-white-100 rounded-md shadow border dark:border-gray-700 mt-4 w-64 lg:w-96 max-h-52 overflow-auto"
@@ -40,11 +40,11 @@ export default {
 <i18n>
 {
   "en": {
-    "goBack": "Go back to previous page",
+    "goBack": "Go back to home page",
     "ohError": "Something went wrong :("
   },
   "es": {
-    "goBack": "Volver a la página anterior",
+    "goBack": "Volver a la página principal",
     "ohError": "Algo ha ido mal :("
   }
 }

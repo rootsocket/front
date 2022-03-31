@@ -1,6 +1,6 @@
 import pkg from './package.json'
 
-const apiUrl = process.env.API_URL || 'http://localhost:8788/'
+const apiUrl = process.env.API_URL || 'http://localhost:8001/'
 const captchaSiteKey =
   process.env.CAPTCHA_SITE_KEY || '10000000-ffff-ffff-ffff-000000000001'
 
@@ -138,8 +138,8 @@ export default {
           autoFetch: false,
         },
         endpoints: {
-          login: { url: `${apiUrl}api/v1/users/me/login/`, method: 'post' },
-          logout: { url: `${apiUrl}api/v1/users/me/logout/`, method: 'post' },
+          login: { url: `${apiUrl}api/v1/users/login/`, method: 'post' },
+          logout: { url: `${apiUrl}api/v1/users/logout/`, method: 'post' },
         },
       },
     },

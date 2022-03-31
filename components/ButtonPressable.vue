@@ -39,6 +39,7 @@ enum Variant {
   outline = 'outline',
   red = 'red',
   outlineRed = 'outline-red',
+  green = 'green',
 }
 
 enum ButtonType {
@@ -101,6 +102,18 @@ export default Vue.extend({
               focus:shadow-sm
               focus:ring-4
               focus:ring-red-500
+              focus:ring-opacity-50
+              text-white
+              font-semibold
+          `
+        case Variant.green:
+          return `
+              bg-green-500
+              hover:bg-green-600
+              focus:bg-green-700
+              focus:shadow-sm
+              focus:ring-4
+              focus:ring-green-500
               focus:ring-opacity-50
               text-white
               font-semibold

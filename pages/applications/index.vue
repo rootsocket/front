@@ -48,8 +48,8 @@
           <div class="flex flex-row items-center mt-2 lg:mt-0">
             <AppBadge :value="application.region" variant="default" />
             <AppBadge
-              :value="$tc('keys', application.keys.length)"
-              :variant="application.keys.length === 0 ? 'red' : 'green'"
+              :value="$tc('keys', (application.keys || []).length)"
+              :variant="(application.keys || []).length === 0 ? 'red' : 'green'"
               class="ml-2"
             />
           </div>
@@ -99,6 +99,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { ApplicationRegion } from '~/types/application'
+import { getErrorMessage } from '~/utils/error'
 
 export default Vue.extend({
   layout: 'user',
@@ -156,7 +157,7 @@ export default Vue.extend({
         })
         this.toggleShowCreateApplicationModal()
       } catch (e) {
-        this.$toast.show(this.$t('noCreateApplication'))
+        this.$toast.show(getErrorMessage(e))
       }
     },
   },
