@@ -142,7 +142,7 @@ export const actions = {
       commit,
       mutation: 'setApplicationsRequest',
       process: async () => {
-        if (!data.force && state.applications.ttl > new Date().getTime()) {
+        if (!data?.force && state.applications.ttl > new Date().getTime()) {
           return state.applications
         }
 
