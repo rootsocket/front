@@ -67,7 +67,6 @@ export default Vue.extend({
       email: '',
       password: '',
       loading: false,
-      showCaptcha: false,
     }
   },
   head(): { title: string } {
@@ -78,6 +77,9 @@ export default Vue.extend({
   computed: {
     siteKey() {
       return process.env.captchaSiteKey
+    },
+    showCaptcha() {
+      return this.$store.getters['captcha/isActive']
     },
   },
   methods: {
@@ -100,7 +102,7 @@ export default Vue.extend({
         } catch (e: any) {
           const err = e.response?.data?.detail ?? 'failedRegister'
           this.$toast.show(this.$t(err))
-          this.showCaptcha = true
+          this.$store.commit('captcha/setCaptchaExpires')
         } finally {
           this.loading = false
           this.$refs.captcha.reset()

@@ -54,6 +54,7 @@ export default {
     '@/plugins/menu.client',
     '@/plugins/captcha.client',
     '@/plugins/persist.client',
+    '@/plugins/hydrate.client',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

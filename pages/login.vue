@@ -75,7 +75,6 @@ export default Vue.extend({
       email: '',
       password: '',
       loading: false,
-      showCaptcha: false,
     }
   },
   head() {
@@ -86,6 +85,9 @@ export default Vue.extend({
   computed: {
     siteKey() {
       return process.env.captchaSiteKey
+    },
+    showCaptcha() {
+      return this.$store.getters['captcha/isActive']
     },
   },
   beforeMount() {
@@ -115,7 +117,7 @@ export default Vue.extend({
         } catch (e: any) {
           const err = e.response?.data?.detail ?? 'failedLogin'
           this.$toast.show(this.$t(err))
-          this.showCaptcha = true
+          this.$store.commit('captcha/setCaptchaExpires')
         } finally {
           this.loading = false
           this.$refs.captcha.reset()

@@ -13,6 +13,7 @@ export const processRequest = async ({
     commit(mutation, {
       data: response.data,
       error: undefined,
+      ttl: new Date().getTime() + 60 * 1000, // 60 seconds
     })
     return response.data
   } catch (e: any) {

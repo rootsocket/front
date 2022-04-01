@@ -185,6 +185,8 @@ export default Vue.extend({
           })
         }
         this.currentPassword = ''
+
+        this.$toast.show(this.$t('success'))
       } catch (e) {
         this.$toast.show(getErrorMessage(e))
       } finally {
@@ -235,7 +237,8 @@ export default Vue.extend({
     "deleteAccountDescription": "All applications, members, keys and connections will be permanently deleted in a month. If you log in again your account will be reactivated",
     "personalInformation": "Personal information",
     "logout": "Log out",
-    "deleteSentEmail": "We sent you an email with more details"
+    "deleteSentEmail": "We sent you an email with more details",
+    "success": "Account updated successfully"
   },
   "es": {
     "account": "Cuenta",
@@ -256,7 +259,8 @@ export default Vue.extend({
     "deleteAccountDescription": "Todas las aplicaciones, miembros, claves y conexiones serán eliminadas permanentemente en un mes. Si inicias sesión de nuevo, tu cuenta será reactivada",
     "personalInformation": "Información personal",
     "logout": "Cerrar sesión",
-    "deleteSentEmail": "Te hemos enviado un email con más detalles"
+    "deleteSentEmail": "Te hemos enviado un email con más detalles",
+    "success": "Cuenta actualizada con éxito"
   }
 }
 </i18n>

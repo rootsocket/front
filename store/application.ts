@@ -7,6 +7,7 @@ const request = {
   data: undefined,
   isLoading: false,
   error: undefined,
+  ttl: 0,
 }
 
 export const state = (): VuexApplicationState => ({
@@ -136,14 +137,19 @@ export const getters = {
 }
 
 export const actions = {
-  async getApplications({ commit }: any) {
+  async getApplications({ state, commit }: any, data: { force: boolean }) {
     return await processRequest({
       commit,
       mutation: 'setApplicationsRequest',
-      process: async () =>
-        await (this as any).$axios.get(
+      process: async () => {
+        if (!data.force && state.applications.ttl > new Date().getTime()) {
+          return state.applications
+        }
+
+        return await (this as any).$axios.get(
           `${process.env.apiUrl}api/v1/applications/`
-        ),
+        )
+      },
     })
   },
   async createApplication(
@@ -311,7 +317,7 @@ export const actions = {
           `${process.env.apiUrl}api/v1/applications/${data.identifier}/members/`,
           { token: data.token }
         )
-        dispatch('getApplications')
+        dispatch('getApplications', { force: true })
         return response.data
       },
     })
@@ -363,6 +369,7 @@ export const actions = {
         )
         const auth = (this as any).$auth
         auth.setUser({ ...auth.user, email: data.email })
+        auth.$storage.setState('loggedIn', true)
         return response.data
       },
     })
