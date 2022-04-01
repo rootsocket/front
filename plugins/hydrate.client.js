@@ -1,3 +1,5 @@
 export default ({ store }) => {
-  store.dispatch('application/getApplications')
+  if (store.state.auth.loggedIn) {
+    store.dispatch('application/getApplications')
+  }
 }
