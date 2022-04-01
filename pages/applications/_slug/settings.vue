@@ -129,6 +129,7 @@
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
 import { UserRole } from '~/types/application'
+import { getErrorMessage } from '~/utils/error'
 
 export default Vue.extend({
   layout: 'application',
@@ -182,7 +183,9 @@ export default Vue.extend({
           allowClientData: this.allowClientData,
           allowChannelSubscription: this.allowChannelSubscription,
         })
-      } catch {
+        this.$toast.show(this.$t('success'))
+      } catch (e) {
+        this.$toast.show(getErrorMessage(e))
       } finally {
         this.loadingUpdate = false
       }
@@ -234,7 +237,8 @@ export default Vue.extend({
     "updateApplication": "Update application",
     "deleteApplication": "Delete application",
     "deleteApplicationDescription": "All members, keys, connections and information related to this application will be permanently deleted and you won't be able to recover it",
-    "copiedIdentifier": "Copied application identifier"
+    "copiedIdentifier": "Copied application identifier",
+    "success": "Application updated successfully"
   },
   "es": {
     "cancel": "Cancelar",
@@ -258,7 +262,8 @@ export default Vue.extend({
     "updateApplication": "Actualizar aplicación",
     "deleteApplication": "Eliminar aplicación",
     "deleteApplicationDescription": "Todos los miembros, claves, conexiones e información relacionada con esta aplicación será eliminada de forma permanente y no se podrá recuperar",
-    "copiedIdentifier": "Copiado el identificador de la aplicación"
+    "copiedIdentifier": "Copiado el identificador de la aplicación",
+    "success": "Aplicación actualizada con éxito"
   }
 }
 </i18n>

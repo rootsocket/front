@@ -179,6 +179,7 @@
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
 import { KeyType } from '@/types/application'
+import { getErrorMessage } from '~/utils/error'
 
 export default Vue.extend({
   layout: 'application',
@@ -238,7 +239,8 @@ export default Vue.extend({
           category: parseInt(this.createKey.type as any),
         })
         this.toggleShowCreateKey()
-      } catch {
+      } catch (e) {
+        this.$toast.show(getErrorMessage(e))
       } finally {
         this.createKey.loading = false
       }
@@ -251,7 +253,8 @@ export default Vue.extend({
           keyIdentifier: this.deleteKey.identifier,
         })
         this.toggleShowDeleteKey()
-      } catch {
+      } catch (e) {
+        this.$toast.show(getErrorMessage(e))
       } finally {
         this.deleteKey.loading = false
       }

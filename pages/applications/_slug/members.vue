@@ -140,6 +140,7 @@
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
 import { Member, UserRole } from '~/types/application'
+import { getErrorMessage } from '~/utils/error'
 
 export default Vue.extend({
   layout: 'application',
@@ -199,7 +200,7 @@ export default Vue.extend({
         this.$toast.show(this.$t('invited'))
         this.toggleShowAddMember()
       } catch (e) {
-        this.$toast.show(this.$t('noInvited'))
+        this.$toast.show(getErrorMessage(e))
       } finally {
         this.addMember.loading = false
       }
@@ -216,7 +217,7 @@ export default Vue.extend({
         }
         this.toggleShowRemoveMember()
       } catch (e) {
-        this.$toast.show(this.$t('noDeleteMember'))
+        this.$toast.show(getErrorMessage(e))
       } finally {
         this.removeMember.loading = false
       }
@@ -244,8 +245,6 @@ export default Vue.extend({
       "remove": "Remove",
       "removeMember": "Remove member",
       "invited": "Invitation sent",
-      "noInvited": "We couldn't send the invitation",
-      "noDeleteMember": "We couldn't delete that members",
       "pending": "Pending"
   },
   "es": {
@@ -260,8 +259,6 @@ export default Vue.extend({
       "remove": "Eliminar",
       "removeMember": "Eliminar miembro",
       "invited": "Invitación enviada",
-      "noInvited": "No hemos podido enviar la invitación",
-      "noDeleteMember": "No hemos podido eliminar ese miembro",
       "pending": "Pendiente"
   }
 }

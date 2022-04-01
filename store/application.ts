@@ -367,9 +367,12 @@ export const actions = {
           `${process.env.apiUrl}api/v1/users/me/`,
           data
         )
-        const auth = (this as any).$auth
-        auth.setUser({ ...auth.user, email: data.email })
-        auth.$storage.setState('loggedIn', true)
+
+        if (data.email) {
+          const auth = (this as any).$auth
+          auth.setUser({ ...auth.user, email: data.email })
+          auth.$storage.setState('loggedIn', true)
+        }
         return response.data
       },
     })
