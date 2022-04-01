@@ -217,7 +217,7 @@ module.exports = {
   purge: {
     // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
     // purges dark theme in production, keeping all css for now until there is time to make it work.
-    enabled: false,
+    enabled: true,
     content: [
       'content/**/*.md',
       'components/**/*.vue',
