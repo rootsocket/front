@@ -32,6 +32,7 @@
             required
           />
           <vue-hcaptcha
+            v-if="showCaptcha"
             ref="captcha"
             :sitekey="siteKey"
             :theme="$colorMode.preference"
@@ -74,6 +75,7 @@ export default Vue.extend({
       email: '',
       password: '',
       loading: false,
+      showCaptcha: false,
     }
   },
   head() {
@@ -93,10 +95,11 @@ export default Vue.extend({
   },
   methods: {
     login() {
-      this.$refs.captcha.execute()
+      if (this.showCaptcha) this.$refs.captcha.execute()
+      else this.onVerify()
     },
-    async onVerify(token: string) {
-      if (this.email && this.password && token) {
+    async onVerify(token = '') {
+      if (this.email && this.password && (token || !this.showCaptcha)) {
         try {
           this.loading = true
           await this.$auth.loginWith('local', {
@@ -112,6 +115,7 @@ export default Vue.extend({
         } catch (e: any) {
           const err = e.response?.data?.detail ?? 'failedLogin'
           this.$toast.show(this.$t(err))
+          this.showCaptcha = true
         } finally {
           this.loading = false
           this.$refs.captcha.reset()

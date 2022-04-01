@@ -17,6 +17,7 @@
             required
           />
           <vue-hcaptcha
+            v-if="showCaptcha"
             ref="captcha"
             :sitekey="siteKey"
             :theme="$colorMode.preference"
@@ -83,6 +84,7 @@ export default Vue.extend({
       loading: false,
       newPassword: '',
       newPasswordConfirm: '',
+      showCaptcha: false,
     }
   },
   head(): { title: string } {
@@ -100,10 +102,11 @@ export default Vue.extend({
   },
   methods: {
     reset() {
-      this.$refs.captcha.execute()
+      if (this.showCaptcha) this.$refs.captcha.execute()
+      else this.onVerify()
     },
-    async onVerify(token: string) {
-      if (this.email && token) {
+    async onVerify(token = '') {
+      if (this.email && (token || !this.showCaptcha)) {
         try {
           this.loading = true
           await this.$axios.post(
@@ -115,6 +118,7 @@ export default Vue.extend({
         } catch (e: any) {
           const err = e.response?.data?.detail ?? 'failedForgot'
           this.$toast.show(this.$t(err))
+          this.showCaptcha = true
         } finally {
           this.loading = false
           this.$refs.captcha.reset()
