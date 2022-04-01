@@ -102,10 +102,10 @@ export default Vue.extend({
         } catch (e: any) {
           const err = e.response?.data?.detail ?? 'failedRegister'
           this.$toast.show(this.$t(err))
-          this.$store.commit('captcha/setCaptchaExpires')
         } finally {
           this.loading = false
           this.$refs.captcha.reset()
+          this.$store.commit('captcha/setCaptchaExpires')
         }
       }
     },
