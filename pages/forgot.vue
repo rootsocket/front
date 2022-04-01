@@ -122,7 +122,9 @@ export default Vue.extend({
           this.$toast.show(this.$t(err))
         } finally {
           this.loading = false
-          this.$refs.captcha.reset()
+          if (this.$refs.captcha) {
+            this.$refs.captcha.reset()
+          }
           this.$store.commit('captcha/setCaptchaExpires')
         }
       }
