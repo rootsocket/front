@@ -35,14 +35,14 @@ export const paperCupsLifeHook = {
         iconVariant: 'outlined',
         baseUrl: 'https://app.papercups.io',
         // Optionally include data about your customer here to identify them
-        // customer: {
-        //   name: __CUSTOMER__.name,
-        //   email: __CUSTOMER__.email,
-        //   external_id: __CUSTOMER__.id,
-        //   metadata: {
-        //     plan: "premium"
-        //   }
-        // }
+        customer: {
+          // name: __CUSTOMER__.name,
+          email: this.$auth.user?.email ?? '',
+          // external_id: __CUSTOMER__.id,
+          // metadata: {
+          //   plan: "premium"
+          // }
+        },
       },
     }
   },
