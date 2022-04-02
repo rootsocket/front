@@ -71,6 +71,9 @@ export default {
     '@nuxtjs/google-fonts',
     '@nuxtjs/color-mode',
   ],
+  colorMode: {
+    classSuffix: '',
+  },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
