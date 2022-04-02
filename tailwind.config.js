@@ -6,7 +6,6 @@
  */
 const plugin = require('tailwindcss/plugin')
 const defaultTheme = require('tailwindcss/defaultTheme')
-const selectorParser = require('postcss-selector-parser')
 const { getColors } = require('theme-colors')
 
 // We need to respect breakpoints that match with docs & blog.
@@ -185,20 +184,21 @@ module.exports = {
     typography: ['responsive', 'dark'],
   },
   plugins: [
-    plugin(function ({ addVariant, prefix, e }) {
-      addVariant('dark', ({ modifySelectors, separator }) => {
-        modifySelectors(({ selector }) => {
-          return selectorParser((selectors) => {
-            selectors.walkClasses((sel) => {
-              sel.value = `dark${separator}${sel.value}`
-              sel.parent.insertBefore(
-                sel,
-                selectorParser().astSync(prefix('.dark-mode '))
-              )
-            })
-          }).processSync(selector)
-        })
-      })
+    plugin(function ({ addVariant, e }) {
+      // WARNING: This part seems to override some weird stuff that Tailwind does by default and dark theme stops working
+      // addVariant('dark', ({ modifySelectors, separator }) => {
+      //   modifySelectors(({ selector }) => {
+      //     return selectorParser((selectors) => {
+      //       selectors.walkClasses((sel) => {
+      //         sel.value = `dark${separator}${sel.value}`
+      //         sel.parent.insertBefore(
+      //           sel,
+      //           selectorParser().astSync(prefix('.dark-mode '))
+      //         )
+      //       })
+      //     }).processSync(selector)
+      //   })
+      // })
 
       addVariant('dark-hover', ({ modifySelectors, separator }) => {
         modifySelectors(({ className }) => {
@@ -217,7 +217,7 @@ module.exports = {
   purge: {
     // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
     // purges dark theme in production, keeping all css for now until there is time to make it work.
-    enabled: true,
+    enabled: process.env.NODE_ENV === 'production',
     content: [
       'content/**/*.md',
       'components/**/*.vue',
