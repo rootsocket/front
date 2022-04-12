@@ -1,6 +1,5 @@
 export enum KeyType {
-  private = 1,
-  public = 2,
+  normal = 1,
 }
 
 export interface Key {
@@ -47,6 +46,8 @@ export interface Application {
   allowClientSend: boolean
   // Subscription to channels will only be available through the API.
   allowChannelSubscription: boolean
+  // Subscriptions to channel require an auth token
+  allowChannelAuthorization: boolean
   // Collects information from the client when a user connects to a WebSocket.
   allowClientData: boolean
   members?: Member[]
@@ -54,10 +55,8 @@ export interface Application {
 
 export interface Connection {
   identifier: string
-  // UNIX timestamp
-  startAt: number
-  // UNIX timestamp
-  finishAt: number
+  startedAt: string
+  endedAt: string
   ipAddress: string
   userAgent: string
   // messages sent and received by connection

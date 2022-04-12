@@ -1,5 +1,13 @@
 <template>
-  <div class="flex flex-wrap-reverse">
+  <div
+    class="flex flex-wrap-reverse"
+    @keydown.esc="
+      () => {
+        addMember.show && toggleShowAddMember()
+        removeMember.show && toggleShowRemoveMember()
+      }
+    "
+  >
     <AppPage>
       <div class="flex flex-col md:flex-row justify-between md:items-center">
         <h1>{{ $t('members') }}</h1>

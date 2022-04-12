@@ -54,7 +54,7 @@ export default {
     "docs": "Docs"
   },
   "es": {
-    "applicatios": "Aplicación",
+    "application": "Aplicación",
     "blog": "Blog",
     "docs": "Docs"
   }

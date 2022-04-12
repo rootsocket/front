@@ -1,5 +1,13 @@
 <template>
-  <div class="flex flex-wrap-reverse">
+  <div
+    class="flex flex-wrap-reverse"
+    @keydown.esc="
+      () => {
+        deleteKey.show && toggleShowDeleteKey()
+        createKey.show && toggleShowCreateKey()
+      }
+    "
+  >
     <AppPage>
       <div class="flex flex-col md:flex-row justify-between md:items-center">
         <h1>{{ $t('keys') }}</h1>
@@ -39,16 +47,20 @@
           class="w-full border dark:border-gray-800 rounded-md hover:shadow-sm flex flex-col items-start divide-y dark:divide-gray-800"
         >
           <div
-            class="flex flex-row justify-between items-center w-full p-2 px-4 pt-3"
+            class="flex flex-row justify-between items-center w-full p-2 px-4 py-3"
           >
             <AppBadge
-              :value="
-                $t(key.category === KeyType.private ? 'private' : 'public')
-              "
-              :variant="key.category === KeyType.private ? 'green' : 'default'"
-              class="mr-2"
+              :value="`${$t('expires')} ${new Date(
+                key.expiresAt
+              ).toLocaleDateString($i18n.locale, {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}`"
+              variant="default"
+              class="mr-2 whitespace-nowrap"
             />
-            <AppDropdown class="inline-flex ml-4">
+            <AppDropdown class="ml-4">
               <template #trigger="{ open, toggle }">
                 <button
                   class="rounded-md hover:text-primary-500 focus:outline-none"
@@ -84,26 +96,6 @@
               </ul>
             </AppDropdown>
           </div>
-          <div class="flex flex-row mt-2 overflow-x-auto w-full p-4">
-            <AppBadge
-              :value="`${$t('expires')} ${new Date(
-                key.expiresAt
-              ).toLocaleDateString($i18n.locale, {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-              })}`"
-              variant="default"
-              class="mr-2 whitespace-nowrap"
-            />
-            <AppBadge
-              v-for="host in key.hosts"
-              :key="host"
-              :value="host"
-              variant="default"
-              class="mr-2"
-            />
-          </div>
         </div>
       </div>
     </AppPage>
@@ -137,23 +129,21 @@
       @close="toggleShowCreateKey"
     >
       <form @submit.prevent="createKeyForm">
-        <TextLabel :value="$t('keyType')" />
+        <TextLabel v-if="false" :value="$t('keyType')" />
         <TextSelect
           v-model="createKey.type"
-          :options="[
-            { value: KeyType.private, text: $t('private') },
-            { value: KeyType.public, text: $t('public') },
-          ]"
+          :options="[{ value: KeyType.normal, text: $t('normal') }]"
           required
+          hidden
+        />
+        <AppAlert
+          v-if="parseInt(createKey.type) === KeyType.admin"
+          variant="warning"
+          :value="$t('adminKeyMessage')"
+          class="mb-4"
         />
         <TextLabel :value="$t('expires')" />
-        <TextInput
-          v-model="createKey.dateExpire"
-          :placeholder="$t('enterName')"
-          type="date"
-          margin
-          required
-        />
+        <TextInput v-model="createKey.dateExpire" type="date" margin required />
 
         <div class="w-full flex justify-end mt-4">
           <ButtonPressable
@@ -191,7 +181,7 @@ export default Vue.extend({
         loading: false,
       },
       createKey: {
-        type: KeyType.private,
+        type: `${KeyType.normal}`,
         dateExpire: '',
         show: false,
         loading: false,
@@ -212,13 +202,29 @@ export default Vue.extend({
     },
   },
   methods: {
+    getKeyTypeValue(type: KeyType): string {
+      switch (type) {
+        case KeyType.normal:
+          return this.$t('normal')
+        default:
+          return ''
+      }
+    },
+    getKeyTypeVariant(type: KeyType): string {
+      switch (type) {
+        case KeyType.normal:
+          return 'green'
+        default:
+          return ''
+      }
+    },
     toggleShowDeleteKey(identifier = '') {
       this.deleteKey.show = !this.deleteKey.show
       this.deleteKey.identifier = identifier
     },
     toggleShowCreateKey() {
       this.createKey.show = !this.createKey.show
-      this.createKey.type = KeyType.private
+      this.createKey.type = `${KeyType.normal}`
     },
     copyKey(identifier: string) {
       navigator.clipboard.writeText(identifier)
@@ -236,7 +242,7 @@ export default Vue.extend({
         await this.$store.dispatch('application/createKey', {
           identifier: this.application.identifier,
           expiresAt: this.createKey.dateExpire,
-          category: parseInt(this.createKey.type as any),
+          category: KeyType.normal,
         })
         this.toggleShowCreateKey()
       } catch (e) {
@@ -269,41 +275,39 @@ export default Vue.extend({
     "cancel": "Cancel",
     "keys": "Keys",
     "expires": "Expires",
-    "public": "Public",
-    "private": "Private",
     "actions": "Actions",
     "deleteKey": "Delete key",
     "copyKey": "Copy key",
     "copyConfig": "Copy config",
     "deleteKeyTitle": "Confirm deletion",
-    "deleteKeyDescription": "After you confirm this action, we won't be able to generate any more connection with this key. Takes up to 5 minutes to remove it from our system.",
+    "deleteKeyDescription": "After you confirm this action, we won't be able to generate any more connection with this key. Takes up to 30 minutes to remove it from our system.",
     "createKey": "Create key",
     "keyType": "Key type",
-    "public": "Public key",
-    "private": "Private key",
+    "normal": "Normal key",
+    "admin": "Admin key",
     "copiedKey": "Copied key",
     "copiedConfig": "Copied application configuration",
-    "noKeys": "There are no keys available for this application"
+    "noKeys": "There are no keys available for this application",
+    "adminKeyMessage": "Admin keys allow pattern subscriptions, read the docs to learn more."
   },
   "es": {
     "cancel": "Cancelar",
     "keys": "Claves",
     "expires": "Caduca",
-    "public": "Pública",
-    "private": "Privada",
     "actions": "Acciones",
     "deleteKey": "Eliminar clave",
     "copyKey": "Copiar clave",
     "copyConfig": "Copiar config",
     "deleteKeyTitle": "Confirmar eliminación",
-    "deleteKeyDescription": "Después de confirmar esta acción, no se podrán generar más conexiones con esta clave. Puede tardar hasta 5 minutos en eliminarla de nuestro sistema.",
+    "deleteKeyDescription": "Después de confirmar esta acción, no se podrán generar más conexiones con esta clave. Puede tardar hasta 30 minutos en eliminarla de nuestro sistema.",
     "createKey": "Crear clave",
     "keyType": "Tipo de clave",
-    "public": "Clave pública",
-    "private": "Clave privada",
+    "normal": "Clave normal",
+    "admin": "Clave admin",
     "copiedKey": "Clave copiada con éxito",
     "copiedConfig": "Configuración de la aplicación copiada",
-    "noKeys": "No hay claves disponibles para esta aplicación"
+    "noKeys": "No hay claves disponibles para esta aplicación",
+    "adminKeyMessage": "Las claves de administrador permiten la suscripción por patrones, consulta la documentación para más información."
   }
 }
 </i18n>

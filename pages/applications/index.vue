@@ -1,5 +1,8 @@
 <template>
-  <div class="flex flex-wrap-reverse">
+  <div
+    class="flex flex-wrap-reverse"
+    @keydown.esc="toggleShowCreateApplicationModal"
+  >
     <AppPage>
       <div class="flex flex-col md:flex-row justify-between md:items-center">
         <h1>{{ $t('applications') }}</h1>
@@ -37,7 +40,7 @@
       >
         <IconLoad />
       </div>
-      <div v-if="!isLoadingApplications" class="grid grid-cols-1 gap-4">
+      <div v-else class="grid grid-cols-1 gap-4">
         <div
           v-for="application in applications"
           :key="application.identifier"

@@ -2,9 +2,8 @@
   <div class="flex flex-wrap-reverse">
     <AppPage>
       <h1>{{ $t('connections') }}</h1>
-
       <div
-        v-if="connections.length === 0"
+        v-if="!isLoadingConnections && connections.length === 0"
         class="w-full flex justify-center items-center"
       >
         <div class="flex flex-col items-center mt-10 mb-20">
@@ -19,14 +18,13 @@
           <ButtonPressable variant="outline" :value="$t('readMore')" />
         </div>
       </div>
-
-      <p
-        v-if="connections.length !== 0"
-        class="text-gray-500 uppercase tracking-wider font-bold text-md"
+      <div
+        v-if="isLoadingConnections"
+        class="w-full flex justify-center items-center h-40"
       >
-        {{ $t('active') }}
-      </p>
-      <div class="grid grid-cols-1 gap-4">
+        <IconLoad />
+      </div>
+      <div v-else class="grid grid-cols-1 gap-4">
         <div
           v-for="connection in connections"
           :key="connection.identifier"
@@ -79,16 +77,31 @@
               class="mr-2 whitespace-nowrap"
             />
             <AppBadge
-              :value="connection.userAgent"
+              v-for="tag in getUserAgentTags(connection.userAgent)"
+              :key="tag"
+              :value="tag"
               variant="default"
               class="mr-2 whitespace-nowrap"
             />
             <AppBadge
-              :value="`${connection.finishAt - connection.startAt} ${$t(
-                'minutes'
-              )}`"
+              :value="`${$t('minutes', {
+                count: Intl.NumberFormat('en-US', {
+                  notation: 'compact',
+                  maximumFractionDigits: 1,
+                }).format(calculateTime(connection)),
+              })}`"
               variant="default"
               class="mr-2 whitespace-nowrap"
+            />
+            <AppBadge
+              :value="`${$t('messages', {
+                count: Intl.NumberFormat('en-US', {
+                  notation: 'compact',
+                  maximumFractionDigits: 1,
+                }).format(connection.messages),
+              })}`"
+              variant="default"
+              class="whitespace-nowrap"
             />
           </div>
         </div>
@@ -158,7 +171,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import UAParser from 'ua-parser-js'
 import { getCurrentApplication } from '@/utils/application'
+import { Connection } from '~/types/application'
 
 export default Vue.extend({
   layout: 'application',
@@ -185,18 +200,41 @@ export default Vue.extend({
       return getCurrentApplication(this.$store.state, this.$route.params.slug)
     },
     connections() {
-      return [
-        // {
-        //   identifier: 'aweoij34ioj35323423',
-        //   startAt: 123123123123123,
-        //   finishAt: 1238912347192348,
-        //   ipAddress: '192.168.1.1',
-        //   userAgent: 'Firefox MacOS 2.20',
-        // },
-      ]
+      return this.$store.state.application.connections.data ?? []
+    },
+    isLoadingConnections() {
+      return this.$store.state.application.connections.loading
     },
   },
+  beforeMount() {
+    this.$store.dispatch('application/getConnections', {
+      limit: 50,
+      offset: 0,
+      identifier: this.application.identifier,
+    })
+  },
   methods: {
+    getUserAgentTags(userAgent: string) {
+      const parsedUA = new UAParser(userAgent)
+      const result = parsedUA.getResult()
+      return [
+        this.$t('device', {
+          text: `${result.browser.name} / ${result.browser.version}`,
+        }),
+        this.$t('browser', {
+          text: `${result.device.model} / ${result.device.type} / ${result.device.vendor}`,
+        }),
+        this.$t('os', { text: result.os.name, text2: result.os.version }),
+      ].filter((i) => !i.includes('undefined'))
+    },
+    calculateTime(connection: Connection) {
+      const timestampStartedAt = new Date(connection.startedAt).getTime()
+      const result =
+        (connection.endedAt
+          ? new Date(connection.endedAt).getTime()
+          : timestampStartedAt) - timestampStartedAt
+      return result !== 0 ? result / (1000 * 60) : result
+    },
     copyIdentifier(identifier: string) {
       navigator.clipboard.writeText(identifier)
       this.$toast.show(this.$t('copiedIdentifier').toString())
@@ -236,12 +274,16 @@ export default Vue.extend({
     "today": "Today",
     "copiedIdentifier": "Copied connection identifier",
     "ip": "IP",
-    "minutes": "minutes",
+    "minutes": "{count} minutes",
     "active": "Active",
     "disconnectConnectionDescription": "Connection {identifier} will be unable to receive or send any more messages",
     "channelName": "Channel name",
     "enterName": "Enter name",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "messages": "{count} messages",
+    "device": "Device {text}",
+    "browser": "Browser {text}",
+    "os": "OS {text} / {text2}"
   },
   "es": {
     "connections": "Conexiones",
@@ -254,12 +296,16 @@ export default Vue.extend({
     "today": "Hoy",
     "copiedIdentifier": "Copiada la identificación de la conexión",
     "ip": "IP",
-    "minutes": "minutos",
+    "minutes": "{count} minutos",
     "active": "Activas",
     "disconnectConnectionDescription": "La conexión {identifier} no podrá enviar o recibir más mensajes",
     "channelName": "Nombre del canal",
     "enterName": "Introduce un nombre",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "messages": "{count} mensajes",
+    "device": "Dispositivo {text}",
+    "browser": "Navegador {text}",
+    "os": "SO {text} / {text2}"
   }
 }
 </i18n>

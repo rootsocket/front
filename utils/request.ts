@@ -8,7 +8,7 @@ export const processRequest = async ({
   process: () => Promise<any>
 }) => {
   try {
-    commit(mutation, { isLoading: true })
+    commit(mutation, { loading: true })
     const response = await process()
     commit(mutation, {
       data: response.data,
@@ -20,6 +20,6 @@ export const processRequest = async ({
     commit(mutation, { data: undefined, error: e.message })
     throw e
   } finally {
-    commit(mutation, { isLoading: false })
+    commit(mutation, { loading: false })
   }
 }

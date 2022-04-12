@@ -1,11 +1,17 @@
-import { Application, ApplicationRegion, Key, User } from '~/types/application'
+import {
+  Application,
+  ApplicationRegion,
+  Key,
+  User,
+  Connection,
+} from '~/types/application'
 import { normalizeString } from '~/utils/string'
 import { VuexApplicationState, VuexRequest } from '~/types/vuex'
 import { processRequest } from '~/utils/request'
 
 const request = {
   data: undefined,
-  isLoading: false,
+  loading: false,
   error: undefined,
   ttl: 0,
 }
@@ -28,6 +34,7 @@ export const state = (): VuexApplicationState => ({
   updateAccount: request,
   deleteAccount: request,
   registerAccount: request,
+  connections: request,
 })
 
 export const mutations = {
@@ -42,6 +49,12 @@ export const mutations = {
     payload: VuexRequest<Application[]>
   ) {
     state.applications = { ...state.applications, ...payload }
+  },
+  setConnectionsRequest(
+    state: VuexApplicationState,
+    payload: VuexRequest<Connection[]>
+  ) {
+    state.connections = { ...state.connections, ...payload }
   },
   setCreateApplicationRequest(
     state: VuexApplicationState,
@@ -169,7 +182,7 @@ export const actions = {
           data: applications,
           error: undefined,
         })
-        return response.data
+        return response
       },
     })
   },
@@ -206,7 +219,7 @@ export const actions = {
           data: applications,
           error: undefined,
         })
-        return response.data
+        return response
       },
     })
   },
@@ -224,7 +237,7 @@ export const actions = {
           ),
           error: undefined,
         })
-        return response.data
+        return response
       },
     })
   },
@@ -248,7 +261,7 @@ export const actions = {
           ),
           error: undefined,
         })
-        return response.data
+        return response
       },
     })
   },
@@ -276,7 +289,7 @@ export const actions = {
           ),
           error: undefined,
         })
-        return response.data
+        return response
       },
     })
   },
@@ -301,7 +314,7 @@ export const actions = {
           ),
           error: undefined,
         })
-        return response.data
+        return response
       },
     })
   },
@@ -318,7 +331,7 @@ export const actions = {
           { token: data.token }
         )
         dispatch('getApplications', { force: true })
-        return response.data
+        return response
       },
     })
   },
@@ -346,7 +359,7 @@ export const actions = {
           ),
           error: undefined,
         })
-        return response.data
+        return response
       },
     })
   },
@@ -373,7 +386,29 @@ export const actions = {
           auth.setUser({ ...auth.user, email: data.email })
           auth.$storage.setState('loggedIn', true)
         }
-        return response.data
+        return response
+      },
+    })
+  },
+  async getConnections(
+    { state, commit }: any,
+    data: { next: boolean; limit: number; offset: number; identifier: string }
+  ) {
+    return await processRequest({
+      commit,
+      mutation: 'setConnectionsRequest',
+      process: async () => {
+        const response = await (this as any).$axios.get(
+          `${process.env.apiUrl}api/v1/applications/${data.identifier}/connections/?limit=${data.limit}&offset=${data.offset}`
+        )
+
+        if (data.next) {
+          return response.data
+            ? { data: [...state.connections.data, ...response.data] }
+            : state.connections
+        }
+
+        return response
       },
     })
   },

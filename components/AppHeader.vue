@@ -8,7 +8,7 @@
       <div class="flex items-center justify-between h-16">
         <div class="lg:w-1/5 flex items-center pr-4" @click.stop="noop">
           <NuxtLink
-            :to="localePath('/')"
+            :to="localeLocation({ path: '/applications' })"
             class="flex-shrink-0 flex-1 font-bold text-xl flex flex-row items-center"
             :aria-label="`${$config.projectTitle} Logo`"
           >

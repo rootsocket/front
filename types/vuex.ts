@@ -1,8 +1,8 @@
-import { Application, User } from './application'
+import { Application, Connection, User } from './application'
 
 export interface VuexRequest<T> {
   data?: T
-  isLoading: boolean
+  loading: boolean
   error?: { status: number; message: string }
 }
 
@@ -19,6 +19,7 @@ export interface VuexApplicationState {
   updateAccount: VuexRequest<User>
   registerAccount: VuexRequest<User>
   deleteAccount: VuexRequest<null>
+  connections: VuexRequest<Connection[]>
   filters: {
     applications: {
       search: string

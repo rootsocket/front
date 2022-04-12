@@ -1,6 +1,7 @@
 import pkg from './package.json'
 
 const apiUrl = process.env.API_URL || 'http://localhost:8001/'
+const wsUrl = process.env.WS_URL || 'http://localhost:8002'
 const captchaSiteKey =
   process.env.CAPTCHA_SITE_KEY || '10000000-ffff-ffff-ffff-000000000001'
 
@@ -8,6 +9,7 @@ export default {
   env: {
     captchaSiteKey,
     apiUrl,
+    wsUrl,
   },
   publicRuntimeConfig: {
     clientVersion: pkg.version,

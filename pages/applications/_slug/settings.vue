@@ -1,5 +1,8 @@
 <template>
-  <div class="flex flex-wrap-reverse">
+  <div
+    class="flex flex-wrap-reverse"
+    @keydown.esc="toggleShowDeleteApplication"
+  >
     <AppPage>
       <h1>{{ $t('settings') }}</h1>
 
@@ -63,6 +66,11 @@
           <AppToggle
             v-model="allowChannelSubscription"
             :label="$t('allowClientSubscription')"
+            class="mt-4"
+          />
+          <AppToggle
+            v-model="allowChannelAuthorization"
+            :label="$t('allowChannelAuthorization')"
             class="mt-4"
           />
         </div>
@@ -139,6 +147,7 @@ export default Vue.extend({
       allowClientSend: false,
       allowClientData: false,
       allowChannelSubscription: false,
+      allowChannelAuthorization: false,
       showDeleteApplication: false,
       loadingUpdate: false,
       loadingDelete: false,
@@ -162,26 +171,35 @@ export default Vue.extend({
       )
     },
   },
+  watch: {
+    allowChannelSubscription(newAllowChannelSubscription: boolean) {
+      if (!newAllowChannelSubscription) {
+        this.allowChannelAuthorization = false
+      }
+    },
+  },
   mounted() {
     this.name = this.application.name
     this.allowClientSend = this.application.allowClientSend
     this.allowClientData = this.application.allowClientData
     this.allowChannelSubscription = this.application.allowChannelSubscription
+    this.allowChannelAuthorization = this.application.allowChannelAuthorization
   },
   methods: {
     copyIdentifier() {
       navigator.clipboard.writeText(this.application.identifier)
       this.$toast.show(this.$t('copiedIdentifier'))
     },
-    updateApplication() {
+    async updateApplication() {
       try {
         this.loadingUpdate = true
-        this.$store.dispatch('application/updateApplication', {
+        await this.$store.dispatch('application/updateApplication', {
           identifier: this.application.identifier,
           name: this.name,
           allowClientSend: this.allowClientSend,
           allowClientData: this.allowClientData,
           allowChannelSubscription: this.allowChannelSubscription,
+          allowChannelAuthorization: this.allowChannelAuthorization,
         })
         this.$toast.show(this.$t('success'))
       } catch (e) {
@@ -233,7 +251,8 @@ export default Vue.extend({
     "clientSend": "Messages",
     "clientSendDescription": "Enables the client connection to send messages to other connections, if disabled connections can only receive messages",
     "clientSubscription": "Subscriptions",
-    "clientSubscriptionDescription": "Enables subscription to channels from a client connection, if disabled you have to subscribe clients to a channel through the API",
+    "allowChannelAuthorization": "Require clients to send an authentication token for every subscription",
+    "clientSubscriptionDescription": "Enables subscription to channels from a client connection with or without authorization, if disabled you have to subscribe clients to a channel through the API",
     "updateApplication": "Update application",
     "deleteApplication": "Delete application",
     "deleteApplicationDescription": "All members, keys, connections and information related to this application will be permanently deleted and you won't be able to recover it",
@@ -258,7 +277,8 @@ export default Vue.extend({
     "clientSend": "Mensajes",
     "clientSendDescription": "Habilita el envío de mensajes a otras conexiones desde una conexión de cliente, si está deshabilitada las conexiones solo podrán recibir mensajes",
     "clientSubscription": "Suscripciones",
-    "clientSubscriptionDescription": "Habilita la suscripción a un canal desde una conexión de cliente, si está deshabilitada tendrás que suscribir la conexión a canales a través de la API",
+    "allowChannelAuthorization": "Requerir a los clientes enviar un token de autorización con cada suscripción",
+    "clientSubscriptionDescription": "Habilita la suscripción a un canal desde una conexión de cliente con o sin autorización, si está deshabilitada tendrás que suscribir la conexión a canales a través de la API",
     "updateApplication": "Actualizar aplicación",
     "deleteApplication": "Eliminar aplicación",
     "deleteApplicationDescription": "Todos los miembros, claves, conexiones e información relacionada con esta aplicación será eliminada de forma permanente y no se podrá recuperar",
