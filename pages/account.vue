@@ -4,7 +4,7 @@
       <div class="flex flex-col md:flex-row justify-between md:items-center">
         <h1>{{ $t('account') }}</h1>
         <ButtonPressable
-          class="mb-8"
+          class="mb-7"
           variant="outline-red"
           :value="$t('logout')"
           @click="logout"

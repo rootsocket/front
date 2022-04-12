@@ -13,7 +13,7 @@
         <h1>{{ $t('keys') }}</h1>
         <ButtonPressable
           v-if="(application.keys || []).length !== 0"
-          class="mb-8"
+          class="mb-7"
           variant="outline"
           :value="$t('createKey')"
           @click="toggleShowCreateKey"
@@ -49,18 +49,38 @@
           <div
             class="flex flex-row justify-between items-center w-full p-2 px-4 py-3"
           >
-            <AppBadge
-              :value="`${$t('expires')} ${new Date(
-                key.expiresAt
-              ).toLocaleDateString($i18n.locale, {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-              })}`"
-              variant="default"
-              class="mr-2 whitespace-nowrap"
-            />
-            <AppDropdown class="ml-4">
+            <div class="flex flex-row items-center">
+              <AppBadge
+                :value="
+                  $t(key.category === KeyType.debugger ? 'debugger' : 'normal')
+                "
+                :variant="
+                  key.category === KeyType.debugger ? 'warning' : 'default'
+                "
+                class="mr-2"
+              />
+              <AppBadge
+                v-if="key.category !== KeyType.debugger"
+                :value="`${$t('expires')} ${new Date(
+                  key.expiresAt
+                ).toLocaleDateString($i18n.locale, {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}`"
+                variant="default"
+                class="mr-2 whitespace-nowrap"
+              />
+            </div>
+            <div v-if="key.category === KeyType.debugger">
+              <span
+                class="flex text-red-400 items-center whitespace-nowrap cursor-pointer"
+                @click="toggleShowDeleteKey(key.identifier)"
+              >
+                {{ $t('deleteKey') }}
+              </span>
+            </div>
+            <AppDropdown v-else class="ml-4">
               <template #trigger="{ open, toggle }">
                 <button
                   class="rounded-md hover:text-primary-500 focus:outline-none"
@@ -104,7 +124,13 @@
       :title="$t('deleteKeyTitle')"
       @close="toggleShowDeleteKey"
     >
-      <span>{{ $t('deleteKeyDescription') }}</span>
+      <span>{{
+        $t(
+          isDebugKey(deleteKey.identifier)
+            ? 'deleteDebugKeyDescription'
+            : 'deleteKeyDescription'
+        )
+      }}</span>
 
       <div class="w-full flex justify-end mt-4">
         <ButtonPressable
@@ -129,21 +155,32 @@
       @close="toggleShowCreateKey"
     >
       <form @submit.prevent="createKeyForm">
-        <TextLabel v-if="false" :value="$t('keyType')" />
+        <TextLabel :value="$t('keyType')" />
         <TextSelect
           v-model="createKey.type"
-          :options="[{ value: KeyType.normal, text: $t('normal') }]"
+          :options="[
+            { value: KeyType.normal, text: $t('normal') },
+            { value: KeyType.debugger, text: $t('debugger') },
+          ]"
           required
-          hidden
         />
         <AppAlert
-          v-if="parseInt(createKey.type) === KeyType.admin"
+          v-if="parseInt(createKey.type) === KeyType.debugger"
           variant="warning"
-          :value="$t('adminKeyMessage')"
+          :value="$t('debuggerMessage')"
           class="mb-4"
         />
-        <TextLabel :value="$t('expires')" />
-        <TextInput v-model="createKey.dateExpire" type="date" margin required />
+        <TextLabel
+          v-if="parseInt(createKey.type) !== KeyType.debugger"
+          :value="$t('expires')"
+        />
+        <TextInput
+          v-if="parseInt(createKey.type) !== KeyType.debugger"
+          v-model="createKey.dateExpire"
+          type="date"
+          margin
+          required
+        />
 
         <div class="w-full flex justify-end mt-4">
           <ButtonPressable
@@ -182,7 +219,7 @@ export default Vue.extend({
       },
       createKey: {
         type: `${KeyType.normal}`,
-        dateExpire: '',
+        dateExpire: undefined,
         show: false,
         loading: false,
       },
@@ -202,6 +239,12 @@ export default Vue.extend({
     },
   },
   methods: {
+    isDebugKey(key: string) {
+      return (
+        this.application.keys?.find((i) => i.identifier === key)?.category ===
+        KeyType.debugger
+      )
+    },
     getKeyTypeValue(type: KeyType): string {
       switch (type) {
         case KeyType.normal:
@@ -241,8 +284,10 @@ export default Vue.extend({
         this.createKey.loading = true
         await this.$store.dispatch('application/createKey', {
           identifier: this.application.identifier,
-          expiresAt: this.createKey.dateExpire,
-          category: KeyType.normal,
+          expiresAt:
+            this.createKey.dateExpire ??
+            new Date(Date.UTC(9999, 1)).toISOString(),
+          category: parseInt(this.createKey.type),
         })
         this.toggleShowCreateKey()
       } catch (e) {
@@ -281,14 +326,15 @@ export default Vue.extend({
     "copyConfig": "Copy config",
     "deleteKeyTitle": "Confirm deletion",
     "deleteKeyDescription": "After you confirm this action, we won't be able to generate any more connection with this key. Takes up to 30 minutes to remove it from our system.",
+    "deleteDebugKeyDescription": "This debug key will de removed immediately.",
     "createKey": "Create key",
     "keyType": "Key type",
     "normal": "Normal key",
-    "admin": "Admin key",
+    "debugger": "Debugger key",
     "copiedKey": "Copied key",
     "copiedConfig": "Copied application configuration",
     "noKeys": "There are no keys available for this application",
-    "adminKeyMessage": "Admin keys allow pattern subscriptions, read the docs to learn more."
+    "debuggerMessage": "Debugger keys bypass application security settings"
   },
   "es": {
     "cancel": "Cancelar",
@@ -300,14 +346,15 @@ export default Vue.extend({
     "copyConfig": "Copiar config",
     "deleteKeyTitle": "Confirmar eliminación",
     "deleteKeyDescription": "Después de confirmar esta acción, no se podrán generar más conexiones con esta clave. Puede tardar hasta 30 minutos en eliminarla de nuestro sistema.",
+    "deleteDebugKeyDescription": "Esta clave depuradora será eliminada inmediatamente.",
     "createKey": "Crear clave",
     "keyType": "Tipo de clave",
     "normal": "Clave normal",
-    "admin": "Clave admin",
+    "debugger": "Clave depuradora",
     "copiedKey": "Clave copiada con éxito",
     "copiedConfig": "Configuración de la aplicación copiada",
     "noKeys": "No hay claves disponibles para esta aplicación",
-    "adminKeyMessage": "Las claves de administrador permiten la suscripción por patrones, consulta la documentación para más información."
+    "debuggerMessage": "Las claves depuradoras sobrepasan los ajustes de seguridad de la aplicación"
   }
 }
 </i18n>

@@ -13,7 +13,7 @@
         <h1>{{ $t('members') }}</h1>
         <ButtonPressable
           v-if="application.members.length !== 0 && isApplicationOwner"
-          class="mb-8"
+          class="mb-7"
           variant="outline"
           :value="$t('inviteMember')"
           @click="toggleShowAddMember"

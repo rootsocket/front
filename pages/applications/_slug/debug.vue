@@ -1,7 +1,25 @@
 <template>
-  <div class="flex flex-wrap-reverse">
-    <AppPage>
-      <h1>{{ $t('debug') }}</h1>
+  <div
+    class="flex flex-wrap-reverse"
+    @keydown.esc="
+      () => {
+        sendEvent.show && toggleShowSendEvent()
+        sendChannel.show && toggleShowSendChannel()
+      }
+    "
+  >
+    <AppPage :class="{ 'lg:w-3/4': isConnected }">
+      <div class="flex flex-col md:flex-row justify-between md:items-center">
+        <h1>{{ $t('debug') }}</h1>
+        <ButtonPressable
+          v-if="isConnected"
+          class="mb-7"
+          :class="{ 'animate-pulse': tutorialStart }"
+          variant="outline"
+          :value="$t('sendEvent')"
+          @click="toggleShowSendEvent"
+        />
+      </div>
 
       <div v-if="!isConnected" class="w-full flex justify-center items-center">
         <div class="flex flex-col items-center mt-10 mb-20">
@@ -16,35 +34,199 @@
           <ButtonPressable
             variant="outline"
             :value="$t('connectDebugger')"
+            :loading="loading"
             @click="startDebugger"
           />
         </div>
       </div>
-      <div v-else class="w-full flex justify-center items-center">
-        <div class="flex flex-row items-center mt-10 mb-20">
-          <span class="text-center text-gray-600">
-            {{ $t('waitingDebugger') }}
-          </span>
+      <div v-else>
+        <div
+          v-if="logs.length === 0"
+          class="w-full flex justify-center items-center"
+        >
+          <div class="flex flex-row items-center mt-10 mb-20">
+            <span class="text-center text-gray-600">
+              {{ $t('waitingDebugger') }}
+            </span>
+          </div>
+        </div>
+        <div v-else>
+          <AppLog
+            v-for="(log, idx) in filteredLogs || []"
+            :key="idx"
+            :log="log"
+          />
         </div>
       </div>
     </AppPage>
+    <AppToc v-if="isConnected" :title="$t('options')">
+      <div
+        class="w-full relative"
+        @keydown.down="increment"
+        @keydown.up="decrement"
+        @keydown.enter="go"
+      >
+        <label for="search" class="sr-only">{{ $t('searchEvents') }}</label>
+        <div class="relative">
+          <input
+            id="search"
+            ref="search"
+            v-model="search"
+            class="block w-full py-2 px-3 truncate leading-5 placeholder-gray-500 border border-transparent text-gray-700 dark:text-white dark-focus:text-white focus:border-gray-300 dark-focus:border-gray-700 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-50 dark:bg-gray-800"
+            :placeholder="$t('searchEvents')"
+            type="search"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+      <ButtonIcon
+        :class="{ 'animate-pulse': tutorialStart }"
+        :title="$t('channels')"
+        @click="toggleShowSendChannel"
+        ><IconWorkspace
+      /></ButtonIcon>
+      <ButtonIcon
+        :title="$t(isPaused ? 'resumeLogs' : 'pauseLogs')"
+        @click="togglePauseLogs"
+        ><IconPlay v-if="isPaused" /><IconPause v-else
+      /></ButtonIcon>
+      <ButtonIcon :title="$t('clearLogs')" @click="deleteLogs"
+        ><IconX
+      /></ButtonIcon>
+    </AppToc>
+
+    <AppModal
+      :show="sendEvent.show"
+      :title="$t('sendEvent')"
+      @close="toggleShowSendEvent"
+    >
+      <form @submit.prevent="sendEventForm">
+        <TextLabel :value="$t('channel')" />
+        <TextInput
+          v-model="sendEvent.channel"
+          :placeholder="$t('enterChannel')"
+          type="text"
+          margin
+          required
+        />
+        <TextLabel :value="$t('data')" />
+        <TextArea
+          v-model="sendEvent.data"
+          :placeholder="$t('enterData')"
+          margin
+          required
+        />
+
+        <div class="w-full flex justify-end mt-4">
+          <ButtonPressable
+            :value="$t('cancel')"
+            variant="outline"
+            class="mr-2"
+            type="button"
+            @click="toggleShowSendEvent"
+          />
+          <ButtonPressable
+            :value="$t('sendEvent')"
+            variant="primary"
+            type="submit"
+            :loading="sendEvent.loading"
+          />
+        </div>
+      </form>
+    </AppModal>
+
+    <AppModal
+      :show="sendChannel.show"
+      :title="$t('channels')"
+      @close="toggleShowSendChannel"
+    >
+      <div class="overflow-x w-full h-16 border-b border-t mb-4">
+        <div
+          v-if="subscriptions.length === 0"
+          class="w-full text-center text-gray-600 dark:text-gray-300 h-16 flex justify-center items-center"
+        >
+          {{ $t('noSubs') }}
+        </div>
+        <div v-else class="flex flex-row overflow-x-auto">
+          <ButtonIcon
+            v-for="(s, idx) in subscriptions"
+            :key="idx"
+            :title="s"
+            class="mr-2"
+            @click="unsubscribe(s)"
+            ><IconX
+          /></ButtonIcon>
+        </div>
+      </div>
+      <form @submit.prevent="subscribe">
+        <TextLabel :value="$t('channel')" />
+        <TextInput
+          v-model="sendChannel.channel"
+          :placeholder="$t('enterChannel')"
+          type="text"
+          margin
+          required
+        />
+
+        <div class="w-full flex justify-end mt-4">
+          <ButtonPressable
+            :value="$t('cancel')"
+            variant="outline"
+            class="mr-2"
+            type="button"
+            @click="toggleShowSendChannel"
+          />
+          <ButtonPressable
+            :value="$t('sendChannel')"
+            variant="primary"
+            type="submit"
+          />
+        </div>
+      </form>
+    </AppModal>
   </div>
 </template>
 
 <script lang="ts">
-import RootSocket from 'rootsocketjs'
+import RootSocket, { SUBSCRIPTION_ADD, SUBSCRIPTION_REMOVE } from 'rootsocketjs'
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
-import { Key } from '~/types/application'
+import { Key, KeyType } from '~/types/application'
+import { EventDirection } from '~/types/log'
 
 const isDev = process.env.NODE_ENV === 'development'
 
 export default Vue.extend({
   layout: 'application',
-  data(): { rootSocket?: RootSocket; isConnected: boolean } {
+  data(): {
+    rootSocket?: RootSocket
+    isConnected: boolean
+    isPaused: boolean
+    logs: Array<any>
+    loading: boolean
+    sendEvent: any
+    sendChannel: any
+    search: string
+    subscriptions: Array<string>
+  } {
     return {
+      loading: false,
       rootSocket: undefined,
       isConnected: false,
+      isPaused: false,
+      logs: [],
+      search: '',
+      sendEvent: {
+        show: false,
+        channel: '',
+        data: '',
+        loading: false,
+      },
+      sendChannel: {
+        show: false,
+        channel: '',
+      },
+      subscriptions: [],
     }
   },
   head() {
@@ -58,11 +240,62 @@ export default Vue.extend({
     },
     validKey(): Key | undefined {
       return this.application.keys?.find(
-        (i: Key) => new Date(i.expiresAt) > new Date()
+        (i: Key) => i.category === KeyType.debugger
       )
+    },
+    tutorialStart(): boolean {
+      return !!(this.rootSocket && this.logs.length === 0)
+    },
+    EventDirection() {
+      return EventDirection
+    },
+    filteredLogs(): Array<any> {
+      return this.logs.filter((i) => {
+        const item = JSON.parse(i.data)
+        return (
+          item.event.includes(this.search) ||
+          (item.data.includes && item.data.includes(this.search))
+        )
+      })
     },
   },
   methods: {
+    async sendEventForm() {
+      await this.rootSocket?.send(
+        this.sendEvent.channel,
+        JSON.parse(this.sendEvent.data)
+      )
+      this.logs.unshift({
+        direction: EventDirection.send,
+        data: JSON.stringify({
+          event: this.sendEvent.channel,
+          data: this.sendEvent.data,
+        }),
+        time: new Date().getTime(),
+      })
+      this.toggleShowSendEvent()
+      this.$toast.show(this.$t('eventSent'))
+    },
+    toggleShowSendEvent() {
+      this.sendEvent.show = !this.sendEvent.show
+    },
+    toggleShowSendChannel() {
+      this.sendChannel.show = !this.sendChannel.show
+      this.sendChannel.channel = ''
+    },
+    deleteLogs() {
+      this.logs = []
+      this.$toast.show(this.$t('logsDeleted'))
+    },
+    togglePauseLogs() {
+      if (this.isPaused) {
+        this.$toast.show(this.$t('logsResumed'))
+      } else {
+        this.$toast.show(this.$t('logsPaused'))
+      }
+
+      this.isPaused = !this.isPaused
+    },
     getConnectionUrl(): string {
       const suffix = '/api/v1/connections/'
       if (isDev) {
@@ -78,13 +311,56 @@ export default Vue.extend({
 
       return `${this.application.region}.${process.env.wsUrl!}`
     },
-    startDebugger() {
-      if ((this.application.keys ?? []).length === 0) {
+    async subscribe() {
+      await this.rootSocket?.subscribe(this.sendChannel.channel, (d) => {
+        if (this.isPaused) return
+
+        this.logs.unshift({
+          time: new Date().getTime(),
+          direction: EventDirection.receive,
+          // we copy the value
+          data: JSON.stringify({
+            event: `${this.sendChannel.channel}`,
+            data: d,
+          }),
+        })
+      })
+      this.logs.unshift({
+        direction: EventDirection.send,
+        data: JSON.stringify({
+          event: SUBSCRIPTION_ADD,
+          data: { channel: this.sendChannel.channel },
+        }),
+        time: new Date().getTime(),
+      })
+      this.subscriptions = this.rootSocket?.getSubscriptions() ?? []
+      this.toggleShowSendChannel()
+    },
+    async unsubscribe(channel: string) {
+      await this.rootSocket?.unsubscribeAll(channel)
+      this.logs.unshift({
+        direction: EventDirection.send,
+        data: JSON.stringify({
+          event: SUBSCRIPTION_REMOVE,
+          data: { channel },
+        }),
+        time: new Date().getTime(),
+      })
+      this.subscriptions = this.rootSocket?.getSubscriptions() ?? []
+    },
+    async startDebugger() {
+      if (
+        !(this.application.keys ?? []).find(
+          (i) => i.category === KeyType.debugger
+        )
+      ) {
         this.$toast.show(this.$t('createKey'))
         return
       }
 
       if (this.validKey?.identifier) {
+        this.loading = true
+
         this.rootSocket = new RootSocket({
           server: this.getServerUrl(),
           connectionUrl: this.getConnectionUrl(),
@@ -92,20 +368,33 @@ export default Vue.extend({
             headers: { Authorization: this.validKey.identifier },
           },
           debug: isDev,
-          // @ts-ignore
           disableTLS: isDev,
         })
-        this.rootSocket.onRawOpen = () => {
+        this.rootSocket.onRawOpen = (ev: MessageEvent) => {
           this.isConnected = true
-          return this.rootSocket?.onMessageOpen
+          this.loading = false
+          this.rootSocket?.onMessageOpen(ev)
         }
 
-        this.rootSocket.onRawClose = () => {
+        this.rootSocket.onRawClose = (ev: CloseEvent) => {
           this.isConnected = false
-          return this.rootSocket?.onMessageClose
+          this.loading = false
+          this.$toast.show(ev.reason)
+          this.rootSocket?.onMessageClose(ev)
         }
 
-        this.rootSocket?.connect()
+        this.rootSocket.onRawError = (ev: MessageEvent) => {
+          this.$toast.show(ev.data)
+          this.rootSocket?.onMessageError(ev)
+        }
+
+        try {
+          this.logs = []
+          await this.rootSocket?.connect()
+        } catch (e) {
+          this.$toast.show(e)
+          this.loading = false
+        }
       }
     },
   },
@@ -118,15 +407,51 @@ export default Vue.extend({
     "debug": "Debug",
     "connectDebugger": "Connect debugger",
     "debugWarning": "You will be able to subscribe to channels, send and read messages",
-    "createKey": "Create a key",
-    "waitingDebugger": "Waiting for events..."
+    "createKey": "Create a debugger key",
+    "waitingDebugger": "Subscribe to a channel or send an event to start",
+    "options": "Options",
+    "searchEvents": "Search events",
+    "pauseLogs": "Pause logs",
+    "resumeLogs": "Resume logs",
+    "clearLogs": "Clear logs",
+    "sendEvent": "Send event",
+    "channels": "Channels",
+    "logsDeleted": "Logs deleted",
+    "logsPaused": "Logs paused",
+    "logsResumed": "Logs resumed",
+    "eventSent": "Event sent",
+    "channel": "Channel",
+    "enterChannel": "Enter channel",
+    "cancel": "Cancel",
+    "data": "Data",
+    "enterData": "Enter data",
+    "sendChannel": "Subscribe to channel",
+    "noSubs": "No subscriptions"
   },
   "es": {
     "debug": "Depurar",
     "connectDebugger": "Conectar depurador",
     "debugWarning": "Podrás subsribirte a canales, recibir y enviar mensajes",
-    "createKey": "Crea una clave",
-    "waitingDebugger": "Esperando eventos..."
+    "createKey": "Crea una clave depuradora",
+    "waitingDebugger": "Suscríbete a un canal o envía un evento para empezar",
+    "options": "Opciones",
+    "searchEvents": "Buscar eventos",
+    "pauseLogs": "Pausar logs",
+    "resumeLogs": "Reanudar logs",
+    "clearLogs": "Borrar logs",
+    "sendEvent": "Enviar evento",
+    "channels": "Canales",
+    "logsDeleted": "Logs eliminados",
+    "logsPaused": "Logs pausados",
+    "logsResumed": "Logs resumidos",
+    "eventSent": "Evento enviado",
+    "channel": "Canal",
+    "enterChannel": "Introduce canal",
+    "cancel": "Cancelar",
+    "data": "Datos",
+    "enterData": "Introduce datos",
+    "sendChannel": "Suscribirse al canal",
+    "noSubs": "Ninguna suscripción"
   }
 }
 </i18n>

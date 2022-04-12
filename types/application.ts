@@ -1,5 +1,6 @@
 export enum KeyType {
   normal = 1,
+  debugger = 1337,
 }
 
 export interface Key {
