@@ -188,7 +188,13 @@
 </template>
 
 <script lang="ts">
-import RootSocket, { SUBSCRIPTION_ADD, SUBSCRIPTION_REMOVE } from 'rootsocketjs'
+import RootSocket, {
+  SUBSCRIPTION_ADD,
+  SUBSCRIPTION_REMOVE,
+  ERROR,
+  isError,
+  stringToMessage,
+} from 'rootsocketjs'
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
 import { Key, KeyType } from '~/types/application'
@@ -260,19 +266,31 @@ export default Vue.extend({
     },
   },
   methods: {
+    addLog(direction: EventDirection, data: string) {
+      if (this.isPaused) return
+
+      this.logs.unshift({
+        direction,
+        data,
+        time: new Date().getTime(),
+      })
+    },
+    deleteLogs() {
+      this.logs = []
+      this.$toast.show(this.$t('logsDeleted'))
+    },
     async sendEventForm() {
       await this.rootSocket?.send(
         this.sendEvent.channel,
         JSON.parse(this.sendEvent.data)
       )
-      this.logs.unshift({
-        direction: EventDirection.send,
-        data: JSON.stringify({
+      this.addLog(
+        EventDirection.send,
+        JSON.stringify({
           event: this.sendEvent.channel,
           data: this.sendEvent.data,
-        }),
-        time: new Date().getTime(),
-      })
+        })
+      )
       this.toggleShowSendEvent()
       this.$toast.show(this.$t('eventSent'))
     },
@@ -282,10 +300,6 @@ export default Vue.extend({
     toggleShowSendChannel() {
       this.sendChannel.show = !this.sendChannel.show
       this.sendChannel.channel = ''
-    },
-    deleteLogs() {
-      this.logs = []
-      this.$toast.show(this.$t('logsDeleted'))
     },
     togglePauseLogs() {
       if (this.isPaused) {
@@ -297,55 +311,59 @@ export default Vue.extend({
       this.isPaused = !this.isPaused
     },
     getConnectionUrl(): string {
+      // we need this because we want different structure locally in dev compared with prod
       const suffix = '/api/v1/connections/'
+      const protocol = location.protocol
       if (isDev) {
-        return `${process.env.wsUrl!}${suffix}`
+        return `${protocol}//${process.env.wsDomain!}${suffix}`
       }
 
-      return `${this.application.region}.${process.env.wsUrl!}${suffix}`
+      return `${protocol}//${this.application.region}.${process.env
+        .wsDomain!}${suffix}`
     },
     getServerUrl(): string {
       if (isDev) {
-        return process.env.wsUrl?.replace('http://', '') ?? ''
+        return process.env.wsDomain!
       }
 
-      return `${this.application.region}.${process.env.wsUrl!}`
+      return `${this.application.region}.${process.env.wsDomain!}`
     },
     async subscribe() {
       await this.rootSocket?.subscribe(this.sendChannel.channel, (d) => {
         if (this.isPaused) return
 
-        this.logs.unshift({
-          time: new Date().getTime(),
-          direction: EventDirection.receive,
-          // we copy the value
-          data: JSON.stringify({
+        // this handles messages we receive from subscribe
+        this.addLog(
+          EventDirection.receive,
+          JSON.stringify({
             event: `${this.sendChannel.channel}`,
             data: d,
-          }),
-        })
+          })
+        )
       })
-      this.logs.unshift({
-        direction: EventDirection.send,
-        data: JSON.stringify({
+
+      this.addLog(
+        EventDirection.send,
+        JSON.stringify({
           event: SUBSCRIPTION_ADD,
           data: { channel: this.sendChannel.channel },
-        }),
-        time: new Date().getTime(),
-      })
+        })
+      )
+
       this.subscriptions = this.rootSocket?.getSubscriptions() ?? []
       this.toggleShowSendChannel()
     },
     async unsubscribe(channel: string) {
       await this.rootSocket?.unsubscribeAll(channel)
-      this.logs.unshift({
-        direction: EventDirection.send,
-        data: JSON.stringify({
+
+      this.addLog(
+        EventDirection.send,
+        JSON.stringify({
           event: SUBSCRIPTION_REMOVE,
           data: { channel },
-        }),
-        time: new Date().getTime(),
-      })
+        })
+      )
+
       this.subscriptions = this.rootSocket?.getSubscriptions() ?? []
     },
     async startDebugger() {
@@ -388,6 +406,25 @@ export default Vue.extend({
           this.rootSocket?.onMessageError(ev)
         }
 
+        this.rootSocket.onRawReceive = (ev: MessageEvent) => {
+          // we want to handle it asap or getSubscriptions will fail
+          this.rootSocket?.onMessageReceive(ev)
+
+          const msg = stringToMessage(ev.data)
+          if (isError(msg)) {
+            this.addLog(
+              EventDirection.receive,
+              JSON.stringify({
+                event: ERROR,
+                data: msg.data,
+              })
+            )
+
+            // handles cases where a unsubscribe message comes
+            this.subscriptions = this.rootSocket?.getSubscriptions() ?? []
+          }
+        }
+
         try {
           this.logs = []
           await this.rootSocket?.connect()
@@ -426,7 +463,7 @@ export default Vue.extend({
     "data": "Data",
     "enterData": "Enter data",
     "sendChannel": "Subscribe to channel",
-    "noSubs": "No subscriptions"
+    "noSubs": "No active subscriptions"
   },
   "es": {
     "debug": "Depurar",
@@ -451,7 +488,7 @@ export default Vue.extend({
     "data": "Datos",
     "enterData": "Introduce datos",
     "sendChannel": "Suscribirse al canal",
-    "noSubs": "Ninguna suscripción"
+    "noSubs": "Ninguna suscripción activa"
   }
 }
 </i18n>
