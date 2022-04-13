@@ -280,10 +280,7 @@ export default Vue.extend({
       this.$toast.show(this.$t('logsDeleted'))
     },
     async sendEventForm() {
-      await this.rootSocket?.send(
-        this.sendEvent.channel,
-        JSON.parse(this.sendEvent.data)
-      )
+      await this.rootSocket?.send(this.sendEvent.channel, this.sendEvent.data)
       this.addLog(
         EventDirection.send,
         JSON.stringify({
@@ -329,6 +326,18 @@ export default Vue.extend({
       return `${this.application.region}.${process.env.wsDomain!}`
     },
     async subscribe() {
+      if (
+        (this.rootSocket?.getSubscriptions() ?? []).includes(
+          (i) => i === this.sendChannel.channel
+        )
+      ) {
+        // we don't want to register twice the same to the same channel, it would duplicate logs
+        return
+      }
+
+      // clone the string, it will save empty channels if we don't do this
+      const channel = `${this.sendChannel.channel}`
+
       await this.rootSocket?.subscribe(this.sendChannel.channel, (d) => {
         if (this.isPaused) return
 
@@ -336,8 +345,8 @@ export default Vue.extend({
         this.addLog(
           EventDirection.receive,
           JSON.stringify({
-            event: `${this.sendChannel.channel}`,
-            data: d,
+            event: channel,
+            data: d.raw,
           })
         )
       })
