@@ -17,6 +17,7 @@ const request = {
   loading: false,
   error: undefined,
   ttl: 0,
+  key: '',
 }
 
 export const state = (): VuexApplicationState => ({
@@ -402,19 +403,20 @@ export const actions = {
   },
   async getConnections(
     { commit, dispatch, state }: any,
-    data: { identifier: string }
+    data: { identifier: string; force: boolean }
   ) {
+    const cacheKey = `${data.identifier}`
+
     return await processRequest({
       commit,
       mutation: 'setConnectionsRequest',
       process: async () => {
-        const application: Application =
-          state.applications.data?.find(
-            (i: Application) => i.identifier === data.identifier
-          ) ?? {}
-
-        if (!application.allowClientData) {
-          return { data: {} }
+        if (
+          state.connections.key === cacheKey &&
+          !data?.force &&
+          state.connections.ttl > new Date().getTime()
+        ) {
+          return state.connections
         }
 
         const { token } = await dispatch('createToken', {
@@ -469,19 +471,27 @@ export const actions = {
             time[newDate] = fullDateData
           } catch {
             // this will happen if there are connection that opened without having analytics on.
+            const browserName = '-'
+            const uaCount = userAgent[browserName] ?? 0
+            userAgent[browserName] = uaCount + 1
+
+            const osName = '-'
+            const osCount = os[osName] ?? 0
+            os[osName] = osCount + 1
           }
         })
 
         return {
           data: {
             time: sortObjectByValue(time, (a, b) =>
-              b[1].order > a[1].order ? 0 : 1
+              b[1].order > a[1].order ? -1 : 1
             ),
             userAgent: sortObjectByValue(userAgent, (a, b) => (b > a ? 1 : -1)),
             os: sortObjectByValue(os, (a, b) => (b > a ? 1 : -1)),
           },
         }
       },
+      key: cacheKey,
     })
   },
   async createToken(

@@ -44,8 +44,6 @@ export interface Application {
   allowChannelSubscription: boolean
   // Subscriptions to channel require an auth token
   allowChannelAuthorization: boolean
-  // Collects information from the client when a user connects to a WebSocket.
-  allowClientData: boolean
   members?: Member[]
 }
 

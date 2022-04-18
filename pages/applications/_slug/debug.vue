@@ -196,7 +196,7 @@ import RootSocket, {
 } from 'rootsocketjs'
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
-import { Key, TokenType } from '~/types/application'
+import { TokenType } from '~/types/application'
 import { EventDirection } from '~/types/log'
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -242,11 +242,6 @@ export default Vue.extend({
   computed: {
     application() {
       return getCurrentApplication(this.$store.state, this.$route.params.slug)
-    },
-    validKey(): Key | undefined {
-      return this.application.keys?.find(
-        (i: Key) => i.category === KeyType.debugger
-      )
     },
     tutorialStart(): boolean {
       return !!(this.rootSocket && this.logs.length === 0)

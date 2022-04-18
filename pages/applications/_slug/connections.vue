@@ -71,7 +71,7 @@
                 <span class="text-sm">
                   {{ $t('browserDescription') }}
                 </span>
-                <div class="h-40 flex flex-col">
+                <div class="flex flex-col">
                   <div v-for="k in Object.keys(agentMap)" :key="k">
                     <span
                       class="flex flex-row justify-between items-center mt-2"
@@ -102,7 +102,7 @@
                   {{ $t('systemDescription') }}
                 </span>
 
-                <div class="h-40 flex flex-col">
+                <div class="flex flex-col">
                   <div v-for="k in Object.keys(osMap)" :key="k">
                     <span
                       class="flex flex-row justify-between items-center mt-2"
@@ -304,8 +304,6 @@ export default Vue.extend({
       this.disconnectConnection.identifier = identifier
       this.disconnectConnection.show = true
     },
-    disconnectConnectionForm() {},
-    subscribeChannelForm() {},
   },
 })
 </script>

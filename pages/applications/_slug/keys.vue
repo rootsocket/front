@@ -241,6 +241,7 @@ export default Vue.extend({
           name: this.createKey.name,
         })
         this.toggleShowCreateKey()
+        this.$toast.show(this.$t('keyCreated'))
       } catch (e) {
         this.$toast.show(getErrorMessage(e))
       } finally {
@@ -255,6 +256,7 @@ export default Vue.extend({
           keyIdentifier: this.deleteKey.identifier,
         })
         this.toggleShowDeleteKey()
+        this.$toast.show(this.$t('keyDeleted'))
       } catch (e) {
         this.$toast.show(getErrorMessage(e))
       } finally {
@@ -282,7 +284,9 @@ export default Vue.extend({
     "createKey": "Create key",
     "copiedKey": "Copied key",
     "copiedConfig": "Copied application configuration",
-    "noKeys": "There are no keys available for this application"
+    "noKeys": "There are no keys available for this application",
+    "keyCreated": "Key created",
+    "keyDeleted": "Key deleted"
   },
   "es": {
     "cancel": "Cancelar",
@@ -299,7 +303,9 @@ export default Vue.extend({
     "createKey": "Crear clave",
     "copiedKey": "Clave copiada con éxito",
     "copiedConfig": "Configuración de la aplicación copiada",
-    "noKeys": "No hay claves disponibles para esta aplicación"
+    "noKeys": "No hay claves disponibles para esta aplicación",
+    "keyCreated": "Clave creada",
+    "keyDeleted": "Clave eliminada"
   }
 }
 </i18n>

@@ -41,15 +41,6 @@
           />
         </div>
         <div class="flex flex-col p-4">
-          <span class="text-xl font-semibold">{{ $t('analytics') }}</span>
-          <span>{{ $t('analyticsDescription') }}</span>
-          <AppToggle
-            v-model="allowClientData"
-            :label="$t('allowAnalytics')"
-            class="mt-4"
-          />
-        </div>
-        <div class="flex flex-col p-4">
           <span class="text-xl font-semibold">{{ $t('clientSend') }}</span>
           <span>{{ $t('clientSendDescription') }}</span>
           <AppToggle
@@ -145,7 +136,6 @@ export default Vue.extend({
     return {
       name: '',
       allowClientSend: false,
-      allowClientData: false,
       allowChannelSubscription: false,
       allowChannelAuthorization: false,
       showDeleteApplication: false,
@@ -181,7 +171,6 @@ export default Vue.extend({
   mounted() {
     this.name = this.application.name
     this.allowClientSend = this.application.allowClientSend
-    this.allowClientData = this.application.allowClientData
     this.allowChannelSubscription = this.application.allowChannelSubscription
     this.allowChannelAuthorization = this.application.allowChannelAuthorization
   },
@@ -197,7 +186,6 @@ export default Vue.extend({
           identifier: this.application.identifier,
           name: this.name,
           allowClientSend: this.allowClientSend,
-          allowClientData: this.allowClientData,
           allowChannelSubscription: this.allowChannelSubscription,
           allowChannelAuthorization: this.allowChannelAuthorization,
         })
@@ -242,12 +230,9 @@ export default Vue.extend({
     "updateName": "Update name",
     "region": "Region",
     "createdAt": "Creation date",
-    "analytics": "Analytics",
-    "analyticsDescription": "It will allow to visualize IP Address and User Agent information",
     "copy": "Copy",
     "allowClientSend": "Allow client connections to send messages",
     "allowClientSubscription": "Allow client connections to subscribe to a channel",
-    "allowAnalytics": "Allow client connections analytics",
     "clientSend": "Messages",
     "clientSendDescription": "Enables the client connection to send messages to other connections, if disabled connections can only receive messages",
     "clientSubscription": "Subscriptions",
@@ -268,12 +253,9 @@ export default Vue.extend({
     "updateName": "Actualizar nombre",
     "region": "Región",
     "createdAt": "Fecha de creación",
-    "analytics": "Analíticas",
-    "analyticsDescription": "Permitirá visualizar información sobre el cliente como su dirección IP y el navegador usado",
     "copy": "Copiar",
     "allowClientSend": "Permitir enviar mensajes desde las conexiones en clientes",
     "allowClientSubscription": "Permitir la suscripción a canales desde conexiones en clientes",
-    "allowAnalytics": "Permitir analíticas de conexiones",
     "clientSend": "Mensajes",
     "clientSendDescription": "Habilita el envío de mensajes a otras conexiones desde una conexión de cliente, si está deshabilitada las conexiones solo podrán recibir mensajes",
     "clientSubscription": "Suscripciones",

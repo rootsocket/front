@@ -2,10 +2,12 @@ export const processRequest = async ({
   commit,
   mutation,
   process,
+  key = '',
 }: {
   commit: any
   mutation: string
   process: () => Promise<any>
+  key?: string
 }) => {
   try {
     commit(mutation, { loading: true })
@@ -13,7 +15,8 @@ export const processRequest = async ({
     commit(mutation, {
       data: response.data,
       error: undefined,
-      ttl: new Date().getTime() + 60 * 1000, // 60 seconds
+      ttl: new Date().getTime() + 20 * 1000, // 60 seconds
+      key,
     })
     return response.data
   } catch (e: any) {

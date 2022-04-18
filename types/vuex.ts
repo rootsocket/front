@@ -4,6 +4,8 @@ export interface VuexRequest<T> {
   data?: T
   loading: boolean
   error?: { status: number; message: string }
+  ttl: number
+  key: string
 }
 
 export interface VuexApplicationState {
