@@ -20,6 +20,7 @@ export interface VuexApplicationState {
   registerAccount: VuexRequest<User>
   deleteAccount: VuexRequest<null>
   connections: VuexRequest<Connection[]>
+  token: VuexRequest<{ token: string }>
   filters: {
     applications: {
       search: string

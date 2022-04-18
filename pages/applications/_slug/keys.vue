@@ -49,18 +49,11 @@
           <div
             class="flex flex-row justify-between items-center w-full p-2 px-4 py-3"
           >
-            <div class="flex flex-row items-center">
+            <div class="flex flex-wrap flex-row items-center">
+              <span class="mr-2 text-ellipsis overflow-hidden break-all">{{
+                key.name
+              }}</span>
               <AppBadge
-                :value="
-                  $t(key.category === KeyType.debugger ? 'debugger' : 'normal')
-                "
-                :variant="
-                  key.category === KeyType.debugger ? 'warning' : 'default'
-                "
-                class="mr-2"
-              />
-              <AppBadge
-                v-if="key.category !== KeyType.debugger"
                 :value="`${$t('expires')} ${new Date(
                   key.expiresAt
                 ).toLocaleDateString($i18n.locale, {
@@ -68,19 +61,11 @@
                   month: 'short',
                   year: 'numeric',
                 })}`"
-                variant="default"
+                :variant="getKeyExpirationVariant(key.expiresAt)"
                 class="mr-2 whitespace-nowrap"
               />
             </div>
-            <div v-if="key.category === KeyType.debugger">
-              <span
-                class="flex text-red-400 items-center whitespace-nowrap cursor-pointer"
-                @click="toggleShowDeleteKey(key.identifier)"
-              >
-                {{ $t('deleteKey') }}
-              </span>
-            </div>
-            <AppDropdown v-else class="ml-4">
+            <AppDropdown class="ml-4">
               <template #trigger="{ open, toggle }">
                 <button
                   class="rounded-md hover:text-primary-500 focus:outline-none"
@@ -124,14 +109,7 @@
       :title="$t('deleteKeyTitle')"
       @close="toggleShowDeleteKey"
     >
-      <span>{{
-        $t(
-          isDebugKey(deleteKey.identifier)
-            ? 'deleteDebugKeyDescription'
-            : 'deleteKeyDescription'
-        )
-      }}</span>
-
+      <span class="my-2">{{ $t('deleteKeyDescription') }}</span>
       <div class="w-full flex justify-end mt-4">
         <ButtonPressable
           :value="$t('cancel')"
@@ -155,32 +133,17 @@
       @close="toggleShowCreateKey"
     >
       <form @submit.prevent="createKeyForm">
-        <TextLabel :value="$t('keyType')" />
-        <TextSelect
-          v-model="createKey.type"
-          :options="[
-            { value: KeyType.normal, text: $t('normal') },
-            { value: KeyType.debugger, text: $t('debugger') },
-          ]"
-          required
-        />
-        <AppAlert
-          v-if="parseInt(createKey.type) === KeyType.debugger"
-          variant="warning"
-          :value="$t('debuggerMessage')"
-          class="mb-4"
-        />
-        <TextLabel
-          v-if="parseInt(createKey.type) !== KeyType.debugger"
-          :value="$t('expires')"
-        />
+        <TextLabel :value="$t('name')" />
         <TextInput
-          v-if="parseInt(createKey.type) !== KeyType.debugger"
-          v-model="createKey.dateExpire"
-          type="date"
+          v-model="createKey.name"
+          :placeholder="$t('enterName')"
+          type="text"
           margin
           required
         />
+
+        <TextLabel :value="$t('expires')" />
+        <TextInput v-model="createKey.dateExpire" type="date" margin required />
 
         <div class="w-full flex justify-end mt-4">
           <ButtonPressable
@@ -205,7 +168,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
-import { KeyType } from '@/types/application'
 import { getErrorMessage } from '~/utils/error'
 
 export default Vue.extend({
@@ -218,7 +180,7 @@ export default Vue.extend({
         loading: false,
       },
       createKey: {
-        type: `${KeyType.normal}`,
+        name: '',
         dateExpire: undefined,
         show: false,
         loading: false,
@@ -231,34 +193,23 @@ export default Vue.extend({
     }
   },
   computed: {
-    KeyType() {
-      return KeyType
-    },
     application() {
       return getCurrentApplication(this.$store.state, this.$route.params.slug)
     },
   },
   methods: {
-    isDebugKey(key: string) {
-      return (
-        this.application.keys?.find((i) => i.identifier === key)?.category ===
-        KeyType.debugger
-      )
-    },
-    getKeyTypeValue(type: KeyType): string {
-      switch (type) {
-        case KeyType.normal:
-          return this.$t('normal')
-        default:
-          return ''
-      }
-    },
-    getKeyTypeVariant(type: KeyType): string {
-      switch (type) {
-        case KeyType.normal:
-          return 'green'
-        default:
-          return ''
+    getKeyExpirationVariant(expiresAt: number): string {
+      const d = new Date(expiresAt).getTime()
+      const n = new Date().getTime()
+      const result = d - n
+      const maxTime = 24 * 60 * 60 * 1000
+
+      if (result <= 0) {
+        return 'red'
+      } else if (result <= maxTime) {
+        return 'warning'
+      } else {
+        return 'default'
       }
     },
     toggleShowDeleteKey(identifier = '') {
@@ -267,7 +218,7 @@ export default Vue.extend({
     },
     toggleShowCreateKey() {
       this.createKey.show = !this.createKey.show
-      this.createKey.type = `${KeyType.normal}`
+      this.createKey.name = ''
     },
     copyKey(identifier: string) {
       navigator.clipboard.writeText(identifier)
@@ -287,7 +238,7 @@ export default Vue.extend({
           expiresAt:
             this.createKey.dateExpire ??
             new Date(Date.UTC(9999, 1)).toISOString(),
-          category: parseInt(this.createKey.type),
+          name: this.createKey.name,
         })
         this.toggleShowCreateKey()
       } catch (e) {
@@ -319,6 +270,8 @@ export default Vue.extend({
   "en": {
     "cancel": "Cancel",
     "keys": "Keys",
+    "name": "Name",
+    "enterName": "Enter name",
     "expires": "Expires",
     "actions": "Actions",
     "deleteKey": "Delete key",
@@ -326,19 +279,16 @@ export default Vue.extend({
     "copyConfig": "Copy config",
     "deleteKeyTitle": "Confirm deletion",
     "deleteKeyDescription": "After you confirm this action, we won't be able to generate any more connection with this key. Takes up to 30 minutes to remove it from our system.",
-    "deleteDebugKeyDescription": "This debug key will de removed immediately.",
     "createKey": "Create key",
-    "keyType": "Key type",
-    "normal": "Normal key",
-    "debugger": "Debugger key",
     "copiedKey": "Copied key",
     "copiedConfig": "Copied application configuration",
-    "noKeys": "There are no keys available for this application",
-    "debuggerMessage": "Debugger keys bypass application security settings"
+    "noKeys": "There are no keys available for this application"
   },
   "es": {
     "cancel": "Cancelar",
     "keys": "Claves",
+    "name": "Nombre",
+    "enterName": "Introduce un nombre",
     "expires": "Caduca",
     "actions": "Acciones",
     "deleteKey": "Eliminar clave",
@@ -346,15 +296,10 @@ export default Vue.extend({
     "copyConfig": "Copiar config",
     "deleteKeyTitle": "Confirmar eliminación",
     "deleteKeyDescription": "Después de confirmar esta acción, no se podrán generar más conexiones con esta clave. Puede tardar hasta 30 minutos en eliminarla de nuestro sistema.",
-    "deleteDebugKeyDescription": "Esta clave depuradora será eliminada inmediatamente.",
     "createKey": "Crear clave",
-    "keyType": "Tipo de clave",
-    "normal": "Clave normal",
-    "debugger": "Clave depuradora",
     "copiedKey": "Clave copiada con éxito",
     "copiedConfig": "Configuración de la aplicación copiada",
-    "noKeys": "No hay claves disponibles para esta aplicación",
-    "debuggerMessage": "Las claves depuradoras sobrepasan los ajustes de seguridad de la aplicación"
+    "noKeys": "No hay claves disponibles para esta aplicación"
   }
 }
 </i18n>

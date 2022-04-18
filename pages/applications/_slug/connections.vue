@@ -1,9 +1,18 @@
 <template>
   <div class="flex flex-wrap-reverse">
     <AppPage>
-      <h1>{{ $t('connections') }}</h1>
+      <div class="flex flex-row items-center justify-between">
+        <h1>{{ $t('connections') }}</h1>
+        <h1 v-show="totalConnectionsCount !== 0">
+          {{
+            Intl.NumberFormat('en', { notation: 'compact' }).format(
+              totalConnectionsCount
+            )
+          }}
+        </h1>
+      </div>
       <div
-        v-if="!isLoadingConnections && connections.length === 0"
+        v-if="totalConnectionsCount === 0 && !isLoadingConnections"
         class="w-full flex justify-center items-center"
       >
         <div class="flex flex-col items-center mt-10 mb-20">
@@ -24,85 +33,93 @@
       >
         <IconLoad />
       </div>
-      <div v-else class="grid grid-cols-1 gap-4">
+      <div
+        v-if="totalConnectionsCount !== 0 && !isLoadingConnections"
+        class="grid grid-cols-1 gap-4"
+      >
         <div
-          v-for="connection in connections"
-          :key="connection.identifier"
-          class="w-full border dark:border-gray-800 rounded-md hover:shadow-sm flex flex-col items-start divide-y dark:divide-gray-800"
+          class="w-full border dark:border-gray-800 rounded-md hover:shadow-sm flex flex-col"
         >
-          <div
-            class="flex flex-row justify-between items-center w-full p-2 px-4 pt-3"
-          >
-            <span>{{ connection.identifier }}</span>
-            <AppDropdown class="inline-flex ml-4">
-              <template #trigger="{ open, toggle }">
-                <button
-                  class="rounded-md hover:text-primary-500 focus:outline-none"
-                  :class="{ 'opacity-0': open }"
-                  @touchstart.stop.prevent="toggle"
-                >
-                  <div class="inline-flex items-center">
-                    <span>{{ $t('actions') }}</span>
-                    <IconDropdown class="w-6 h-6" />
-                  </div>
-                </button>
-              </template>
-
-              <ul class="px-4">
-                <span
-                  class="flex text-red-400 items-center leading-8 whitespace-nowrap cursor-pointer"
-                  @click="setDisconnectConnection(connection.identifier)"
-                >
-                  {{ $t('disconnectConnection') }}
-                </span>
-                <span
-                  class="flex items-center hover:text-primary-500 leading-8 whitespace-nowrap cursor-pointer"
-                  @click="setSubscribeChannel(connection.identifier)"
-                >
-                  {{ $t('subscribeChannel') }}
-                </span>
-                <span
-                  class="flex items-center hover:text-primary-500 leading-8 whitespace-nowrap cursor-pointer"
-                  @click="copyIdentifier(connection.identifier)"
-                >
-                  {{ $t('copyIdentifier') }}
-                </span>
-              </ul>
-            </AppDropdown>
+          <div class="p-4 mb-2">
+            <span
+              class="text-gray-500 uppercase tracking-wider font-bold text-md w-full flex flex-row"
+            >
+              {{ $t('graph') }}
+            </span>
+            <span class="text-sm">
+              {{ $t('graphDescription') }}
+            </span>
           </div>
-          <div class="flex flex-row mt-2 overflow-x-auto w-full p-4">
-            <AppBadge
-              :value="`${$t('ip')} ${connection.ipAddress}`"
-              variant="default"
-              class="mr-2 whitespace-nowrap"
+          <div class="h-40">
+            <ChartLine
+              :labels="Object.keys(timeMap)"
+              :data="Object.values(timeMap).map((i) => i.count)"
             />
-            <AppBadge
-              v-for="tag in getUserAgentTags(connection.userAgent)"
-              :key="tag"
-              :value="tag"
-              variant="default"
-              class="mr-2 whitespace-nowrap"
-            />
-            <AppBadge
-              :value="`${$t('minutes', {
-                count: Intl.NumberFormat('en-US', {
-                  notation: 'compact',
-                  maximumFractionDigits: 1,
-                }).format(calculateTime(connection)),
-              })}`"
-              variant="default"
-              class="mr-2 whitespace-nowrap"
-            />
-            <AppBadge
-              :value="`${$t('messages', {
-                count: Intl.NumberFormat('en-US', {
-                  notation: 'compact',
-                  maximumFractionDigits: 1,
-                }).format(connection.messages),
-              })}`"
-              variant="default"
-              class="whitespace-nowrap"
-            />
+          </div>
+        </div>
+        <div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div
+              class="w-full border dark:border-gray-800 rounded-md hover:shadow-sm flex flex-col"
+            >
+              <div class="p-4 mb-2">
+                <span
+                  class="text-gray-500 uppercase tracking-wider font-bold text-md w-full flex flex-row"
+                >
+                  {{ $t('browser') }}
+                </span>
+                <span class="text-sm">
+                  {{ $t('browserDescription') }}
+                </span>
+                <div class="h-40 flex flex-col">
+                  <div v-for="k in Object.keys(agentMap)" :key="k">
+                    <span
+                      class="flex flex-row justify-between items-center mt-2"
+                    >
+                      <span class="flex flex-row items-center">
+                        <component
+                          :is="getAgentIcon(k)"
+                          class="bg-gray-200 text-gray-700 rounded-full p-1 w-7 h-7 flex flex-row items-center justify-center mr-4"
+                        ></component>
+                        <span>{{ k }}</span>
+                      </span>
+                      <span>{{ agentMap[k] }}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="w-full border dark:border-gray-800 rounded-md hover:shadow-sm flex flex-col"
+            >
+              <div class="p-4 mb-2">
+                <span
+                  class="text-gray-500 uppercase tracking-wider font-bold text-md w-full flex flex-row"
+                >
+                  {{ $t('system') }}
+                </span>
+                <span class="text-sm">
+                  {{ $t('systemDescription') }}
+                </span>
+
+                <div class="h-40 flex flex-col">
+                  <div v-for="k in Object.keys(osMap)" :key="k">
+                    <span
+                      class="flex flex-row justify-between items-center mt-2"
+                    >
+                      <span class="flex flex-row items-center">
+                        <component
+                          :is="getOsIcon(k)"
+                          class="bg-gray-200 text-gray-700 rounded-full p-1 w-7 h-7 flex flex-row items-center justify-center mr-4"
+                        ></component>
+                        <span>{{ k }}</span>
+                      </span>
+                      <span>{{ osMap[k] }}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -171,9 +188,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import UAParser from 'ua-parser-js'
 import { getCurrentApplication } from '@/utils/application'
-import { Connection } from '~/types/application'
 
 export default Vue.extend({
   layout: 'application',
@@ -188,6 +203,21 @@ export default Vue.extend({
         identifier: '',
         show: false,
       },
+      chartData: {
+        labels: ['January', 'February', 'March'],
+        datasets: [
+          {
+            label: 'My First Dataset',
+            data: [65, 59, 80, 81, 56, 55, 40],
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1,
+          },
+        ],
+      },
+      chartOptions: {
+        responsive: true,
+      },
     }
   },
   head() {
@@ -199,8 +229,20 @@ export default Vue.extend({
     application() {
       return getCurrentApplication(this.$store.state, this.$route.params.slug)
     },
-    connections() {
-      return this.$store.state.application.connections.data ?? []
+    totalConnectionsCount() {
+      const result: any = Object.values(
+        this.$store.state.application.connections.data?.os ?? {}
+      ).reduce((previous: number, current: any) => previous + current, 0)
+      return result
+    },
+    osMap() {
+      return this.$store.state.application.connections.data?.os ?? {}
+    },
+    agentMap() {
+      return this.$store.state.application.connections.data?.userAgent ?? {}
+    },
+    timeMap() {
+      return this.$store.state.application.connections.data?.time ?? {}
     },
     isLoadingConnections() {
       return this.$store.state.application.connections.loading
@@ -208,32 +250,39 @@ export default Vue.extend({
   },
   beforeMount() {
     this.$store.dispatch('application/getConnections', {
-      limit: 50,
-      offset: 0,
       identifier: this.application.identifier,
     })
   },
   methods: {
-    getUserAgentTags(userAgent: string) {
-      const parsedUA = new UAParser(userAgent)
-      const result = parsedUA.getResult()
-      return [
-        this.$t('device', {
-          text: `${result.browser.name} / ${result.browser.version}`,
-        }),
-        this.$t('browser', {
-          text: `${result.device.model} / ${result.device.type} / ${result.device.vendor}`,
-        }),
-        this.$t('os', { text: result.os.name, text2: result.os.version }),
-      ].filter((i) => !i.includes('undefined'))
+    getAgentIcon(type: string) {
+      const lower = type.toLowerCase()
+
+      if (lower.includes('chrome')) {
+        return 'IconChrome'
+      } else if (lower.includes('firefox')) {
+        return 'IconFirefox'
+      } else if (lower.includes('safari')) {
+        return 'IconSafari'
+      }
+
+      return 'IconWorld'
     },
-    calculateTime(connection: Connection) {
-      const timestampStartedAt = new Date(connection.startedAt).getTime()
-      const result =
-        (connection.endedAt
-          ? new Date(connection.endedAt).getTime()
-          : timestampStartedAt) - timestampStartedAt
-      return result !== 0 ? result / (1000 * 60) : result
+    getOsIcon(type: string) {
+      const lower = type.toLowerCase()
+
+      if (lower.includes('windows')) {
+        return 'IconWindows'
+      } else if (lower.includes('linux')) {
+        return 'IconLinux'
+      } else if (lower.includes('mac')) {
+        return 'IconMac'
+      } else if (lower.includes('android')) {
+        return 'IconAndroid'
+      } else if (lower.includes('ios')) {
+        return 'IconIOS'
+      }
+
+      return 'IconDevice'
     },
     copyIdentifier(identifier: string) {
       navigator.clipboard.writeText(identifier)
@@ -264,7 +313,7 @@ export default Vue.extend({
 <i18n>
 {
   "en": {
-    "connections": "Connections",
+    "connections": "Active connections",
     "noConnections": "There are no connections available for this application",
     "readMore": "Read configuration steps",
     "disconnectConnection": "Disconnect connection",
@@ -275,18 +324,19 @@ export default Vue.extend({
     "copiedIdentifier": "Copied connection identifier",
     "ip": "IP",
     "minutes": "{count} minutes",
-    "active": "Active",
+    "graph": "Graph",
     "disconnectConnectionDescription": "Connection {identifier} will be unable to receive or send any more messages",
     "channelName": "Channel name",
     "enterName": "Enter name",
     "cancel": "Cancel",
-    "messages": "{count} messages",
-    "device": "Device {text}",
-    "browser": "Browser {text}",
-    "os": "OS {text} / {text2}"
+    "graphDescription": "All active connections grouped by connection hour",
+    "browser": "Client",
+    "browserDescription": "All browsers and clients",
+    "system": "System",
+    "systemDescription": "All operative systems"
   },
   "es": {
-    "connections": "Conexiones",
+    "connections": "Conexiones activas",
     "noConnections": "No hay conexiones disponibles para esta aplicación",
     "readMore": "Leer pasos de configuración",
     "disconnectConnection": "Desconectar conexión",
@@ -297,15 +347,16 @@ export default Vue.extend({
     "copiedIdentifier": "Copiada la identificación de la conexión",
     "ip": "IP",
     "minutes": "{count} minutos",
-    "active": "Activas",
+    "graph": "Gráfico",
     "disconnectConnectionDescription": "La conexión {identifier} no podrá enviar o recibir más mensajes",
     "channelName": "Nombre del canal",
     "enterName": "Introduce un nombre",
     "cancel": "Cancelar",
-    "messages": "{count} mensajes",
-    "device": "Dispositivo {text}",
-    "browser": "Navegador {text}",
-    "os": "SO {text} / {text2}"
+    "graphDescription": "Todas las conexiones activas agrupadas por hora de conexión",
+    "browser": "Cliente",
+    "browserDescription": "Todos los navegadores y clientes",
+    "system": "Sistema",
+    "systemDescription": "Todos los sistemas operativos"
   }
 }
 </i18n>

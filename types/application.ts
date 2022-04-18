@@ -1,8 +1,3 @@
-export enum KeyType {
-  normal = 1,
-  debugger = 1337,
-}
-
 export interface Key {
   identifier: string
   category: KeyType
@@ -62,4 +57,9 @@ export interface Connection {
   userAgent: string
   // messages sent and received by connection
   messages: number
+}
+
+export enum TokenType {
+  createConnection = 'createConn',
+  getConnections = 'getConn',
 }

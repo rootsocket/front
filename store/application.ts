@@ -1,13 +1,16 @@
+import UAParser from 'ua-parser-js'
 import {
   Application,
   ApplicationRegion,
   Key,
   User,
   Connection,
+  TokenType,
 } from '~/types/application'
 import { normalizeString } from '~/utils/string'
 import { VuexApplicationState, VuexRequest } from '~/types/vuex'
 import { processRequest } from '~/utils/request'
+import { sortObjectByValue } from '~/utils/objects'
 
 const request = {
   data: undefined,
@@ -35,6 +38,7 @@ export const state = (): VuexApplicationState => ({
   deleteAccount: request,
   registerAccount: request,
   connections: request,
+  token: request,
 })
 
 export const mutations = {
@@ -121,6 +125,12 @@ export const mutations = {
     payload: VuexRequest<null>
   ) {
     state.deleteAccount = { ...state.deleteAccount, ...payload }
+  },
+  setTokenRequest(
+    state: VuexApplicationState,
+    payload: VuexRequest<{ token: string }>
+  ) {
+    state.token = { ...state.token, ...payload }
   },
 }
 
@@ -243,7 +253,7 @@ export const actions = {
   },
   async createKey(
     { commit, state }: any,
-    data: { identifier: string; expiresAt: string; category: KeyType }
+    data: { identifier: string; expiresAt: string; name: string }
   ) {
     return await processRequest({
       commit,
@@ -251,7 +261,7 @@ export const actions = {
       process: async () => {
         const response = await (this as any).$axios.post(
           `${process.env.apiUrl}api/v1/applications/${data.identifier}/keys/`,
-          { expiresAt: data.expiresAt, category: data.category }
+          { expiresAt: data.expiresAt, name: data.name }
         )
         commit('setApplicationsRequest', {
           data: state.applications.data.map((app: Application) =>
@@ -391,25 +401,101 @@ export const actions = {
     })
   },
   async getConnections(
-    { state, commit }: any,
-    data: { next: boolean; limit: number; offset: number; identifier: string }
+    { commit, dispatch, state }: any,
+    data: { identifier: string }
   ) {
     return await processRequest({
       commit,
       mutation: 'setConnectionsRequest',
       process: async () => {
-        const response = await (this as any).$axios.get(
-          `${process.env.apiUrl}api/v1/applications/${data.identifier}/connections/?limit=${data.limit}&offset=${data.offset}`
-        )
+        const application: Application =
+          state.applications.data?.find(
+            (i: Application) => i.identifier === data.identifier
+          ) ?? {}
 
-        if (data.next) {
-          return response.data
-            ? { data: [...state.connections.data, ...response.data] }
-            : state.connections
+        if (!application.allowClientData) {
+          return { data: {} }
         }
 
-        return response
+        const { token } = await dispatch('createToken', {
+          action: TokenType.getConnections,
+          identifier: data.identifier,
+        })
+
+        const response = await (this as any).$axios.get(
+          `${location.protocol}//${process.env.wsDomain}/api/v1/connections/`,
+          { headers: { Authorization: token } }
+        )
+
+        const results: Array<string> = Object.values(response.data)
+
+        if (results.length === 0) {
+          return { data: {} }
+        }
+
+        const time: Record<string, { count: number; order: number }> = {}
+        const userAgent: Record<string, number> = {}
+        const os: Record<string, number> = {}
+        const locale = (this as any).app.i18n.locale
+
+        results.forEach((i) => {
+          try {
+            const parsedResult = JSON.parse(i)
+            const parsedUA = new UAParser(parsedResult.userAgent)
+            const result = parsedUA.getResult()
+
+            const browserName = result.browser.name ?? ''
+            const uaCount = userAgent[browserName] ?? 0
+            userAgent[browserName] = uaCount + 1
+
+            const osName = result.os.name ?? ''
+            const osCount = os[osName] ?? 0
+            os[osName] = osCount + 1
+
+            const parsedDate = new Date(parsedResult.createdAt * 1000)
+            parsedDate.setMinutes(0)
+            const newDate = parsedDate.toLocaleString(locale, {
+              hour: 'numeric',
+              minute: '2-digit',
+              month: 'long',
+              year: 'numeric',
+              day: '2-digit',
+            })
+            const fullDateData = time[newDate] ?? {
+              count: 0,
+              order: parsedResult.createdAt,
+            }
+            fullDateData.count = fullDateData.count + 1
+            time[newDate] = fullDateData
+          } catch {
+            // this will happen if there are connection that opened without having analytics on.
+          }
+        })
+
+        return {
+          data: {
+            time: sortObjectByValue(time, (a, b) =>
+              b[1].order > a[1].order ? 0 : 1
+            ),
+            userAgent: sortObjectByValue(userAgent, (a, b) => (b > a ? 1 : -1)),
+            os: sortObjectByValue(os, (a, b) => (b > a ? 1 : -1)),
+          },
+        }
       },
+    })
+  },
+  async createToken(
+    { commit }: any,
+    data: { action: TokenType; identifier: string }
+  ) {
+    return await processRequest({
+      commit,
+      mutation: 'setTokenRequest',
+      process: async () =>
+        await (this as any).$axios.post(
+          `${process.env.apiUrl}api/v1/applications/${data.identifier}/tokens/`,
+          { action: data.action }
+        ),
     })
   },
 }

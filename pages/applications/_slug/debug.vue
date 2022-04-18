@@ -4,7 +4,6 @@
     @keydown.esc="
       () => {
         sendEvent.show && toggleShowSendEvent()
-        sendChannel.show && toggleShowSendChannel()
       }
     "
   >
@@ -197,7 +196,7 @@ import RootSocket, {
 } from 'rootsocketjs'
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
-import { Key, KeyType } from '~/types/application'
+import { Key, TokenType } from '~/types/application'
 import { EventDirection } from '~/types/log'
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -327,11 +326,12 @@ export default Vue.extend({
     },
     async subscribe() {
       if (
-        (this.rootSocket?.getSubscriptions() ?? []).includes(
-          (i) => i === this.sendChannel.channel
+        (this.rootSocket?.getSubscriptions() ?? []).find(
+          (i: string) => i === this.sendChannel.channel
         )
       ) {
         // we don't want to register twice the same to the same channel, it would duplicate logs
+        this.$toast.show(this.$t('alreadySubscribed'))
         return
       }
 
@@ -376,23 +376,22 @@ export default Vue.extend({
       this.subscriptions = this.rootSocket?.getSubscriptions() ?? []
     },
     async startDebugger() {
-      if (
-        !(this.application.keys ?? []).find(
-          (i) => i.category === KeyType.debugger
-        )
-      ) {
-        this.$toast.show(this.$t('createKey'))
-        return
-      }
+      this.loading = true
 
-      if (this.validKey?.identifier) {
-        this.loading = true
+      try {
+        const { token } = await this.$store.dispatch(
+          'application/createToken',
+          {
+            action: TokenType.createConnection,
+            identifier: this.application.identifier,
+          }
+        )
 
         this.rootSocket = new RootSocket({
           server: this.getServerUrl(),
           connectionUrl: this.getConnectionUrl(),
           fetchOptions: {
-            headers: { Authorization: this.validKey.identifier },
+            headers: { Authorization: token },
           },
           debug: isDev,
           disableTLS: isDev,
@@ -408,6 +407,8 @@ export default Vue.extend({
           this.loading = false
           this.$toast.show(ev.reason)
           this.rootSocket?.onMessageClose(ev)
+          this.logs = []
+          this.subscriptions = []
         }
 
         this.rootSocket.onRawError = (ev: MessageEvent) => {
@@ -441,6 +442,8 @@ export default Vue.extend({
           this.$toast.show(e)
           this.loading = false
         }
+      } catch (e) {
+        this.$toast.show(e)
       }
     },
   },
@@ -472,7 +475,8 @@ export default Vue.extend({
     "data": "Data",
     "enterData": "Enter data",
     "sendChannel": "Subscribe to channel",
-    "noSubs": "No active subscriptions"
+    "noSubs": "No active subscriptions",
+    "alreadySubscribed": "There is an active subscription for that channel"
   },
   "es": {
     "debug": "Depurar",
@@ -497,7 +501,8 @@ export default Vue.extend({
     "data": "Datos",
     "enterData": "Introduce datos",
     "sendChannel": "Suscribirse al canal",
-    "noSubs": "Ninguna suscripción activa"
+    "noSubs": "Ninguna suscripción activa",
+    "alreadySubscribed": "Ya hay una suscripción activa para ese canal"
   }
 }
 </i18n>
