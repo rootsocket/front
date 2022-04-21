@@ -1959,6 +1959,11 @@
   resolved "https://registry.npmjs.org/@polka/url/-/url-1.0.0-next.21.tgz"
   integrity sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==
 
+"@rootsocket/websocket@^1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@rootsocket/websocket/-/websocket-1.1.6.tgz#9ade356a616dcaa0821c448b7ddf2c180e29bfdb"
+  integrity sha512-kaOvfB2SHIgTBbC93AAoxQ8SXM8u3VrhdaKWvqiaUbhv03iG2zb1Fpz8YwY8f0sqNqeAWLwUeZaquI8p3TDUGw==
+
 "@sindresorhus/is@^4.0.0":
   version "4.4.0"
   resolved "https://registry.npmjs.org/@sindresorhus/is/-/is-4.4.0.tgz"
@@ -10929,9 +10934,6 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
   dependencies:
     hash-base "^3.0.0"
     inherits "^2.0.1"
-
-"rootsocketjs@file:../rootsocketjs":
-  version "1.0.0"
 
 run-async@^2.4.0:
   version "2.4.1"

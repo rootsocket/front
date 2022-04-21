@@ -193,7 +193,7 @@ import RootSocket, {
   ERROR,
   isError,
   stringToMessage,
-} from 'rootsocketjs'
+} from '@rootsocket/websocket'
 import Vue from 'vue'
 import { getCurrentApplication } from '@/utils/application'
 import { TokenType } from '~/types/application'
@@ -341,7 +341,7 @@ export default Vue.extend({
           EventDirection.receive,
           JSON.stringify({
             event: channel,
-            data: d.raw,
+            data: d,
           })
         )
       })
