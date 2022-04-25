@@ -84,8 +84,9 @@ export default Vue.extend({
   },
   methods: {
     register() {
-      if (this.showCaptcha) this.$refs.captcha.execute()
-      else this.onVerify()
+      // if (this.showCaptcha) this.$refs.captcha.execute()
+      // else this.onVerify()
+      this.onVerify()
     },
     async onVerify(token = '') {
       if (this.email && this.password && (token || !this.showCaptcha)) {
