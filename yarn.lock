@@ -2564,10 +2564,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rootsocket/websocket@npm:^1.1.10":
-  version: 1.1.10
-  resolution: "@rootsocket/websocket@npm:1.1.10"
-  checksum: cba4958b8c34352924f213442692b8b62847de150b7e7a6eb475f37b21ad9296247f80286165a9e80e85169420932cc90e874268e0434a884abddc09c794591c
+"@rootsocket/websocket@npm:^1.1.11":
+  version: 1.1.11
+  resolution: "@rootsocket/websocket@npm:1.1.11"
+  checksum: f681392114fb51ce572c3f21bbef2e5eaa0768bf82baa1d9b05aeec5ee7b8710f783b2271cc981fb690243501a5f49278035075450e512598ee41ef267c2b64a
   languageName: node
   linkType: hard
 
@@ -3736,7 +3736,7 @@ __metadata:
     "@nuxtjs/stylelint-module": ^4.1.0
     "@nuxtjs/tailwindcss": ^4.2.1
     "@nuxtjs/toast": ^3.3.1
-    "@rootsocket/websocket": ^1.1.10
+    "@rootsocket/websocket": ^1.1.11
     "@tailwindcss/typography": ^0.5.2
     "@types/ua-parser-js": ^0.7.36
     "@vue/test-utils": ^1.3.0
