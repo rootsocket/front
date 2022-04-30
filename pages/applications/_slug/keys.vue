@@ -9,11 +9,12 @@
     "
   >
     <AppPage>
-      <div class="flex flex-col md:flex-row justify-between md:items-center">
-        <h1>{{ $t('keys') }}</h1>
+      <div
+        class="flex flex-col md:flex-row justify-between md:items-center mb-6"
+      >
+        <h1 class="text-4xl">{{ $t('keys') }}</h1>
         <ButtonPressable
           v-if="(application.keys || []).length !== 0"
-          class="mb-7"
           variant="outline"
           :value="$t('createKey')"
           @click="toggleShowCreateKey"

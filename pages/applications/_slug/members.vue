@@ -9,11 +9,12 @@
     "
   >
     <AppPage>
-      <div class="flex flex-col md:flex-row justify-between md:items-center">
-        <h1>{{ $t('members') }}</h1>
+      <div
+        class="flex flex-col md:flex-row justify-between md:items-center mb-6"
+      >
+        <h1 class="text-4xl">{{ $t('members') }}</h1>
         <ButtonPressable
           v-if="application.members.length !== 0 && isApplicationOwner"
-          class="mb-7"
           variant="outline"
           :value="$t('inviteMember')"
           @click="toggleShowAddMember"

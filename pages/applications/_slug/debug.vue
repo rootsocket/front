@@ -8,8 +8,10 @@
     "
   >
     <AppPage :class="{ 'lg:w-3/4': isConnected }">
-      <div class="flex flex-col md:flex-row justify-between md:items-center">
-        <h1>{{ $t('debug') }}</h1>
+      <div
+        class="flex flex-col md:flex-row justify-between md:items-center mb-6"
+      >
+        <h1 class="text-4xl">{{ $t('debug') }}</h1>
         <ButtonPressable
           v-if="isConnected"
           class="mb-7"

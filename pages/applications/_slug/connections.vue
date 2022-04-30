@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-wrap-reverse">
     <AppPage>
-      <div class="flex flex-row items-center justify-between">
-        <h1>{{ $t('connections') }}</h1>
-        <h1 v-show="totalConnectionsCount !== 0">
+      <div class="flex flex-row items-center justify-between mb-6">
+        <h1 class="text-4xl">{{ $t('connections') }}</h1>
+        <h1 v-show="totalConnectionsCount !== 0" class="text-4xl">
           {{
             Intl.NumberFormat('en', { notation: 'compact' }).format(
               totalConnectionsCount
@@ -251,6 +251,7 @@ export default Vue.extend({
   beforeMount() {
     this.$store.dispatch('application/getConnections', {
       identifier: this.application.identifier,
+      region: this.application.region,
     })
   },
   methods: {

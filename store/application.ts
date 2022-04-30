@@ -403,7 +403,7 @@ export const actions = {
   },
   async getConnections(
     { commit, dispatch, state }: any,
-    data: { identifier: string; force: boolean }
+    data: { identifier: string; force: boolean; region: ApplicationRegion }
   ) {
     const cacheKey = `${data.identifier}`
 
@@ -424,8 +424,12 @@ export const actions = {
           identifier: data.identifier,
         })
 
+        const isDev = process.env.NODE_ENV === 'development'
+
         const response = await (this as any).$axios.get(
-          `${location.protocol}//${process.env.wsDomain}/api/v1/connections/`,
+          `${location.protocol}//${isDev ? '' : `${data.region}.`}${
+            process.env.wsDomain
+          }/api/v1/connections/`,
           { headers: { Authorization: token } }
         )
 

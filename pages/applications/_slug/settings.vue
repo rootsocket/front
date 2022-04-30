@@ -4,7 +4,7 @@
     @keydown.esc="toggleShowDeleteApplication"
   >
     <AppPage>
-      <h1>{{ $t('settings') }}</h1>
+      <h1 class="text-4xl mb-6">{{ $t('settings') }}</h1>
 
       <div class="w-full mr-4 h-62 border dark:border-gray-800 rounded-md p-4">
         <TextLabel :value="$t('createdAt')" />
