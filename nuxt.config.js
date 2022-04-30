@@ -132,7 +132,7 @@ export default {
     redirect: {
       login: '/login',
       logout: '/login',
-      home: '/applications',
+      home: '/',
     },
     plugins: ['~/plugins/auth.client.js'],
     strategies: {
