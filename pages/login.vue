@@ -92,7 +92,7 @@ export default Vue.extend({
   },
   beforeMount() {
     if (this.$auth.loggedIn) {
-      this.$router.push('/')
+      this.$router.push(this.localePath('/applications'))
     }
   },
   methods: {
