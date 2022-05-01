@@ -3,7 +3,10 @@
     <AppPage>
       <div class="flex flex-row items-center justify-between mb-6">
         <h1 class="text-4xl">{{ $t('connections') }}</h1>
-        <h1 v-show="totalConnectionsCount !== 0" class="text-4xl">
+        <h1
+          v-show="totalConnectionsCount !== 0 && !isLoadingConnections"
+          class="text-4xl"
+        >
           {{
             Intl.NumberFormat('en', { notation: 'compact' }).format(
               totalConnectionsCount
